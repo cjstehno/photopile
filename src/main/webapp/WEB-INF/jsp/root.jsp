@@ -1,15 +1,11 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <html>
-    <head>
-        <title>Welcome!</title>
-    </head>
-    <body>
-        <h1>Photopile</h1>
+<head>
+    <title>Hello Ext</title>
 
-        <p>${welcome}</p>
+    <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
 
-        <c:out value="${welcome}" default="I got nuttin" />
-
-    </body>
+    <script type="text/javascript" src="extjs/ext-debug.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+</head>
+<body></body>
 </html>

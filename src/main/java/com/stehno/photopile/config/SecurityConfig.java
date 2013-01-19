@@ -16,6 +16,7 @@ import javax.servlet.Filter;
 import java.util.HashMap;
 
 /**
+ * Configuration of security related beans.
  */
 @Configuration
 public class SecurityConfig {
