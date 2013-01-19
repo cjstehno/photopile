@@ -1,0 +1,62 @@
+
+Project To Do
+-------------
+
+-   Service Security
+    -   use Shiro for internal functionality
+    -   use public/private key hashing for service auth
+    -   redirect non-secure to secure (this should be auto in real server so may be able to neglect in dev)
+
+    -   apikey is the common key value shared across all users (generated and stored in the app)
+        -   will need a means of providing it to users
+        -   this is the password for the "service" user
+
+    -   sessionkey is the user-specific, session-specific
+        -   combination of apikey, user/pass, and session generated key
+
+    -   Client "login"
+        -   client sends login request with: username, password, apikey
+        -   server authenticates user and returns sessionkey and sessionid
+
+        request comes in and is authenticated as the service user using the api_key as password
+        if authenticated the service users is upgraded to runAs the user specified by the userid (if the userid exists)
+
+    -   Standard request
+        1.  client creates request
+        2.  client creates hash of request data
+            -   apikey + sessionkey + request_params + request_body + timestamp
+        3.  client sends request with hash, sessionid, other request data, timestamp
+        4.  server receives the request
+        5.  server checks the timestamp of the request and rejects if too old
+        6.  server uses the sessionid to find the sessionkey
+        7.  server generates its own hash of the same data
+        8.  server compares the hash with its version
+            -   if ok, allow request
+                -
+            -   if not, respond with error content
+
+
+-   formatting rules
+
+-   setup db realm
+
+-   crash setup
+    -   for some reason there are classloader issues when I try to integrate the crash server
+
+-   project analysis and reporting
+-   maybe break down packages by functional area
+
+-   consider template framework like tiles or whatever grails uses
+
+
+Tomcat Stuff
+------------
+
+-   get manager/deployer running
+-   get mbean server running
+-   setup mail session config
+
+Notes
+-----
+
+-   remember me is setup but not deeply used

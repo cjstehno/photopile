@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="OFF">
+    <appenders>
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+    </appenders>
+    <loggers>
+        <logger name="org.apache.shiro" level="WARN" />
+        <logger name="org.springframework" level="WARN" />
+
+        <logger name="com.stehno.photopile" level="INFO" />
+        <logger name="com.stehno.photopile.config" level="INFO" />
+        <logger name="com.stehno.photopile.controller" level="INFO" />
+        <logger name="com.stehno.photopile.service" level="DEBUG" />
+        <logger name="com.stehno.photopile.dao" level="DEBUG" />
+
+        <root level="WARN">
+            <appender-ref ref="Console"/>
+        </root>
+    </loggers>
+</configuration>

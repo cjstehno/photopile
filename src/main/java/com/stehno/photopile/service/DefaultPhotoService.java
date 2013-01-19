@@ -1,0 +1,59 @@
+package com.stehno.photopile.service;
+
+import com.stehno.photopile.dao.PhotoDao;
+import com.stehno.photopile.domain.Photo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service("photoService")
+public class DefaultPhotoService implements PhotoService {
+
+    private static final Logger log = LogManager.getLogger(PhotoService.class);
+
+    @Autowired
+    private PhotoDao photoDao;
+
+    @Override
+    @Transactional
+    public void addPhoto(Photo photo) {
+        photoDao.save(photo);
+    }
+
+    @Override
+    @Transactional
+    public List<Photo> listPhotos() {
+        return photoDao.list();
+    }
+
+    @Override
+    @Transactional
+    public void deletePhoto(Long photoId) {
+        photoDao.delete(photoId);
+    }
+
+    @Override
+    @Transactional
+    public int importFromServer(){
+        // FIXME: temp impl
+
+        int count = 10;
+        for( int i=0; i<count; i++ ){
+            final Photo photo = new Photo();
+            photo.setName("Photo-" + i);
+            photo.setDescription("This is photo " + i);
+            photo.setWidth(800);
+            photo.setHeight(600);
+
+            photoDao.save(photo);
+
+            if(log.isDebugEnabled()) log.debug("Imported photo ({}) from server as ID ({})", photo.getName(), photo.getId());
+        }
+
+        return count;
+    }
+}
