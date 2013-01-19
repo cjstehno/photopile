@@ -14,17 +14,53 @@
  * limitations under the License.
  */
 
-Ext.require('Ext.container.Viewport');
 
 Ext.application({
-    name: 'HelloExt',
+    requires: ['Ext.container.Viewport'],
+    name: 'PP',
+    appFolder:'app',
+
+    controllers:[
+        'HeaderController', 'CategoryController', 'GalleryController', 'DetailsController'
+    ],
+
     launch: function() {
         Ext.create('Ext.container.Viewport', {
-            layout: 'fit',
+            layout: 'border',
             items: [
+                { region:'north', xtype:'app-header' },
                 {
-                    title: 'Hello Ext',
-                    html : 'Hello! Welcome to Ext JS.'
+                    region:'west',
+                    title:'Categories',
+
+                    width:'25%',
+                    collapsible: true,
+                    resizable: true,
+                    frame:true,
+
+                    layout: {
+                        type: 'accordion',
+                        titleCollapse: true,
+                        animate: true,
+                        activeOnTop: true
+                    },
+
+                    items: [
+                        { xtype:'album-list' },
+                        { xtype:'tag-list' },
+                        {
+                            title: 'Date Taken',
+                            frame:true,
+                            html: 'Panel content!'
+                        }
+                    ]
+                },
+                { region:'center', xtype:'gallery' },
+                { region:'east', xtype:'photo-details' },
+                {
+                    region:'south',
+                    frame:true,
+                    html:'Logged in as admin...'
                 }
             ]
         });

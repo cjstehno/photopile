@@ -10,7 +10,10 @@ public interface PhotoDao {
 
     void save( Photo photo );
 
+    long count();
+
     List<Photo> list();
+    List<Photo> list( int start, int limit );
 
     void delete( Long photoId );
 }

@@ -8,7 +8,11 @@ public interface PhotoService {
 
     void addPhoto( Photo photo );
 
+    long countPhotos();
+
     List<Photo> listPhotos();
+
+    List<Photo> listPhotos( int start, int limit );
 
     void deletePhoto( Long photoId );
 

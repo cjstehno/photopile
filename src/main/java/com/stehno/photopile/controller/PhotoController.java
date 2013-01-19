@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @RequiresAuthentication
@@ -50,10 +51,18 @@ public class PhotoController {
     }
 
     @RequestMapping( value="/list", method=RequestMethod.GET)
-    public ModelAndView list(){
-        final ModelAndView modelAndView = new ModelAndView("photo/list");
+    public ModelAndView list( @RequestParam("start") final Integer start, @RequestParam("limit") final Integer limit ){
+        final ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.addObject("photos", photoService.listPhotos() );
+        modelAndView.addObject("success", true);
+
+        modelAndView.addObject("total", photoService.countPhotos());
+
+        if( start != null && limit != null ){
+            modelAndView.addObject("photos", photoService.listPhotos( start, limit ) );
+        } else {
+            modelAndView.addObject("photos", photoService.listPhotos() );
+        }
 
         return modelAndView;
     }

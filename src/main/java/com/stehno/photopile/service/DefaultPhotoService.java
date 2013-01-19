@@ -26,8 +26,20 @@ public class DefaultPhotoService implements PhotoService {
 
     @Override
     @Transactional
+    public long countPhotos(){
+        return photoDao.count();
+    }
+
+    @Override
+    @Transactional
     public List<Photo> listPhotos() {
         return photoDao.list();
+    }
+
+    @Override
+    @Transactional
+    public List<Photo> listPhotos( int start, int limit ){
+        return photoDao.list(start,limit);
     }
 
     @Override
@@ -41,7 +53,7 @@ public class DefaultPhotoService implements PhotoService {
     public int importFromServer(){
         // FIXME: temp impl
 
-        int count = 10;
+        int count = 200;
         for( int i=0; i<count; i++ ){
             final Photo photo = new Photo();
             photo.setName("Photo-" + i);
