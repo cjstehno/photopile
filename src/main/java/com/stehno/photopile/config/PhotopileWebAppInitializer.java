@@ -34,25 +34,24 @@ import javax.servlet.ServletRegistration;
 public class PhotopileWebAppInitializer implements WebApplicationInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup( ServletContext servletContext ) throws ServletException{
         final AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
-        root.setServletContext(servletContext);
-        root.scan("com.stehno.photopile.config");
+        root.setServletContext( servletContext );
+        root.scan( "com.stehno.photopile.config" );
         root.refresh();
 
         // Manage the lifecycle of the root application context
-        servletContext.addListener(new ContextLoaderListener(root));
+        servletContext.addListener( new ContextLoaderListener( root ) );
 
         // ----- servlet configuration -----
 
-        final ServletRegistration.Dynamic servlet = servletContext.addServlet("spring", new DispatcherServlet(root));
-        servlet.setLoadOnStartup(0);
-        servlet.addMapping("/");
+        final ServletRegistration.Dynamic servlet = servletContext.addServlet( "spring", new DispatcherServlet( root ) );
+        servlet.setLoadOnStartup( 0 );
+        servlet.addMapping( "/" );
 
         // ----- filter configuration -----
 
-        FilterRegistration.Dynamic filter = servletContext.addFilter("securityFilter", new DelegatingFilterProxy("securityFilter"));
+        FilterRegistration.Dynamic filter = servletContext.addFilter( "securityFilter", new DelegatingFilterProxy( "securityFilter" ) );
         filter.addMappingForUrlPatterns( null, true, "/*" );
     }
 }
-

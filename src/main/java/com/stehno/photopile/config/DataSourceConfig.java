@@ -1,57 +1,68 @@
+/*
+ * Copyright (c) 2013 Christopher J. Stehno
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.stehno.photopile.config;
 
-import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowire;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.naming.NamingException;
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.util.Properties;
 
 /**
- *
+ * Configuration for the database connections.
  */
 @Configuration
 @EnableTransactionManagement
 public class DataSourceConfig {
-    // FIXME: this is a temporary setup
-    // I need to consider the pros/cons of how this DB is setup - jdbc will suffice for now as a quick start
 
-    @Bean
-    public DataSource dataSource(){
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.postgresql.Driver");
-        dataSource.setUrl("jdbc:postgresql://localhost:5432/photopile_dev");
-        dataSource.setUsername("photopile");
-        dataSource.setPassword("photopile");
-        return dataSource;
+    @Autowired
+    @Qualifier("dataSourceFactory")
+    public DataSource dataSource;
+    this
+    needs work
+
+    @Bean(autowire = Autowire.BY_NAME, name = "dataSourceFactory")
+    public JndiObjectFactoryBean dataSourceFactory(){
+        final JndiObjectFactoryBean jndiDataSource = new JndiObjectFactoryBean();
+        jndiDataSource.setCache( true );
+        jndiDataSource.setJndiName( "java:/comp/env/jdbc/PhotopileDS" );
+
+        try{
+            jndiDataSource.afterPropertiesSet();
+        } catch( NamingException e ){
+            e.printStackTrace();
+        }
+
+        return jndiDataSource;
     }
 
     @Bean
-    public SessionFactory sessionFactory() throws IOException {
-        final LocalSessionFactoryBean factory = new LocalSessionFactoryBean();
-        factory.setDataSource(dataSource());
-        factory.setConfigLocation(new ClassPathResource("hibernate.cfg.xml"));
-        factory.setHibernateProperties(new Properties(){
-            {
-                setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
-                setProperty("hibernate.show_sql", "true");
-                setProperty("hibernate.hbm2ddl.auto", "create-drop");
-            }
-        });
-        factory.afterPropertiesSet();
-        return factory.getObject();
-    }
-
-    @Bean
-    public HibernateTransactionManager transactionManager() throws IOException {
-        HibernateTransactionManager manager = new HibernateTransactionManager();
-        manager.setSessionFactory(sessionFactory());
-        return manager;
+    public PlatformTransactionManager transactionManager(){
+        final DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
+        transactionManager.setDataSource( dataSource );
+        transactionManager.setRollbackOnCommitFailure( true );
+        transactionManager.afterPropertiesSet();
+        return transactionManager;
     }
 }
