@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service("photoService")
+@Service
 public class DefaultPhotoService implements PhotoService {
 
     private static final Logger log = LogManager.getLogger( PhotoService.class );
@@ -41,7 +41,7 @@ public class DefaultPhotoService implements PhotoService {
     }
 
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public long countPhotos(){
         return photoDao.count();
     }

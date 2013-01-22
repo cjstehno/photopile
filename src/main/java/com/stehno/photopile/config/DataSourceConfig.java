@@ -16,17 +16,14 @@
 
 package com.stehno.photopile.config;
 
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 
 /**
@@ -36,33 +33,42 @@ import javax.sql.DataSource;
 @EnableTransactionManagement
 public class DataSourceConfig {
 
-    @Autowired
-    @Qualifier("dataSourceFactory")
-    public DataSource dataSource;
-    this
-    needs work
+    /* FIXME: not sure why but transactions dont work when JNDI data source is used - keeps erroring that
+        DataSource is closed.
 
-    @Bean(autowire = Autowire.BY_NAME, name = "dataSourceFactory")
+    @Bean
     public JndiObjectFactoryBean dataSourceFactory(){
         final JndiObjectFactoryBean jndiDataSource = new JndiObjectFactoryBean();
         jndiDataSource.setCache( true );
         jndiDataSource.setJndiName( "java:/comp/env/jdbc/PhotopileDS" );
-
-        try{
-            jndiDataSource.afterPropertiesSet();
-        } catch( NamingException e ){
-            e.printStackTrace();
-        }
-
         return jndiDataSource;
     }
 
     @Bean
+    public DataSource dataSource(){
+        return (DataSource)dataSourceFactory().getObject();
+    }
+    */
+
+    @Bean
+    public DataSource dataSource(){
+        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName( "org.postgresql.Driver" );
+        dataSource.setUrl( "jdbc:postgresql://localhost:5432/photopile_test" );
+        dataSource.setUsername( "photopile" );
+        dataSource.setPassword( "photopile" );
+        return dataSource;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(){
+        return new JdbcTemplate( dataSource() );
+    }
+
+    @Bean
     public PlatformTransactionManager transactionManager(){
-        final DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-        transactionManager.setDataSource( dataSource );
-        transactionManager.setRollbackOnCommitFailure( true );
-        transactionManager.afterPropertiesSet();
-        return transactionManager;
+        final DataSourceTransactionManager tx = new DataSourceTransactionManager();
+        tx.setDataSource( dataSource() );
+        return tx;
     }
 }

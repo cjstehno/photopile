@@ -18,29 +18,28 @@ package com.stehno.photopile.dao;
 
 import com.stehno.photopile.domain.Photo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.sql.Types;
 import java.util.List;
 
-@Repository("photoDao")
-public class JdbcPhotoDao extends JdbcDaoSupport implements PhotoDao {
+@Repository
+public class JdbcPhotoDao implements PhotoDao {
 
     private static final String COUNT_PHOTOS = "SELECT COUNT(*) FROM photos";
-    private static final String LIST_ALL_PHOTOS = "select id,version,name,description,camera_info,date_taken,date_uploaded,date_updated,latitude,longitude from photos";
+    private static final String LIST_ALL_PHOTOS = "SELECT id,version,NAME,description,camera_info,date_taken,date_uploaded,date_updated,latitude,longitude FROM photos";
     private static final String PHOTO_LIMIT_FRAGMENT = "%s limit %d offset %d";
     private final PhotoRowMapper photoRowMapper = new PhotoRowMapper();
     private PreparedStatementCreatorFactory saveCreatorFactory;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    JdbcPhotoDao( final DataSource dataSource ){
-        super();
-        setDataSource( dataSource );
+    public void setJdbcTemplate( final JdbcTemplate jdbcTemplate ){
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @PostConstruct
@@ -62,7 +61,7 @@ public class JdbcPhotoDao extends JdbcDaoSupport implements PhotoDao {
             }
         );
 
-        int count = getJdbcTemplate().update( saveStatementCreator );
+        int count = jdbcTemplate.update( saveStatementCreator );
         if( count != 1 ){
             // FIXME: handle bad insert
         }
@@ -76,17 +75,17 @@ public class JdbcPhotoDao extends JdbcDaoSupport implements PhotoDao {
 
     @Override
     public long count(){
-        return getJdbcTemplate().queryForInt( COUNT_PHOTOS );
+        return jdbcTemplate.queryForInt( COUNT_PHOTOS );
     }
 
     @Override
     public List<Photo> list(){
-        return getJdbcTemplate().query( LIST_ALL_PHOTOS, photoRowMapper );
+        return jdbcTemplate.query( LIST_ALL_PHOTOS, photoRowMapper );
     }
 
     @Override
     public List<Photo> list( int start, int limit ){
-        return getJdbcTemplate().query( String.format( PHOTO_LIMIT_FRAGMENT, LIST_ALL_PHOTOS, limit, start ), photoRowMapper );
+        return jdbcTemplate.query( String.format( PHOTO_LIMIT_FRAGMENT, LIST_ALL_PHOTOS, limit, start ), photoRowMapper );
     }
 
     @Override
