@@ -39,3 +39,37 @@ Notes
 -----
 
 -   remember me is setup but not deeply used
+
+
+
+
+BOOTSTRAP
+
+
+
+-	Select All (or defailt view)
+	-	Main display is all photos in order by most recent taken
+	-	Filter by...
+		-	Albums
+		-	Tags
+		-	Date Taken
+		*	any of these filter options opens a modal dialog with a list of available options
+			-	once selected that filter is applied and listed in bread crumbs
+			-	filter is additive
+			-	clicking on any level of filter will remove all up to that level
+			-	allows progressive filtering
+
+
+-	Select an Albums
+	-	Main display becomes a
+
+-	Select Tags
+
+
+-	Select Date Taken
+
+
+
+
+mouse over photo to display name
+click photo to open in full view (full content) with details side panel) x to return to previous view

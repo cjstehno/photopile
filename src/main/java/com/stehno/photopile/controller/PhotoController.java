@@ -28,40 +28,39 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 @RequiresAuthentication
-@RequestMapping("/photo")
 @Controller
 public class PhotoController {
 
-    private static final Logger log = LogManager.getLogger(PhotoController.class);
+    private static final Logger log = LogManager.getLogger( PhotoController.class );
 
     @Autowired
     private PhotoService photoService;
 
-    @RequestMapping( value = "/load", method = RequestMethod.GET )
+    @RequestMapping(value = "/photos/load", method = RequestMethod.GET)
     public ModelAndView load(){
-        if(log.isDebugEnabled()) log.debug("Importing photos from server...");
+        if( log.isDebugEnabled() ) log.debug( "Importing photos from server..." );
 
         final ModelAndView modelAndView = new ModelAndView();
 
         final int importCount = photoService.importFromServer();
 
-        modelAndView.addObject("importCount", importCount);
+        modelAndView.addObject( "importCount", importCount );
 
         return modelAndView;
     }
 
-    @RequestMapping( value="/list", method=RequestMethod.GET)
+    @RequestMapping(value = "/photos", method = RequestMethod.GET)
     public ModelAndView list( @RequestParam("start") final Integer start, @RequestParam("limit") final Integer limit ){
         final ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.addObject("success", true);
+        modelAndView.addObject( "success", true );
 
-        modelAndView.addObject("total", photoService.countPhotos());
+        modelAndView.addObject( "total", photoService.countPhotos() );
 
         if( start != null && limit != null ){
-            modelAndView.addObject("photos", photoService.listPhotos( start, limit ) );
+            modelAndView.addObject( "photos", photoService.listPhotos( start, limit ) );
         } else {
-            modelAndView.addObject("photos", photoService.listPhotos() );
+            modelAndView.addObject( "photos", photoService.listPhotos() );
         }
 
         return modelAndView;
