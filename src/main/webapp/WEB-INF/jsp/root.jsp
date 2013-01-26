@@ -36,7 +36,7 @@
                     <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                    <li><a href="#all">All Photos</a></li>
+                    <li><a href="#photos">All Photos</a></li>
                     <li><a href="#albums">Albums</a></li>
                     <li><a href="#tags">Tags</a></li>
                     <li><a href="#dateTaken">Date Taken</a></li>
@@ -112,31 +112,14 @@
         </div>
     </div>
 
-    <script type="text/template" id="gallery-cell-template">
-        <a href="#" class="thumbnail"><img src="http://localhost:8080/photopile/image/{{photo_id}}"/></a>
-    </script>
-
-    <!-- Gallery template (start) -->
-    <script type="text/template" id="gallery-row-template">
-        <div class="row-fluid">
-            <div class="span12">
-                <ul class="thumbnails">
-                    <li class="span2">{{gallery_cell_1}}</li>
-                    <li class="span2">{{gallery_cell_2}}</li>
-                    <li class="span2">{{gallery_cell_3}}</li>
-                    <li class="span2">{{gallery_cell_4}}</li>
-                    <li class="span2">{{gallery_cell_5}}</li>
-                    <li class="span2">{{gallery_cell_6}}</li>
-                </ul>
-            </div>
-        </div>
-    </script>
-    <!-- Gallery template (end) -->
+    <!-- FIXME: can this be moved into head? -->
+    <jsp:directive.include file="_gallery_templates.jsp"/>
 
     <div id="gallery-container"></div>
 
 </div>
 
+<!-- FIXME: not sure why they put these at the bottom, its not really valid is it? -->
 <script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
 <script src="js/bootstrap.min.js" type="text/javascript"></script>
 <script src="js/underscore-min.js" type="text/javascript"></script>
@@ -145,9 +128,6 @@
 <script src="js/pp.views.js" type="text/javascript"></script>
 <script src="js/pp.routes.js" type="text/javascript"></script>
 <script src="js/photopile.js" type="text/javascript"></script>
-<script type="text/javascript">
-    <%--Photos.reset(${});--%> // FIXME: do bootstrapping here
-</script>
 </body>
 </html>
 

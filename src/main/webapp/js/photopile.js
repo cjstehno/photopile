@@ -15,25 +15,19 @@
  */
 
 $(new function () {
+    // use moustache style template variables
     _.templateSettings = {
         interpolate: /\{\{(.+?)\}\}/g
     };
 
-    var listAllPhotos = function () {
-        Photos.fetch({
-            data: {start: 0, limit: 22},
-            success: function (collection, response, options) {
-                collection.total = response.total;
-                console.log('Total = ' + collection.total);
-            }
-        });
-    };
+    var galleryView = new GalleryView({ el: '#gallery-container', collection: Photos });
+    var importDialogView = new ImportDialogView({ el: '#import-dialog', model: new PhotoImport });
 
-    photopileRouter.on('route:allPhotos', listAllPhotos);
-    photopileRouter.on('route:defaultRoute', listAllPhotos);
-
-    photopileRouter.on('route:photoImport', function () {
-        $('#import-dialog').modal();
+    new PhotopileRouter({
+        views: {
+            'gallery': galleryView,
+            'importDialog': importDialogView
+        }
     });
 
     Backbone.history.start();

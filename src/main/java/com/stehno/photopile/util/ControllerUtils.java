@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-/**
- * The model for a single photo.
- */
-var Photo = Backbone.Model.extend({});
+package com.stehno.photopile.util;
 
 /**
- * A collection of Photo objects. This collection should only contain a single
- * page of photos at a time.
+ * TODO: refactor this later
  */
-var PhotoCollection = Backbone.Collection.extend({
-    model: Photo,
-    url: '/photopile/photos',
-    parse: function (response) {
-        return response.photos;
-    }
-});
-var Photos = new PhotoCollection;
+public class ControllerUtils {
 
-/**
- * Defines the model used by the photo bulk import functionality.
- */
-var PhotoImport = Backbone.Model.extend({});
-
+    public static final String SUCCESS = "success";
+    public static final String ERROR = "error";
+}

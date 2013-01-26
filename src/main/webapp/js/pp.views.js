@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-//
-//  Gallery
-//
-
+/**
+ * Defines the photo gallery view.
+ */
 var GalleryView = Backbone.View.extend({
     initialize: function () {
         this.listenTo(this.collection, "reset", this.render);
@@ -49,30 +48,36 @@ var GalleryView = Backbone.View.extend({
         return this;
     }
 });
-var gallery = new GalleryView({ el: '#gallery-container', collection: Photos });
 
-//
-// Import Dialog
-//
-
+/**
+ * Defines the server import dialog view.
+ */
 var ImportDialogView = Backbone.View.extend({
-    initialize: function () {
-    },
     events: {
         'click button.btn-primary': 'onImportClicked',
-        'click button[data-dismiss=modal]': 'onDialogHidden'
+        'click button[data-dismiss=modal]': 'onDialogHidden',
+        'change input[type=checkbox]': 'onUnderstandChanged'
+    },
+
+    openDialog: function () {
+        $(this.el).modal();
     },
 
     onDialogHidden: function (evt) {
         location.hash = '';
     },
+    onUnderstandChanged: function (evt) {
+        $('button.btn-primary', this.el).toggleClass('disabled');
+    },
     onImportClicked: function (evt) {
-        location.hash = '';
+        if (!$('button.btn-primary', this.el).hasClass('disabled')) {
+            location.hash = '';
 
-        // FIXME: need to call server and ensure import job accepted
-        console.log("importing...");
+            // FIXME: need to call server and ensure import job accepted
+            console.log("importing...");
 
-        $('#import-dialog div.modal-body > div').toggle();
+            $('div.card', this.el).toggle();
+        }
     }
 });
-var importDialog = new ImportDialogView({ el: '#import-dialog', model: new PhotoImport });
+

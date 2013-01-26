@@ -14,15 +14,32 @@
  * limitations under the License.
  */
 
+//
+//  PhotopileRouter (main)
+//
+
 var PhotopileRouter = Backbone.Router.extend({
+    initialize: function (opts) {
+        this.views = opts.views;
+    },
     routes: {
-        "all": "allPhotos",
-        "albums": "listAlbums",
-        "tags": "listTags",
-        "dateTaken": "listDateTaken",
-        "photoImport": "photoImport",
-        "*actions": "defaultRoute"
+        'photos': 'listPhotos',
+//        'photos/album/:album':'listPhotos',
+        'photoImport': 'photoImport',
+        '*actions': 'listPhotos'
+    },
+
+    allPhotos: function () {
+        Photos.fetch({
+            data: {start: 0, limit: 22},
+            success: function (collection, response, options) {
+                collection.total = response.total;
+                console.log('Total = ' + collection.total);
+            }
+        });
+    },
+
+    photoImport: function () {
+        this.views.importDialog.openDialog();
     }
 });
-
-var photopileRouter = new PhotopileRouter;

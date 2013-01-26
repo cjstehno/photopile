@@ -14,26 +14,18 @@
  * limitations under the License.
  */
 
-/**
- * The model for a single photo.
- */
-var Photo = Backbone.Model.extend({});
+package com.stehno.photopile.service;
 
 /**
- * A collection of Photo objects. This collection should only contain a single
- * page of photos at a time.
+ * FIXME: document
  */
-var PhotoCollection = Backbone.Collection.extend({
-    model: Photo,
-    url: '/photopile/photos',
-    parse: function (response) {
-        return response.photos;
-    }
-});
-var Photos = new PhotoCollection;
+public interface ImportService {
 
-/**
- * Defines the model used by the photo bulk import functionality.
- */
-var PhotoImport = Backbone.Model.extend({});
-
+    /**
+     * Schedules the background job which will run the filesystem scan of the given directory to create a list of
+     * photos to be imported.
+     *
+     * @param directory the directory (on the server) to be scanned
+     */
+    void scheduleImportScan( final String directory ); // FIXME: will throw exceptions on scheduling errors
+}
