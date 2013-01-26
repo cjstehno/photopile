@@ -54,7 +54,7 @@ public class DataSourceConfig {
     public DataSource dataSource(){
         final DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName( "org.postgresql.Driver" );
-        dataSource.setUrl( "jdbc:postgresql://localhost:5432/photopile_test" );
+        dataSource.setUrl( "jdbc:postgresql://localhost:5432/photopile_dev" );
         dataSource.setUsername( "photopile" );
         dataSource.setPassword( "photopile" );
         return dataSource;

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-var Photo = Backbone.Model.extend({
-});
+//
+//  Photo
+//
+
+var Photo = Backbone.Model.extend({});
 
 var PhotoCollection = Backbone.Collection.extend({
     model: Photo,
@@ -24,5 +27,11 @@ var PhotoCollection = Backbone.Collection.extend({
         return response.photos;
     }
 });
-
 var Photos = new PhotoCollection;
+
+//
+//  Import
+//
+
+var PhotoImport = Backbone.Model.extend({});
+

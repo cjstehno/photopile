@@ -15,9 +15,13 @@
  */
 
 $(new function () {
+    _.templateSettings = {
+        interpolate: /\{\{(.+?)\}\}/g
+    };
+
     var listAllPhotos = function () {
         Photos.fetch({
-            data: {start: 0, limit: 24},
+            data: {start: 0, limit: 22},
             success: function (collection, response, options) {
                 collection.total = response.total;
                 console.log('Total = ' + collection.total);
@@ -27,6 +31,10 @@ $(new function () {
 
     photopileRouter.on('route:allPhotos', listAllPhotos);
     photopileRouter.on('route:defaultRoute', listAllPhotos);
+
+    photopileRouter.on('route:photoImport', function () {
+        $('#import-dialog').modal();
+    });
 
     Backbone.history.start();
 });

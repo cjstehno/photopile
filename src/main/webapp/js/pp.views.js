@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 
+//
+//  Gallery
+//
 
 var GalleryView = Backbone.View.extend({
     initialize: function () {
@@ -22,10 +25,23 @@ var GalleryView = Backbone.View.extend({
     render: function () {
         var template = '';
 
-        console.log("photo count: " + this.collection.length);
+        var cellTemplateContent = $('#gallery-cell-template').html();
+        var rowTemplateContent = $("#gallery-row-template").html();
 
+        var collectionIndex = 0;
         for (var row = 0; row < 4; row++) {
-            template += _.template($("#gallery-row-template").html(), {});
+            var cells = {};
+            for (var cell = 0; cell < 6; cell++) {
+                if (collectionIndex < this.collection.length) {
+                    var photo = this.collection.at(collectionIndex++);
+                    cells['gallery_cell_' + (cell + 1)] = _.template(cellTemplateContent, { photo_id: photo.id });
+
+                } else {
+                    cells['gallery_cell_' + (cell + 1)] = '';
+                }
+            }
+
+            template += _.template(rowTemplateContent, cells);
         }
 
         this.$el.html(template);
@@ -33,5 +49,30 @@ var GalleryView = Backbone.View.extend({
         return this;
     }
 });
-
 var gallery = new GalleryView({ el: '#gallery-container', collection: Photos });
+
+//
+// Import Dialog
+//
+
+var ImportDialogView = Backbone.View.extend({
+    initialize: function () {
+    },
+    events: {
+        'click button.btn-primary': 'onImportClicked',
+        'click button[data-dismiss=modal]': 'onDialogHidden'
+    },
+
+    onDialogHidden: function (evt) {
+        location.hash = '';
+    },
+    onImportClicked: function (evt) {
+        location.hash = '';
+
+        // FIXME: need to call server and ensure import job accepted
+        console.log("importing...");
+
+        $('#import-dialog div.modal-body > div').toggle();
+    }
+});
+var importDialog = new ImportDialogView({ el: '#import-dialog', model: new PhotoImport });

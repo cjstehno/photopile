@@ -18,23 +18,12 @@
 <html lang="en">
 <head>
     <title>PhotoPile: Your photos, your way.</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-    <link href="css/photopile.css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
+    <link href="css/photopile.css" type="text/css" rel="stylesheet" media="screen">
 </head>
 <body>
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Modal header</h3>
-    </div>
-    <div class="modal-body">
-        <p>One fine body…</p>
-    </div>
-    <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        <button class="btn btn-primary">Save changes</button>
-    </div>
-</div>
+
+<jsp:directive.include file="_import_dialog.jsp"/>
 
 <div class="container-fluid">
     <div class="navbar navbar-fixed-top">
@@ -54,7 +43,21 @@
                 </ul>
             </div>
 
+            <div class="btn-group">
+                <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                    New
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">Album</a></li>
+                    <li><a href="#">Photo</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#photoImport">Photo Import</a></li>
+                </ul>
+            </div>
+
             <ul class="nav pull-right">
+                <li><a href="#">Messages <span class="badge badge-success">2</span></a></li>
                 <li><a href="#">Selected <span class="badge badge-info">8</span></a></li>
                 <li class="divider-vertical"></li>
                 <li>
@@ -110,7 +113,7 @@
     </div>
 
     <script type="text/template" id="gallery-cell-template">
-
+        <a href="#" class="thumbnail"><img src="http://localhost:8080/photopile/image/{{photo_id}}"/></a>
     </script>
 
     <!-- Gallery template (start) -->
@@ -118,42 +121,12 @@
         <div class="row-fluid">
             <div class="span12">
                 <ul class="thumbnails">
-                    <li class="span2">
-                        <a href="#" class="thumbnail">
-                            <img src="http://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/features/_2012/06_2012/coffee_and_your_health_features/375x321_coffee_and_your_health_features.jpg"
-                                 alt="">
-                        </a>
-                    </li>
-                    <li class="span2">
-                        <a href="#" class="thumbnail">
-                            <img src="http://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/features/_2012/06_2012/coffee_and_your_health_features/375x321_coffee_and_your_health_features.jpg"
-                                 alt="">
-                        </a>
-                    </li>
-                    <li class="span2">
-                        <a href="#" class="thumbnail">
-                            <img src="http://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/features/_2012/06_2012/coffee_and_your_health_features/375x321_coffee_and_your_health_features.jpg"
-                                 alt="">
-                        </a>
-                    </li>
-                    <li class="span2">
-                        <a href="#" class="thumbnail">
-                            <img src="http://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/features/_2012/06_2012/coffee_and_your_health_features/375x321_coffee_and_your_health_features.jpg"
-                                 alt="">
-                        </a>
-                    </li>
-                    <li class="span2">
-                        <a href="#" class="thumbnail">
-                            <img src="http://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/features/_2012/06_2012/coffee_and_your_health_features/375x321_coffee_and_your_health_features.jpg"
-                                 alt="">
-                        </a>
-                    </li>
-                    <li class="span2">
-                        <a href="#" class="thumbnail">
-                            <img src="http://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/features/_2012/06_2012/coffee_and_your_health_features/375x321_coffee_and_your_health_features.jpg"
-                                 alt="">
-                        </a>
-                    </li>
+                    <li class="span2">{{gallery_cell_1}}</li>
+                    <li class="span2">{{gallery_cell_2}}</li>
+                    <li class="span2">{{gallery_cell_3}}</li>
+                    <li class="span2">{{gallery_cell_4}}</li>
+                    <li class="span2">{{gallery_cell_5}}</li>
+                    <li class="span2">{{gallery_cell_6}}</li>
                 </ul>
             </div>
         </div>
@@ -164,14 +137,14 @@
 
 </div>
 
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/underscore-min.js"></script>
-<script src="js/backbone-min.js"></script>
-<script src="js/pp.models.js"></script>
-<script src="js/pp.views.js"></script>
-<script src="js/pp.routes.js"></script>
-<script src="js/photopile.js"></script>
+<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
+<script src="js/bootstrap.min.js" type="text/javascript"></script>
+<script src="js/underscore-min.js" type="text/javascript"></script>
+<script src="js/backbone-min.js" type="text/javascript"></script>
+<script src="js/pp.models.js" type="text/javascript"></script>
+<script src="js/pp.views.js" type="text/javascript"></script>
+<script src="js/pp.routes.js" type="text/javascript"></script>
+<script src="js/photopile.js" type="text/javascript"></script>
 <script type="text/javascript">
     <%--Photos.reset(${});--%> // FIXME: do bootstrapping here
 </script>
