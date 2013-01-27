@@ -33,6 +33,7 @@
                     <label>Directory:</label>
                     <input type="text" placeholder="/some/path"/>
                     <span class="help-block">(relative to the server filesystem root)</span>
+                    <label class="checkbox"><input type="checkbox" checked="checked" />Scan only, do not actually import.</label>
                     <label class="checkbox"><input type="checkbox"/>I understand what I am doing.</label>
                 </fieldset>
             </form>

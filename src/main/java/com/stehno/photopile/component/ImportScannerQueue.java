@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.service;
+package com.stehno.photopile.component;
 
 /**
- * FIXME: document
+ * Created with IntelliJ IDEA.
+ * User: cjstehno
+ * Date: 1/27/13
+ * Time: 7:48 AM
+ * To change this template use File | Settings | File Templates.
  */
-public interface ImportService {
 
-    /**
-     * Schedules the background job which will run the filesystem scan of the given directory to create a list of
-     * photos to be imported.
-     *
-     * @param directory the directory (on the server) to be scanned
-     */
-    void scheduleImportScan( final String directory );
+public interface ImportScannerQueue {
+
+    void submit( final String path );
 }

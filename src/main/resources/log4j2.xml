@@ -24,12 +24,14 @@
     <loggers>
         <logger name="org.apache.shiro" level="WARN"/>
         <logger name="org.springframework" level="INFO"/>
+        <logger name="org.springframework.jdbc" level="INFO"/>
+        <logger name="org.springframework.scheduling.quartz" level="INFO" />
 
         <logger name="com.stehno.photopile" level="INFO"/>
         <logger name="com.stehno.photopile.config" level="INFO"/>
         <logger name="com.stehno.photopile.controller" level="INFO"/>
-        <logger name="com.stehno.photopile.service" level="DEBUG"/>
-        <logger name="com.stehno.photopile.dao" level="DEBUG"/>
+        <logger name="com.stehno.photopile.service" level="INFO"/>
+        <logger name="com.stehno.photopile.dao" level="INFO"/>
 
         <root level="WARN">
             <appender-ref ref="Console"/>

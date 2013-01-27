@@ -57,6 +57,7 @@ var ImportDialogView = Backbone.View.extend({
         'click button.btn-primary': 'onImportClicked',
         'click button[data-dismiss=modal]': 'onDialogHidden',
         'change input[type=checkbox]': 'onUnderstandChanged'
+        // FIXME: fix checkbox resolution
     },
 
     openDialog: function () {

@@ -14,24 +14,34 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.service;
+package com.stehno.photopile.component;
 
-import com.stehno.photopile.component.ImportScannerQueue;
+import com.stehno.photopile.service.InfoMessageService;
+import groovyx.gpars.MessagingRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 /**
- * FIXME: document
+ * FIXME: doc
+ *
  */
-@Service
-public class DefaultImportService implements ImportService {
-    // FIXME: is this service needed?
+@Component
+public class ScanTask extends MessagingRunnable<String> {
+
+    private static final String SCAN_SUCCESS_CODE = "import.scan.success";
 
     @Autowired
-    private ImportScannerQueue importScannerQueue;
+    private Scanner scanner;
+
+    @Autowired
+    private InfoMessageService infoMessageService;
 
     @Override
-    public void scheduleImportScan( final String directory ){
-        importScannerQueue.submit( directory );
+    protected void doRun( final String dir ){
+        final ScanResults results = scanner.scan( dir );
+
+        final String username = "admin"; // FIXME: probably need to pass in username
+
+        infoMessageService.create( username, SCAN_SUCCESS_CODE, results );
     }
 }
