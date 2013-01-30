@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.controller;
 
-import com.stehno.photopile.dto.ImportRequest;
+import com.stehno.photopile.dto.ServerImport;
 import com.stehno.photopile.service.ImportService;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,15 +38,21 @@ public class ImportController {
     private ImportService importService;
 
     /**
-     * Initiates the scanning of the specified directory to prepare a server-local import batch job.
+     * Initiates the scanning or actual import of photo data from a location on the server itself.
      *
-     * FIXME: document
+     * A ServerImport.preview value of true will only run the scan and not actually import any files.
+     *
+     * The ServerImport.understand property must be true to proceed.
+     *
+     * @param serverImport the incoming data from the client
+     * @return a response entity populated with either an error or the current state of the ServerImport object
      */
     @RequestMapping(value="/import", method=RequestMethod.POST, consumes="application/json", produces="application/json")
-    public ResponseEntity<?> serverScan( @RequestBody final ImportRequest importRequest ){
-        if( importRequest.isUnderstand() ){
-            if( importRequest.isPreview() ){
-                importService.scheduleImportScan( importRequest.getPath() );
+    public ResponseEntity<?> serverImport( @RequestBody final ServerImport serverImport ){
+        // TODO: use validation?
+        if( serverImport.isUnderstand() ){
+            if( serverImport.isPreview() ){
+                importService.scheduleImportScan( serverImport.getPath() );
 
             } else {
                 // FIXME: schedule actual import
@@ -56,6 +62,6 @@ public class ImportController {
             return new ResponseEntity<String>( "You do not understand what you are doing!", HttpStatus.BAD_REQUEST );
         }
 
-        return new ResponseEntity<>(importRequest, HttpStatus.ACCEPTED );
+        return new ResponseEntity<>( serverImport, HttpStatus.ACCEPTED );
     }
 }
