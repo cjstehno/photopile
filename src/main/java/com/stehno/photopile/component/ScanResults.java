@@ -16,6 +16,9 @@
 
 package com.stehno.photopile.component;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +37,18 @@ public class ScanResults {
     private Map<String,Integer> skippedExtensions = new HashMap<>();
     private Map<String,Integer> acceptedExtensions = new HashMap<>();
     private long bytes;
+
+    @Override
+    public String toString(){
+        return new ToStringBuilder( this, ToStringStyle.MULTI_LINE_STYLE )
+            .append( "id", id )
+            .append( "acceptedCount", acceptedCount )
+            .append( "skippedCount", skippedCount )
+            .append( "skippedExtensions", skippedExtensions )
+            .append( "acceptedExtensions", acceptedExtensions )
+            .append( "bytes", bytes )
+            .toString();
+    }
 
     public long getId(){
         return id;

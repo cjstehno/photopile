@@ -40,6 +40,10 @@ public class ScanTask extends MessagingRunnable<String> {
     protected void doRun( final String dir ){
         final ScanResults results = scanner.scan( dir );
 
+        System.out.println("----------------------------------");
+        System.out.println(results);
+        System.out.println("----------------------------------");
+
         final String username = "admin"; // FIXME: probably need to pass in username
 
         infoMessageService.create( username, SCAN_SUCCESS_CODE, results );

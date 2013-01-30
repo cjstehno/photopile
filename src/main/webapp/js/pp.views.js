@@ -53,6 +53,13 @@ var GalleryView = Backbone.View.extend({
  * Defines the server import dialog view.
  */
 var ImportDialogView = Backbone.View.extend({
+    initialize:function(){
+        this.model.on('error',function(e){
+            // FIXME: implement error handling
+            console.log('error ' + e);
+        });
+        this.listenTo( this.model, 'change', this.render );
+    },
     events: {
         'click button.btn-primary': 'onImportClicked',
         'click button[data-dismiss=modal]': 'onDialogHidden',
@@ -61,23 +68,61 @@ var ImportDialogView = Backbone.View.extend({
     },
 
     openDialog: function () {
+        this.model.clear();
+
         $(this.el).modal();
+    },
+
+    render:function(){
+        $('div.modal-body div.alert', this.el).hide();
+
+        var cards = $('div.modal-body .card', this.el);
+        $(cards[0]).show();
+        $(cards[1]).hide();
+        $(cards[2]).show();
+        $(cards[3]).hide();
+
+        $('form input[name=path]',this.el).val(this.model.get('path'));
+        $('form input[name=preview]',this.el).prop('checked', true);
+        $('form input[name=understand]',this.el).prop('checked', false);
+
+        return this;
     },
 
     onDialogHidden: function (evt) {
         location.hash = '';
     },
+
     onUnderstandChanged: function (evt) {
         $('button.btn-primary', this.el).toggleClass('disabled');
     },
+
     onImportClicked: function (evt) {
         if (!$('button.btn-primary', this.el).hasClass('disabled')) {
             location.hash = '';
 
-            // FIXME: need to call server and ensure import job accepted
-            console.log("importing...");
+            var theModel = this.model;
+            theModel.save(
+                {
+                    path:$('form input[name=path]', this.el).val(),
+                    preview:$('form input[name=preview]', this.el).is(':checked'),
+                    understand:$('form input[name=understand]', this.el).is(':checked')
+                },
+                {
+                    success:function(){
+                        console.log('succeeded...');
 
-            $('div.card', this.el).toggle();
+                        $($('div.modal-body div.card p',this.el)[1]).html('Your scan of ' + theModel.get('path') + ' has started.')
+                        $('div.card', this.el).toggle();
+                    },
+
+                    error:function(model, xhr, options){
+                        console.log('failed: ' + xhr);
+                        $('div.modal-body div.alert div', this.el).text(xhr.responseText);
+                        $('div.modal-body div.alert', this.el).show();
+                    }
+                }
+            );
         }
     }
 });

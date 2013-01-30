@@ -35,5 +35,21 @@ var Photos = new PhotoCollection;
 /**
  * Defines the model used by the photo bulk import functionality.
  */
-var PhotoImport = Backbone.Model.extend({});
+var PhotoImport = Backbone.Model.extend({
+    url:'/photopile/import',
+    defaults:{
+        'path':'',
+        'preview': true,
+        'understand': false
+    },
+    validate:function(attrs, options){
+        // FIXME: put this back
+//        if( !attrs.understand ){
+//            return 'You must understand what you are doing.'
+//        } else if( !attrs.path ){
+//            return 'A path must be specified.'
+//        }
+
+    }
+});
 

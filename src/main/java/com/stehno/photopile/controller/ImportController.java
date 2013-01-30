@@ -16,22 +16,20 @@
 
 package com.stehno.photopile.controller;
 
+import com.stehno.photopile.dto.ImportRequest;
 import com.stehno.photopile.service.ImportService;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import static com.stehno.photopile.util.ControllerUtils.ERROR;
-import static com.stehno.photopile.util.ControllerUtils.SUCCESS;
 
 /**
  * Controller for handling bulk photo imports.
  */
-@RequestMapping("/import")
 @RequiresRoles("Admin")
 @Controller
 public class ImportController {
@@ -42,23 +40,22 @@ public class ImportController {
     /**
      * Initiates the scanning of the specified directory to prepare a server-local import batch job.
      *
-     * @param directory  the server-local directory to be scanned
-     * @param understand a confirmation that the user understands what they are doing
-     * @return a ModelAndView denoting success or failure
+     * FIXME: document
      */
-    @RequestMapping(value = "/scan", method = RequestMethod.POST)
-    public ModelAndView serverScan( @RequestParam final String directory, @RequestParam final boolean understand ){
-        final ModelAndView mav = new ModelAndView();
+    @RequestMapping(value="/import", method=RequestMethod.POST, consumes="application/json", produces="application/json")
+    public ResponseEntity<?> serverScan( @RequestBody final ImportRequest importRequest ){
+        if( importRequest.isUnderstand() ){
+            if( importRequest.isPreview() ){
+                importService.scheduleImportScan( importRequest.getPath() );
 
-        if( understand ){
-            importService.scheduleImportScan( directory );
-            mav.addObject( SUCCESS, true );
+            } else {
+                // FIXME: schedule actual import
+            }
 
         } else {
-            mav.addObject( SUCCESS, false );
-            mav.addObject( ERROR, "not understood" ); // FIXME: externalize
+            return new ResponseEntity<String>( "You do not understand what you are doing!", HttpStatus.BAD_REQUEST );
         }
 
-        return mav;
+        return new ResponseEntity<>(importRequest, HttpStatus.ACCEPTED );
     }
 }
