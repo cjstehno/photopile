@@ -30,6 +30,7 @@ import javax.annotation.PostConstruct;
  */
 @Component
 public class DefaultImportScannerQueue implements ImportScannerQueue {
+    // TODO: see if spring integration has something for this as well
 
     @Autowired
     private ScanTask scanTask;

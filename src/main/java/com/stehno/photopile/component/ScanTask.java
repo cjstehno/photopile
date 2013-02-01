@@ -16,10 +16,12 @@
 
 package com.stehno.photopile.component;
 
-import com.stehno.photopile.service.InfoMessageService;
 import groovyx.gpars.MessagingRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.integration.message.GenericMessage;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
 
 /**
  * FIXME: doc
@@ -28,13 +30,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScanTask extends MessagingRunnable<String> {
 
-    private static final String SCAN_SUCCESS_CODE = "import.scan.success";
-
     @Autowired
     private Scanner scanner;
 
     @Autowired
-    private InfoMessageService infoMessageService;
+    private EventGateway eventGateway;
 
     @Override
     protected void doRun( final String dir ){
@@ -44,8 +44,12 @@ public class ScanTask extends MessagingRunnable<String> {
         System.out.println(results);
         System.out.println("----------------------------------");
 
-        final String username = "admin"; // FIXME: probably need to pass in username
-
-        infoMessageService.create( username, SCAN_SUCCESS_CODE, results );
+        // TODO: create a real message
+        eventGateway.submitEvent( new GenericMessage<HashMap<String,Object>>( new HashMap<String,Object>(){
+            {
+                put( "username", "admin" ); // FIXME: probably need to pass in username
+                put( "results", results );
+            }
+        }));
     }
 }
