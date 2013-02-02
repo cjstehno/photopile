@@ -17,14 +17,22 @@
 package com.stehno.photopile.component;
 
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 1/27/13
- * Time: 7:48 AM
- * To change this template use File | Settings | File Templates.
+ * Defines an asynchronous work queue.
  */
+public interface WorkQueue<W> {
 
-public interface ImportScannerQueue {
+    /**
+     * Submits a unit of work to the work queue.
+     *
+     * @param work the work to be done
+     */
+    void submit( final W work );
 
-    void submit( final String path );
+    /**
+     * Determines whether or not the given work item type is accepted by this queue.
+     *
+     * @param workType
+     * @return
+     */
+    boolean accepts( final Class<?> workType );
 }

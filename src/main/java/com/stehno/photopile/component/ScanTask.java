@@ -17,11 +17,10 @@
 package com.stehno.photopile.component;
 
 import groovyx.gpars.MessagingRunnable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.message.GenericMessage;
 import org.springframework.stereotype.Component;
-
-import java.util.HashMap;
 
 /**
  * FIXME: doc
@@ -30,26 +29,27 @@ import java.util.HashMap;
 @Component
 public class ScanTask extends MessagingRunnable<String> {
 
+    private static final Logger log = LogManager.getLogger( ScanTask.class );
+
     @Autowired
     private Scanner scanner;
 
     @Autowired
-    private EventGateway eventGateway;
+    private WorkQueues workQueues;
 
     @Override
     protected void doRun( final String dir ){
+        // TODO: perf4j here...
+
         final ScanResults results = scanner.scan( dir );
 
-        System.out.println("----------------------------------");
-        System.out.println(results);
-        System.out.println("----------------------------------");
+        // FIXME: add more info to logging
+        if( log.isTraceEnabled() ){
+            log.trace( "Scan completed: {}", results );
+        } else {
+            log.info( "Scan completed..." );
+        }
 
-        // TODO: create a real message
-        eventGateway.submitEvent( new GenericMessage<HashMap<String,Object>>( new HashMap<String,Object>(){
-            {
-                put( "username", "admin" ); // FIXME: probably need to pass in username
-                put( "results", results );
-            }
-        }));
+        workQueues.findWorkQueue( ScanResults.class ).submit( results );
     }
 }

@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.service;
 
-import com.stehno.photopile.component.ImportScannerQueue;
+import com.stehno.photopile.component.WorkQueues;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,10 +28,10 @@ public class DefaultImportService implements ImportService {
     // FIXME: is this service needed?
 
     @Autowired
-    private ImportScannerQueue importScannerQueue;
+    private WorkQueues workQueues;
 
     @Override
     public void scheduleImportScan( final String directory ){
-        importScannerQueue.submit( directory );
+        workQueues.findWorkQueue( String.class ).submit( directory );
     }
 }

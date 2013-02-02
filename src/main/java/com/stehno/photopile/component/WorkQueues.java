@@ -16,35 +16,34 @@
 
 package com.stehno.photopile.component;
 
-import groovyx.gpars.dataflow.DataCallbackWithPool;
-import groovyx.gpars.dataflow.DataflowQueue;
-import groovyx.gpars.scheduler.DefaultPool;
-import groovyx.gpars.scheduler.Pool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.util.Map;
 
 /**
- * FIXME: document
+ * Gateway/locator service for the work queues in the system.
  */
 @Component
-public class DefaultImportScannerQueue implements ImportScannerQueue {
-    // TODO: see if spring integration has something for this as well
+public class WorkQueues {
 
     @Autowired
-    private ScanTask scanTask;
+    private ApplicationContext applicationContext;
 
-    private final Pool threadPool = new DefaultPool( false, 2 );
-    private final DataflowQueue<String> queue = new DataflowQueue<>();
-
-    @PostConstruct
-    public void init(){
-        queue.wheneverBound( new DataCallbackWithPool( threadPool, scanTask));
-    }
-
-    @Override
-    public void submit( final String path ){
-        queue.bind( path );
+    /**
+     * Used to find a work queue that accepts the given work item type.
+     *
+     * @param workType
+     * @param <W>
+     * @return a work queue accepting the given work item type, or null if none exists
+     */
+    public <W> WorkQueue<W> findWorkQueue( final Class<? extends W> workType ){
+        for( final Map.Entry<String,WorkQueue> entry: applicationContext.getBeansOfType( WorkQueue.class ).entrySet() ){
+            if( entry.getValue().accepts( workType ) ){
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

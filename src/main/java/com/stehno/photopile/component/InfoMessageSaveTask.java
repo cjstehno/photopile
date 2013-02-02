@@ -17,13 +17,9 @@
 package com.stehno.photopile.component;
 
 import com.stehno.photopile.service.InfoMessageService;
+import groovyx.gpars.MessagingRunnable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.integration.Message;
-import org.springframework.integration.MessagingException;
-import org.springframework.integration.core.MessageHandler;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,21 +28,18 @@ import java.util.Map;
  * Time: 6:46 PM
  * To change this template use File | Settings | File Templates.
  */
-//@MessageEndpoint
 @Component
-public class ImportResultsMessageHandler implements MessageHandler {
+public class InfoMessageSaveTask extends MessagingRunnable<ScanResults> {
 
     private static final String SCAN_SUCCESS_CODE = "import.scan.success";
 
     @Autowired
     private InfoMessageService infoMessageService;
 
-//    @ServiceActivator(inputChannel = "eventChannel")
-    public void handleMessage( final Message<?> message ) throws MessagingException{
-        final Map<String,Object> payload = (Map<String, Object>)message.getPayload();
+    @Override
+    protected void doRun( final ScanResults scanResults ){
+        final String username = "admin"; // FIXME: need to get this?
 
-        System.out.println("Handling: " + payload);
-
-        infoMessageService.create( (String)payload.get( "username" ), SCAN_SUCCESS_CODE, payload.get( "results" ));
+        infoMessageService.create( username, SCAN_SUCCESS_CODE, scanResults.toString() );
     }
 }
