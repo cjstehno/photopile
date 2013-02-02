@@ -17,6 +17,7 @@
 package com.stehno.photopile.config;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -31,6 +32,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableTransactionManagement
+@ComponentScan("com.stehno.photopile.dao")
 public class DataSourceConfig {
 
     /* FIXME: not sure why but transactions dont work when JNDI data source is used - keeps erroring that

@@ -15,25 +15,30 @@
  */
 
 package com.stehno.photopile.dao
+
 import com.stehno.photopile.domain.Photo
 import org.junit.Before
+import org.junit.ClassRule
+import org.junit.Rule
 import org.junit.Test
 
 import static junit.framework.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
 
-class JdbcPhotoDaoTest extends DbEnvironmentTester {
+class JdbcPhotoDaoTest {
+
+    @ClassRule
+    public static DatabaseEnvironment databaseEnvironment = new DatabaseEnvironment()
+
+    @Rule
+    public DatabaseCleaner databaseCleaner = new DatabaseCleaner( jdbcTemplate:databaseEnvironment.jdbcTemplate, tables:['photos'] )
 
     private static final String CAMERA_INFO = '6000-SUX'
     private JdbcPhotoDao photoDao
 
-    JdbcPhotoDaoTest(){
-        tables = ['photos']
-    }
-
     @Before
     public void before() throws Exception {
-        photoDao = new JdbcPhotoDao( jdbcTemplate:jdbcTemplate )
+        photoDao = new JdbcPhotoDao( jdbcTemplate:databaseEnvironment.jdbcTemplate )
         photoDao.prepareQueries()
     }
 
