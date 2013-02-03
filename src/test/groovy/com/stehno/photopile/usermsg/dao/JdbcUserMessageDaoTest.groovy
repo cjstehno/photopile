@@ -18,16 +18,19 @@ package com.stehno.photopile.usermsg.dao
 
 import com.stehno.photopile.dao.DatabaseCleaner
 import com.stehno.photopile.dao.DatabaseEnvironment
+import com.stehno.photopile.dao.Integration
 import com.stehno.photopile.usermsg.domain.MessageType
 import com.stehno.photopile.usermsg.domain.UserMessage
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
 import org.junit.Test
+import org.junit.experimental.categories.Category
 
 import static junit.framework.Assert.assertEquals
 import static org.junit.Assert.*
 
+@Category(Integration)
 class JdbcUserMessageDaoTest {
 
     @ClassRule

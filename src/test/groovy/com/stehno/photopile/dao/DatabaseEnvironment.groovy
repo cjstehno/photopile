@@ -15,21 +15,13 @@
  */
 
 package com.stehno.photopile.dao
-
 import org.junit.rules.ExternalResource
 import org.springframework.jdbc.core.JdbcTemplate
-
-import static org.junit.Assume.assumeTrue
-
 /**
  * A JUnit external resource rule implementation.
  *
- * Tests using this class will only be executed if the system property "integration" is
- * set to true, e.g.
- *
- * -Dintegration=true
- *
- * Otherwise, these tests will be skipped using the JUnit assume functionality.
+ * Tests using this environment should be annotated with Category(Integration) so that they are only run during the
+ * integration-test phase, this category is excluded during the normal test phase.
  *
  * Generally, this will be a ClassRule.
  *
@@ -48,19 +40,8 @@ class DatabaseEnvironment extends ExternalResource {
         dbEnvironment.jdbcTemplate
     }
 
-    /**
-     * Determines whether or not the integration flag is enabled.
-     *
-     * @return true, if the integration flag is enabled.
-     */
-    boolean isIntegrationEnabled(){
-        TRUE.equalsIgnoreCase( System.getProperty( INTEGRATION ) )
-    }
-
     @Override
     protected void before() throws Throwable {
-        assumeTrue isIntegrationEnabled()
-
         dbEnvironment = new Database()
         dbEnvironment.initializeDatabase()
     }
