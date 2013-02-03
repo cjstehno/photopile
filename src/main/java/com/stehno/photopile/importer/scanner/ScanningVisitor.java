@@ -18,8 +18,6 @@ package com.stehno.photopile.importer.scanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -28,12 +26,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * FileVisitor implementation used to process a single filesystem scan operation. It is meant to be used as a single
- * disposable instance per scan (as a prototype bean).
+ * FileVisitor implementation used to process a single filesystem scan operation.
  */
-@Component
-@Scope("prototype")
-public class ScanningVisitor extends SimpleFileVisitor<Path> {
+class ScanningVisitor extends SimpleFileVisitor<Path> {
 
     private static final Logger log = LogManager.getLogger( ScanningVisitor.class );
     private static final String ALLOWED_EXTENSION = ".jpg";
@@ -63,7 +58,7 @@ public class ScanningVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFileFailed( final Path path, final IOException e ) throws IOException{
         log.warn( "File visit failed for {}, with {}", path, e.getMessage() );
 
-        return super.visitFileFailed( path, e );
+        return FileVisitResult.CONTINUE;
     }
 
     private boolean isAllowedExtension( final String fileName ){

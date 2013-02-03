@@ -16,6 +16,8 @@
 
 package com.stehno.photopile.util;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
@@ -26,8 +28,25 @@ import java.util.Map;
  */
 public class WorkQueues {
 
+    private static final Logger log = LogManager.getLogger(WorkQueues.class);
+
     @Autowired
     private ApplicationContext applicationContext;
+
+    /**
+     * Submits work to the proper work queue using the work type to resolve the queue.
+     *
+     * @param work the work to be done.
+     * @param <W>
+     */
+    public <W> void submit( final W work ){
+        final WorkQueue<W> queue = (WorkQueue<W>)findWorkQueue( work.getClass() );
+        if( queue != null ){
+            queue.submit( work );
+        } else {
+            log.warn( "Attempting to send work to unregistered queue: {}", work );
+        }
+    }
 
     /**
      * Used to find a work queue that accepts the given work item type.

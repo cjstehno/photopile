@@ -14,48 +14,30 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg.service;
+package com.stehno.photopile.usermsg.service;
 
-import com.stehno.photopile.infomsg.InfoMessageDao;
-import com.stehno.photopile.infomsg.InfoMessageService;
-import com.stehno.photopile.infomsg.domain.InfoMessage;
+import com.stehno.photopile.usermsg.UserMessageDao;
+import com.stehno.photopile.usermsg.UserMessageService;
+import com.stehno.photopile.usermsg.domain.UserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
- * Default implementation of the info messaging service.
- *
- * Message templates are pulled from the message source bundles, using the template code with the prefix 'info.message.'
- * to resolve the message.
+ * Default implementation of the user messaging service.
  */
 @Service
 @Transactional
-public class DefaultInfoMessageService implements InfoMessageService {
-
-    private static final String PREFIX = "info.message.";
+public class DefaultUserMessageService implements UserMessageService {
 
     @Autowired
-    private InfoMessageDao infoMessageDao;
-
-    @Autowired
-    private MessageSource messageSource;
+    private UserMessageDao infoMessageDao;
 
     @Override
-    public void create( final String username, final String templateCode, final Object... data ){
-        infoMessageDao.save( createMessage( username, templateCode, data ) );
-    }
-
-    @Override
-    public void createImportant( final String username, final String templateCode, final Object... data ){
-        final InfoMessage message = createMessage( username, templateCode, data );
-        message.setImportant( true );
-
-        infoMessageDao.save( message );
+    public void create( final UserMessage userMessage ){
+        infoMessageDao.save( userMessage );
     }
 
     @Override
@@ -79,16 +61,12 @@ public class DefaultInfoMessageService implements InfoMessageService {
     }
 
     @Override
-    public List<InfoMessage> list( final String username ){
+    public List<UserMessage> list( final String username ){
         return infoMessageDao.list( username );
     }
 
     @Override
-    public InfoMessage fetch( final String username, final long id ){
+    public UserMessage fetch( final String username, final long id ){
         return infoMessageDao.fetch( username, id );
-    }
-
-    private InfoMessage createMessage( final String username, final String code, final Object... args ){
-        return new InfoMessage( username, messageSource.getMessage( PREFIX + code, args, Locale.getDefault() ) );
     }
 }

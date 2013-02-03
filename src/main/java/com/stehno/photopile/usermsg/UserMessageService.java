@@ -14,34 +14,23 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg;
+package com.stehno.photopile.usermsg;
 
-import com.stehno.photopile.infomsg.domain.InfoMessage;
+import com.stehno.photopile.usermsg.domain.UserMessage;
 
 import java.util.List;
 
 /**
- * Service used to access and manage the information messages.
+ * Service used to access and manage the user messages.
  */
-public interface InfoMessageService {
+public interface UserMessageService {
 
     /**
-     * Creates a new non-important information message with the given parameters.
+     * Creates a new user message..
      *
-     * @param username username
-     * @param templateCode the template code
-     * @param args the data to be used in the message
+     * @param userMessage the message to be created
      */
-    void create( final String username, final String templateCode, final Object... args );
-
-    /**
-     * Creates a new information message that is important.
-     *
-     * @param username the username
-     * @param templateCode the template to use
-     * @param args the data to be used in the message
-     */
-    void createImportant( final String username, final String templateCode, final Object... args );
+    void create( final UserMessage userMessage );
 
     /**
      * Counts the total number of messages for the user.
@@ -77,17 +66,19 @@ public interface InfoMessageService {
     void markRead( final String username, final long id );
 
     /**
+     * Lists the messages associated with the given user.
      *
-     * @param username
-     * @return
+     * @param username the user
+     * @return a list of messages for the user
      */
-    List<InfoMessage> list( final String username );
+    List<UserMessage> list( final String username );
 
     /**
+     * Retrieves a single message for the given user.
      *
-     * @param username
-     * @param id
-     * @return
+     * @param username the user
+     * @param id the message id
+     * @return the message
      */
-    InfoMessage fetch( final String username, final long id );
+    UserMessage fetch( final String username, final long id );
 }

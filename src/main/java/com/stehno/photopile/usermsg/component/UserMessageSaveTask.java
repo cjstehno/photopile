@@ -14,33 +14,35 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg.component;
+package com.stehno.photopile.usermsg.component;
 
-import com.stehno.photopile.importer.scanner.ScanResults;
-import com.stehno.photopile.infomsg.InfoMessageService;
+import com.stehno.photopile.usermsg.UserMessageService;
+import com.stehno.photopile.usermsg.domain.UserMessage;
+import com.stehno.photopile.util.Clock;
 import groovyx.gpars.MessagingRunnable;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 1/30/13
- * Time: 6:46 PM
- * To change this template use File | Settings | File Templates.
+ * A work queue task used to create info messages in an asynchronous manner.
  */
 @Component
-public class InfoMessageSaveTask extends MessagingRunnable<ScanResults> {
+public class UserMessageSaveTask extends MessagingRunnable<UserMessage> {
 
-    private static final String SCAN_SUCCESS_CODE = "import.scan.success";
+    private static final Logger log = LogManager.getLogger( UserMessageSaveTask.class );
+    private static final String TAG = "run-time: {} ms";
 
     @Autowired
-    private InfoMessageService infoMessageService;
+    private UserMessageService userMessageService;
 
     @Override
-    protected void doRun( final ScanResults scanResults ){
-        final String username = "admin"; // FIXME: need to get this?
+    protected void doRun( final UserMessage userMessage ){
+        final Clock clock = new Clock( TAG, log );
 
-        infoMessageService.create( username, SCAN_SUCCESS_CODE, scanResults.toString() );
+        userMessageService.create( userMessage );
+
+        clock.stop();
     }
 }

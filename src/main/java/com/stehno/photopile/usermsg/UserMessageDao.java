@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg;
+package com.stehno.photopile.usermsg;
 
-import com.stehno.photopile.infomsg.domain.InfoMessage;
+import com.stehno.photopile.usermsg.domain.UserMessage;
 
 import java.util.List;
 
 /**
- * DAO for managing InfoMessage persistence.
+ * DAO for managing UserMessage persistence.
  */
-public interface InfoMessageDao {
+public interface UserMessageDao {
     // FIXME: once I get a real user database use id rather then username
 
     /**
@@ -31,7 +31,7 @@ public interface InfoMessageDao {
      *
      * @param message the message to be saved
      */
-    void save( final InfoMessage message );
+    void save( final UserMessage message );
 
     /**
      * Counts the number of messages for the given user.
@@ -77,7 +77,7 @@ public interface InfoMessageDao {
      * @param username the user
      * @return the list of messages for the user
      */
-    List<InfoMessage> list( final String username );
+    List<UserMessage> list( final String username );
 
     /**
      * Retrieves a single message.
@@ -89,5 +89,5 @@ public interface InfoMessageDao {
      * @param id the id of the message
      * @return the message, or null
      */
-    InfoMessage fetch( final String username, final long id );
+    UserMessage fetch( final String username, final long id );
 }

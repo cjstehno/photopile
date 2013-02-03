@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg.dao
+package com.stehno.photopile.usermsg.dao
 
 import com.stehno.photopile.dao.DatabaseCleaner
 import com.stehno.photopile.dao.DatabaseEnvironment
-import com.stehno.photopile.infomsg.domain.InfoMessage
+import com.stehno.photopile.usermsg.domain.MessageType
+import com.stehno.photopile.usermsg.domain.UserMessage
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
@@ -27,21 +28,21 @@ import org.junit.Test
 import static junit.framework.Assert.assertEquals
 import static org.junit.Assert.*
 
-class JdbcInfoMessageDaoTest {
+class JdbcUserMessageDaoTest {
 
     @ClassRule
     public static DatabaseEnvironment databaseEnvironment = new DatabaseEnvironment()
 
     @Rule
-    public DatabaseCleaner databaseCleaner = new DatabaseCleaner(jdbcTemplate:databaseEnvironment.jdbcTemplate, tables:['info_messages'] )
+    public DatabaseCleaner databaseCleaner = new DatabaseCleaner(jdbcTemplate:databaseEnvironment.jdbcTemplate, tables:['user_messages'] )
 
     private static final String USER_A = 'user_a'
     private static final String USER_B = 'user_b'
-    private JdbcInfoMessageDao infoMessageDao
+    private JdbcUserMessageDao infoMessageDao
 
     @Before
     void before(){
-        infoMessageDao = new JdbcInfoMessageDao( jdbcTemplate: databaseEnvironment.jdbcTemplate )
+        infoMessageDao = new JdbcUserMessageDao( jdbcTemplate: databaseEnvironment.jdbcTemplate )
     }
 
     @Test
@@ -52,25 +53,25 @@ class JdbcInfoMessageDaoTest {
 
     @Test
     void saving(){
-        infoMessageDao.save(new InfoMessage(
+        infoMessageDao.save(new UserMessage(
             username:USER_A,
-            important: true,
+            messageType: MessageType.ERROR,
             read:false,
-            message: 'message-1'
+            content: 'message-1'
         ))
 
-        infoMessageDao.save(new InfoMessage(
+        infoMessageDao.save(new UserMessage(
             username:USER_A,
-            important: false,
+            messageType: MessageType.INFO,
             read:true,
-            message: 'message-2'
+            content: 'message-2'
         ))
 
-        infoMessageDao.save(new InfoMessage(
+        infoMessageDao.save(new UserMessage(
             username:USER_B,
-            important: true,
+            messageType: MessageType.ERROR,
             read:false,
-            message: 'message-3'
+            content: 'message-3'
         ))
 
         assertEquals 2, infoMessageDao.count(USER_A)
@@ -84,14 +85,14 @@ class JdbcInfoMessageDaoTest {
 
         assertEquals 0, infoMessageDao.list('sadfas').size()
 
-        def msgId = userAList.find { msg-> msg.message == 'message-1'}.id
+        def msgId = userAList.find { msg-> msg.content == 'message-1'}.id
 
         def infoMsg = infoMessageDao.fetch(USER_A, msgId)
         assertEquals msgId, infoMsg.id
         assertEquals USER_A, infoMsg.username
-        assertTrue infoMsg.important
+        assertEquals MessageType.ERROR, infoMsg.messageType
         assertFalse infoMsg.read
-        assertEquals 'message-1', infoMsg.message
+        assertEquals 'message-1', infoMsg.content
         assertNotNull infoMsg.dateCreated
 
         infoMessageDao.delete(USER_A, msgId)
@@ -103,18 +104,18 @@ class JdbcInfoMessageDaoTest {
     void markRead(){
         assertEquals 0, infoMessageDao.count(USER_A)
 
-        infoMessageDao.save(new InfoMessage(
+        infoMessageDao.save(new UserMessage(
             username:USER_A,
-            important: false,
+            messageType: MessageType.INFO,
             read: false,
-            message: 'message-1'
+            content: 'message-1'
         ))
 
         assertEquals 1, infoMessageDao.count(USER_A)
         assertEquals 1, infoMessageDao.count(USER_A, false)
         assertEquals 0, infoMessageDao.count(USER_A, true)
 
-        def msgId = infoMessageDao.list(USER_A).find { msg-> msg.message == 'message-1'}.id
+        def msgId = infoMessageDao.list(USER_A).find { msg-> msg.content == 'message-1'}.id
 
         assertFalse infoMessageDao.fetch(USER_A,msgId).read
 

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg.dao;
+package com.stehno.photopile.usermsg.dao;
 
-import com.stehno.photopile.infomsg.InfoMessageDao;
-import com.stehno.photopile.infomsg.domain.InfoMessage;
+import com.stehno.photopile.usermsg.UserMessageDao;
+import com.stehno.photopile.usermsg.domain.UserMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -25,19 +25,19 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * JDBC-based implementation of the InfoMessageDAO.
+ * JDBC-based implementation of the UserMessageDAO.
  */
 @Repository
-public class JdbcInfoMessageDao implements InfoMessageDao {
+public class JdbcUserMessageDao implements UserMessageDao {
 
-    private static final String SAVE_SQL = "INSERT INTO info_messages (username,important,READ,message) VALUES (?,?,?,?)";
-    private static final String COUNT_SQL = "SELECT COUNT(*) FROM info_messages WHERE username=?";
-    private static final String LIST_SQL = "SELECT id,username,important,READ,message,date_created FROM info_messages WHERE username=?";
-    private static final String FETCH_SQL = "SELECT id,username,important,READ,message,date_created FROM info_messages WHERE username=? AND id=?";
-    private static final String DELETE_SQL = "DELETE FROM info_messages WHERE username=? AND id=?";
-    private static final String MARK_READ_SQL = "update info_messages set read=true where username=? and id=?";
-    private static final String COUNT_READ_SQL = "SELECT COUNT(*) FROM info_messages WHERE username=? and read=?";
-    private final InfoMessageRowMapper infoMessageRowMapper = new InfoMessageRowMapper();
+    private static final String SAVE_SQL = "INSERT INTO user_messages (username,message_type,READ,content) VALUES (?,?,?,?)";
+    private static final String COUNT_SQL = "SELECT COUNT(*) FROM user_messages WHERE username=?";
+    private static final String LIST_SQL = "SELECT id,username,message_type,READ,content,date_created FROM user_messages WHERE username=?";
+    private static final String FETCH_SQL = "SELECT id,username,message_type,READ,content,date_created FROM user_messages WHERE username=? AND id=?";
+    private static final String DELETE_SQL = "DELETE FROM user_messages WHERE username=? AND id=?";
+    private static final String MARK_READ_SQL = "update user_messages set read=true where username=? and id=?";
+    private static final String COUNT_READ_SQL = "SELECT COUNT(*) FROM user_messages WHERE username=? and read=?";
+    private final UserMessageRowMapper infoMessageRowMapper = new UserMessageRowMapper();
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -46,8 +46,8 @@ public class JdbcInfoMessageDao implements InfoMessageDao {
     }
 
     @Override
-    public void save( final InfoMessage message ){
-        int count = jdbcTemplate.update( SAVE_SQL, message.getUsername(), message.isImportant(), message.isRead(),message.getMessage() );
+    public void save( final UserMessage message ){
+        int count = jdbcTemplate.update( SAVE_SQL, message.getUsername(), message.getMessageType().name(), message.isRead(),message.getContent() );
         if( count != 1 ){
             // FIXME: error
         }
@@ -74,12 +74,12 @@ public class JdbcInfoMessageDao implements InfoMessageDao {
     }
 
     @Override
-    public List<InfoMessage> list( final String username ){
+    public List<UserMessage> list( final String username ){
         return jdbcTemplate.query( LIST_SQL, new Object[]{username}, infoMessageRowMapper);
     }
 
     @Override
-    public InfoMessage fetch( final String username, final long id ){
+    public UserMessage fetch( final String username, final long id ){
         return jdbcTemplate.queryForObject( FETCH_SQL, new Object[]{ username, id }, infoMessageRowMapper );
     }
 }

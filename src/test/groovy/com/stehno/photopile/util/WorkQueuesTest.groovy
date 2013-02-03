@@ -24,6 +24,7 @@ import org.mockito.runners.MockitoJUnitRunner
 import org.springframework.context.ApplicationContext
 
 import static org.junit.Assert.*
+import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 
 @RunWith(MockitoJUnitRunner)
@@ -57,10 +58,7 @@ class WorkQueuesTest {
 
     @Test
     void 'findWorkQueue: string'(){
-        when( applicationContext.getBeansOfType(WorkQueue) ).thenReturn([
-            'stringQueue':stringQueue,
-            'numberQueue':numberQueue
-        ])
+        mockContext()
 
         def queue = workQueues.findWorkQueue( String )
         assertNotNull queue
@@ -69,10 +67,7 @@ class WorkQueuesTest {
 
     @Test
     void 'findWorkQueue: number'(){
-        when( applicationContext.getBeansOfType(WorkQueue) ).thenReturn([
-            'stringQueue':stringQueue,
-            'numberQueue':numberQueue
-        ])
+        mockContext()
 
         def queue = workQueues.findWorkQueue( Number )
         assertNotNull queue
@@ -81,11 +76,32 @@ class WorkQueuesTest {
 
     @Test
     void 'findWorkQueue: not-found'(){
+        mockContext()
+
+        assertNull workQueues.findWorkQueue( Date )
+    }
+
+    @Test
+    void 'submit'(){
+        mockContext()
+
+        workQueues.submit('foo')
+
+        verify(stringQueue).submit('foo')
+    }
+
+    @Test
+    void 'submit: not found'(){
+        mockContext()
+
+        // it will just be logged but this is to test non-exception behavior
+        workQueues.submit(new Date())
+    }
+
+    private void mockContext(){
         when( applicationContext.getBeansOfType(WorkQueue) ).thenReturn([
             'stringQueue':stringQueue,
             'numberQueue':numberQueue
         ])
-
-        assertNull workQueues.findWorkQueue( Date )
     }
 }

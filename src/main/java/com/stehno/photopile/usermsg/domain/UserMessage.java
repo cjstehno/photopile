@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg.domain;
+package com.stehno.photopile.usermsg.domain;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
@@ -24,26 +24,25 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import java.util.Date;
 
 /**
- * Represents a simple informational message for the user. The messages are persisted due to the fact
- * that they may be created by operations running in the background; this allows the user to see them
- * when they login.
+ * Represents a simple user message. The messages are persisted due to the fact that they may be created by operations
+ * running in the background; this allows the user to see them when they login.
  */
-public class InfoMessage {
+public class UserMessage {
 
     private Long id;
     private String username;
-    private boolean important;
+    private MessageType messageType = MessageType.INFO;
+    private Date dateCreated = new Date();
     private boolean read;
-    private String message;
-    private Date dateCreated;
+    private String content;
 
-    public InfoMessage(){
+    public UserMessage(){
         super();
     }
 
-    public InfoMessage( final String username, final String message ){
+    public UserMessage( final String username, final String content ){
         this.username = username;
-        this.message = message;
+        this.content = content;
     }
 
     public Long getId(){
@@ -70,14 +69,6 @@ public class InfoMessage {
         this.username = username;
     }
 
-    public boolean isImportant(){
-        return important;
-    }
-
-    public void setImportant( final boolean important ){
-        this.important = important;
-    }
-
     public boolean isRead(){
         return read;
     }
@@ -86,12 +77,20 @@ public class InfoMessage {
         this.read = read;
     }
 
-    public String getMessage(){
-        return message;
+    public String getContent(){
+        return content;
     }
 
-    public void setMessage( final String message ){
-        this.message = message;
+    public void setContent( final String content ){
+        this.content = content;
+    }
+
+    public MessageType getMessageType(){
+        return messageType;
+    }
+
+    public void setMessageType( final MessageType messageType ){
+        this.messageType = messageType;
     }
 
     @Override
@@ -99,9 +98,9 @@ public class InfoMessage {
         return new HashCodeBuilder()
             .append( id )
             .append( username )
-            .append( important )
+            .append( messageType )
             .append( read )
-            .append( message )
+            .append( content )
             .append( dateCreated )
             .toHashCode();
     }
@@ -109,14 +108,14 @@ public class InfoMessage {
     @Override
     public boolean equals( final Object other ){
         boolean eq = false;
-        if( other instanceof InfoMessage ){
-            final InfoMessage otr = (InfoMessage)other;
+        if( other instanceof UserMessage ){
+            final UserMessage otr = (UserMessage)other;
             eq = new EqualsBuilder()
                 .append( id, otr.id )
                 .append( username, otr.username )
-                .append( important, otr.important )
+                .append( messageType, otr.messageType )
                 .append( read, otr.read )
-                .append( message, otr.message )
+                .append( content, otr.content )
                 .append( dateCreated, otr.dateCreated )
                 .isEquals();
         }
@@ -128,9 +127,9 @@ public class InfoMessage {
         return new ToStringBuilder( this, ToStringStyle.DEFAULT_STYLE )
             .append( "id", id )
             .append( "username", username )
-            .append( "important", important )
+            .append( "messageType", messageType )
             .append( "read", read )
-            .append( "message", message )
+            .append( "content", content )
             .append( "dateCreated", dateCreated )
             .toString();
     }

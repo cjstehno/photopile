@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.infomsg;
+package com.stehno.photopile.usermsg;
 
-import com.stehno.photopile.importer.scanner.ScanResults;
-import com.stehno.photopile.infomsg.component.InfoMessageSaveTask;
+import com.stehno.photopile.usermsg.component.UserMessageSaveTask;
+import com.stehno.photopile.usermsg.domain.UserMessage;
 import com.stehno.photopile.util.SimpleWorkQueue;
 import com.stehno.photopile.util.WorkQueue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,18 +30,17 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan({
-    "com.stehno.photopile.infomsg.dao",
-    "com.stehno.photopile.infomsg.service",
-    "com.stehno.photopile.infomsg.component",
+    "com.stehno.photopile.usermsg.dao",
+    "com.stehno.photopile.usermsg.service",
+    "com.stehno.photopile.usermsg.component",
 })
-public class InfoMsgConfig {
-
+public class UserMsgConfig {
 
     @Autowired
-    private InfoMessageSaveTask infoMessageSaveTask;
+    private UserMessageSaveTask userMessageSaveTask;
 
     @Bean
-    public WorkQueue<ScanResults> infoSaveQueue(){
-        return new SimpleWorkQueue<>(2, infoMessageSaveTask, ScanResults.class);
+    public WorkQueue<UserMessage> userMessageSaveQueue(){
+        return new SimpleWorkQueue<>(2, userMessageSaveTask, UserMessage.class);
     }
 }

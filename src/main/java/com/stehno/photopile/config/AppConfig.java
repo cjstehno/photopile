@@ -1,8 +1,8 @@
 package com.stehno.photopile.config;
 
 import com.stehno.photopile.importer.ImporterConfig;
-import com.stehno.photopile.infomsg.InfoMsgConfig;
 import com.stehno.photopile.security.SecurityConfig;
+import com.stehno.photopile.usermsg.UserMsgConfig;
 import com.stehno.photopile.util.WorkQueues;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +30,7 @@ import java.util.Arrays;
 @Import({
     SecurityConfig.class,
     ImporterConfig.class,
-    InfoMsgConfig.class
+    UserMsgConfig.class
 })
 @ComponentScan({
     "com.stehno.photopile.controller",
