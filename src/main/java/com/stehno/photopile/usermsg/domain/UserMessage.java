@@ -45,6 +45,11 @@ public class UserMessage {
         this.content = content;
     }
 
+    public UserMessage( final String username, final String content, final MessageType messageType ){
+        this(username, content);
+        this.messageType = messageType;
+    }
+
     public Long getId(){
         return id;
     }
@@ -124,7 +129,7 @@ public class UserMessage {
 
     @Override
     public String toString(){
-        return new ToStringBuilder( this, ToStringStyle.DEFAULT_STYLE )
+        return new ToStringBuilder( this, ToStringStyle.MULTI_LINE_STYLE )
             .append( "id", id )
             .append( "username", username )
             .append( "messageType", messageType )

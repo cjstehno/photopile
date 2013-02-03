@@ -33,6 +33,6 @@ public class DefaultImportService implements ImportService {
 
     @Override
     public void scheduleImportScan( final String directory ){
-        workQueues.findWorkQueue( String.class ).submit( directory );
+        workQueues.submit( directory );
     }
 }

@@ -16,5 +16,32 @@
 
 package com.stehno.photopile.importer.service
 
+import com.stehno.photopile.util.WorkQueues
+import org.junit.Before
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.runners.MockitoJUnitRunner
+
+import static org.mockito.Mockito.verify
+
+@RunWith(MockitoJUnitRunner)
 class DefaultImportServiceTest {
+
+    private DefaultImportService importService
+
+    @Mock
+    private WorkQueues workQueues
+
+    @Before
+    void before(){
+        importService = new DefaultImportService( workQueues:workQueues )
+    }
+
+    @Test
+    void scheduleImportScan(){
+        importService.scheduleImportScan('foo')
+
+        verify(workQueues).submit('foo')
+    }
 }
