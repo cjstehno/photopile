@@ -30,10 +30,10 @@ import java.util.List;
 @Repository
 public class JdbcUserMessageDao implements UserMessageDao {
 
-    private static final String SAVE_SQL = "INSERT INTO user_messages (username,message_type,READ,content) VALUES (?,?,?,?)";
+    private static final String SAVE_SQL = "INSERT INTO user_messages (username,message_type,READ,title,content) VALUES (?,?,?,?,?)";
     private static final String COUNT_SQL = "SELECT COUNT(*) FROM user_messages WHERE username=?";
-    private static final String LIST_SQL = "SELECT id,username,message_type,READ,content,date_created FROM user_messages WHERE username=?";
-    private static final String FETCH_SQL = "SELECT id,username,message_type,READ,content,date_created FROM user_messages WHERE username=? AND id=?";
+    private static final String LIST_SQL = "SELECT id,username,message_type,READ,title,content,date_created FROM user_messages WHERE username=?";
+    private static final String FETCH_SQL = "SELECT id,username,message_type,READ,title,content,date_created FROM user_messages WHERE username=? AND id=?";
     private static final String DELETE_SQL = "DELETE FROM user_messages WHERE username=? AND id=?";
     private static final String MARK_READ_SQL = "update user_messages set read=true where username=? and id=?";
     private static final String COUNT_READ_SQL = "SELECT COUNT(*) FROM user_messages WHERE username=? and read=?";
@@ -47,7 +47,7 @@ public class JdbcUserMessageDao implements UserMessageDao {
 
     @Override
     public void save( final UserMessage message ){
-        int count = jdbcTemplate.update( SAVE_SQL, message.getUsername(), message.getMessageType().name(), message.isRead(),message.getContent() );
+        int count = jdbcTemplate.update( SAVE_SQL, message.getUsername(), message.getMessageType().name(), message.isRead(), message.getTitle(), message.getContent() );
         if( count != 1 ){
             // FIXME: error
         }

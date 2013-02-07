@@ -48,8 +48,10 @@ public class ScanTask extends MessagingRunnable<String> {
 
     private static final Logger log = LogManager.getLogger( ScanTask.class );
     private static final String RUN_TIME = "run-time {}";
-    private static final String SUCCESS_MESSAGE = "user.message.import.scan.success";
-    private static final String ERROR_MESSAGE = "user.message.import.scan.error";
+    private static final String SUCCESS_TITLE = "user.message.import.scan.success.title";
+    private static final String SUCCESS_MESSAGE = "user.message.import.scan.success.text";
+    private static final String ERROR_MESSAGE = "user.message.import.scan.error.text";
+    private static final String ERROR_TITLE = "user.message.import.scan.error.title";
 
     @Autowired
     private MessageSource messageSource;
@@ -72,23 +74,29 @@ public class ScanTask extends MessagingRunnable<String> {
             }
 
             // TODO: see above for builder idea
-            workQueues.submit( new UserMessage( username, messageSource.getMessage(
-                SUCCESS_MESSAGE,
-                new Object[]{
-                    dir,
-                    results.getAcceptedCount(),
-                    results.getTotalFileSize(),
-                    results.getSkippedCount(),
-                    results.getSkippedExtensions()},
-                Locale.getDefault()
-            ) ) );
+            workQueues.submit( new UserMessage(
+                username,
+                messageSource.getMessage( SUCCESS_TITLE, new Object[0], Locale.getDefault() ),
+                messageSource.getMessage(
+                    SUCCESS_MESSAGE,
+                    new Object[]{
+                        dir,
+                        results.getAcceptedCount(),
+                        results.getTotalFileSize(),
+                        results.getSkippedCount(),
+                        results.getSkippedExtensions()
+                    },
+                    Locale.getDefault()
+                )
+            ));
 
         } catch( Exception ex ){
-            workQueues.submit( new UserMessage( username, messageSource.getMessage(
-                ERROR_MESSAGE,
-                new Object[]{ dir, ex.getMessage() },
-                Locale.getDefault()
-            ), MessageType.ERROR ) );
+            workQueues.submit(new UserMessage(
+                username,
+                messageSource.getMessage( ERROR_TITLE, new Object[0], Locale.getDefault() ),
+                messageSource.getMessage(ERROR_MESSAGE, new Object[]{ dir, ex.getMessage() }, Locale.getDefault()),
+                MessageType.ERROR
+            ));
 
             log.warn( "Problem scanning directory {}: {}", dir, ex.getMessage() );
         }

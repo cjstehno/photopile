@@ -17,6 +17,7 @@ public class UserMessageRowMapper implements RowMapper<UserMessage> {
     private static final String MESSAGE_TYPE = "message_type";
     private static final String READ = "read";
     private static final String DATE_CREATED = "date_created";
+    private static final String TITLE = "title";
     private static final String CONTENT = "content";
 
     @Override
@@ -28,6 +29,7 @@ public class UserMessageRowMapper implements RowMapper<UserMessage> {
         message.setMessageType( MessageType.valueOf(resultSet.getString( MESSAGE_TYPE )) );
         message.setRead( resultSet.getBoolean( READ ) );
         message.setDateCreated( resultSet.getDate( DATE_CREATED ) );
+        message.setTitle( resultSet.getString( TITLE ) );
         message.setContent( resultSet.getString( CONTENT ) );
 
         return message;

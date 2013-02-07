@@ -24,6 +24,7 @@
 <body>
 
 <jsp:directive.include file="_import_dialog.jsp"/>
+<jsp:directive.include file="_messages_dialog.jsp"/>
 
 <div class="container-fluid">
     <div class="navbar navbar-fixed-top">
@@ -57,7 +58,7 @@
             </div>
 
             <ul class="nav pull-right">
-                <li><a href="#">Messages <span class="badge badge-success">2</span></a></li>
+                <li><a href="#messages">Messages <span class="badge badge-success">2</span></a></li>
                 <li><a href="#">Selected <span class="badge badge-info">8</span></a></li>
                 <li class="divider-vertical"></li>
                 <li>

@@ -26,6 +26,7 @@ var PhotopileRouter = Backbone.Router.extend({
         'photos': 'listPhotos',
 //        'photos/album/:album':'listPhotos',
         'photoImport': 'photoImport',
+        'messages': 'listMessages',
         '*actions': 'listPhotos'
     },
 
@@ -37,6 +38,10 @@ var PhotopileRouter = Backbone.Router.extend({
                 console.log('Total = ' + collection.total);
             }
         });
+    },
+
+    listMessages:function(){
+        this.views.messagesDialog.openDialog();
     },
 
     photoImport: function () {

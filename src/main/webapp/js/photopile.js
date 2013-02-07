@@ -20,13 +20,11 @@ $(new function () {
         interpolate: /\{\{(.+?)\}\}/g
     };
 
-    var galleryView = new GalleryView({ el: '#gallery-container', collection: Photos });
-    var importDialogView = new ImportDialogView({ el: '#import-dialog', model: new PhotoImport });
-
     new PhotopileRouter({
         views: {
-            'gallery': galleryView,
-            'importDialog': importDialogView
+            'gallery': new GalleryView({ el: '#gallery-container', collection: Photos }),
+            'importDialog': new ImportDialogView({ el: '#import-dialog', model:new PhotoImport }),
+            'messagesDialog': new MessageDialogView({ el:'#messages-dialog', collection:UserMessages })
         }
     });
 

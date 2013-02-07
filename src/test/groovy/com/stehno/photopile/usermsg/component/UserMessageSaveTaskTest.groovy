@@ -41,7 +41,7 @@ class UserMessageSaveTaskTest {
 
     @Test
     void running(){
-        def message = new UserMessage('someuser','some content')
+        def message = new UserMessage('someuser','title','some content')
         task.doRun(message)
 
         verify(userMessageService).create(message)

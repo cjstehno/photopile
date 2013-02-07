@@ -57,6 +57,9 @@
                 <constraints nullable="false" />
             </column>
             <column name="read" type="boolean" defaultValueBoolean="false" />
+            <column name="title" type="varchar(50)">
+                <constraints nullable="false" />
+            </column>
             <column name="content" type="varchar(2000)">
                 <constraints nullable="false"/>
             </column>

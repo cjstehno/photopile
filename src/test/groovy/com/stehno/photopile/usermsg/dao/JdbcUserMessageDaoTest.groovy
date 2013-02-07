@@ -60,6 +60,7 @@ class JdbcUserMessageDaoTest {
             username:USER_A,
             messageType: MessageType.ERROR,
             read:false,
+            title: 'title-1',
             content: 'message-1'
         ))
 
@@ -67,6 +68,7 @@ class JdbcUserMessageDaoTest {
             username:USER_A,
             messageType: MessageType.INFO,
             read:true,
+            title: 'title-2',
             content: 'message-2'
         ))
 
@@ -74,6 +76,7 @@ class JdbcUserMessageDaoTest {
             username:USER_B,
             messageType: MessageType.ERROR,
             read:false,
+            title: 'title-3',
             content: 'message-3'
         ))
 
@@ -109,6 +112,7 @@ class JdbcUserMessageDaoTest {
 
         infoMessageDao.save(new UserMessage(
             username:USER_A,
+            title: 'some title',
             messageType: MessageType.INFO,
             read: false,
             content: 'message-1'

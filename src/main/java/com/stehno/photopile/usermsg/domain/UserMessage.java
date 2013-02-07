@@ -34,19 +34,21 @@ public class UserMessage {
     private MessageType messageType = MessageType.INFO;
     private Date dateCreated = new Date();
     private boolean read;
+    private String title;
     private String content;
 
     public UserMessage(){
         super();
     }
 
-    public UserMessage( final String username, final String content ){
+    public UserMessage( final String username, final String title, final String content ){
         this.username = username;
+        this.title = title;
         this.content = content;
     }
 
-    public UserMessage( final String username, final String content, final MessageType messageType ){
-        this(username, content);
+    public UserMessage( final String username, final String title, final String content, final MessageType messageType ){
+        this(username, title, content);
         this.messageType = messageType;
     }
 
@@ -56,6 +58,14 @@ public class UserMessage {
 
     public void setId( final Long id ){
         this.id = id;
+    }
+
+    public String getTitle(){
+        return title;
+    }
+
+    public void setTitle( final String title ){
+        this.title = title;
     }
 
     public Date getDateCreated(){
@@ -105,6 +115,7 @@ public class UserMessage {
             .append( username )
             .append( messageType )
             .append( read )
+            .append( title )
             .append( content )
             .append( dateCreated )
             .toHashCode();
@@ -120,6 +131,7 @@ public class UserMessage {
                 .append( username, otr.username )
                 .append( messageType, otr.messageType )
                 .append( read, otr.read )
+                .append( title, otr.title )
                 .append( content, otr.content )
                 .append( dateCreated, otr.dateCreated )
                 .isEquals();
@@ -134,6 +146,7 @@ public class UserMessage {
             .append( "username", username )
             .append( "messageType", messageType )
             .append( "read", read )
+            .append( "title", title )
             .append( "content", content )
             .append( "dateCreated", dateCreated )
             .toString();

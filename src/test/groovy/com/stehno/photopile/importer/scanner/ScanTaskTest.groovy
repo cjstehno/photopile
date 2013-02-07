@@ -62,7 +62,9 @@ class ScanTaskTest {
         when(workQueues.findWorkQueue(any())).thenReturn(queue)
 
         def messageSource = new StaticMessageSource()
+        messageSource.addMessage(ScanTask.SUCCESS_TITLE, Locale.getDefault(), 'success_title')
         messageSource.addMessage(ScanTask.SUCCESS_MESSAGE, Locale.getDefault(), '{0},{1},{2},{3},{4}')
+        messageSource.addMessage(ScanTask.ERROR_TITLE, Locale.getDefault(), 'error_title')
         messageSource.addMessage(ScanTask.ERROR_MESSAGE, Locale.getDefault(), '{0},{1}')
 
         task = new ScanTask( workQueues:workQueues, messageSource:messageSource )

@@ -32,6 +32,7 @@ class UserMessageRowMapperTest {
 
     private static final String USERNAME_VALUE = 'someone'
     private static final String CONTENT_VALUE = 'some message data'
+    private static final String TITLE_VALUE = 'the title'
     private static final long ID_VALUE = 123L
     private static final String MESSAGE_TYPE_VALUE = 'ERROR'
     private UserMessageRowMapper mapper = new UserMessageRowMapper()
@@ -51,6 +52,7 @@ class UserMessageRowMapperTest {
         whenString resultSet, UserMessageRowMapper.MESSAGE_TYPE, MESSAGE_TYPE_VALUE
         whenBoolean resultSet, UserMessageRowMapper.READ, true
         whenDate resultSet, UserMessageRowMapper.DATE_CREATED, now
+        whenString resultSet, UserMessageRowMapper.TITLE, TITLE_VALUE
         whenString resultSet, UserMessageRowMapper.CONTENT, CONTENT_VALUE
 
         def userMessage = mapper.mapRow(resultSet, 2)
@@ -60,6 +62,7 @@ class UserMessageRowMapperTest {
         assertEquals MessageType.ERROR, userMessage.messageType
         assertTrue userMessage.read
         assertEquals now, userMessage.dateCreated
+        assertEquals TITLE_VALUE, userMessage.title
         assertEquals CONTENT_VALUE, userMessage.content
     }
 }

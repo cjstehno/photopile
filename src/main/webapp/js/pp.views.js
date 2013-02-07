@@ -127,3 +127,19 @@ var ImportDialogView = Backbone.View.extend({
     }
 });
 
+/**
+ *
+ */
+var MessageDialogView = Backbone.View.extend({
+    events:{
+        'click button[data-dismiss=modal]': 'onDialogHidden'
+    },
+
+    onDialogHidden: function (evt) {
+        location.hash = '';
+    },
+
+    openDialog: function () {
+        $(this.el).modal();
+    }
+});

@@ -53,3 +53,14 @@ var PhotoImport = Backbone.Model.extend({
     }
 });
 
+var UserMessage = Backbone.Model.extend({});
+
+var UserMessageCollection = Backbone.Collection.extend({
+    model:UserMessage,
+    url:'/photopile/messages',
+    parse:function(response){
+        return response.messages;
+    }
+});
+var UserMessages = new UserMessageCollection;
+
