@@ -4,6 +4,7 @@ import com.stehno.photopile.importer.ImporterConfig;
 import com.stehno.photopile.security.SecurityConfig;
 import com.stehno.photopile.usermsg.UserMsgConfig;
 import com.stehno.photopile.util.WorkQueues;
+import org.crsh.spring.SpringWebBootstrap;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -21,6 +22,7 @@ import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.Arrays;
+import java.util.Properties;
 
 /**
  * Spring-based web application context configuration.
@@ -72,5 +74,21 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     @Bean
     public WorkQueues workQueues(){
         return new WorkQueues();
+    }
+
+    @Bean
+    public SpringWebBootstrap springWebBootstrap(){
+        final SpringWebBootstrap bootstrap = new SpringWebBootstrap();
+        bootstrap.setConfig( new Properties(){
+            {
+                setProperty( "crash.vfs.refresh_period", "1" );
+                setProperty( "crash.ssh.port", "9898" );
+                setProperty( "crash.telnet.port", "10101" );
+                setProperty( "crash.auth", "simple" );
+                setProperty( "crash.auth.simple.username", "admin" );
+                setProperty( "crash.auth.simple.password", "admin" );
+            }
+        });
+        return bootstrap;
     }
 }
