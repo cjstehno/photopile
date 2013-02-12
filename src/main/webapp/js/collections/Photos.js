@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-$(new function () {
-    // use moustache style template variables
-    _.templateSettings = {
-        interpolate: /\{\{(.+?)\}\}/g
-    };
+PP.namespace('PP.collections.Photos');
 
-    new PhotopileRouter({
-        views: {
-            'gallery': new GalleryView({ el: '#gallery-container', collection: Photos }),
-            'importDialog': new ImportDialogView({ el: '#import-dialog', model:new PhotoImport }),
-            'messagesDialog': new MessageDialogView({ el:'#messages-dialog', collection:UserMessages })
+PP.collections.Photos = (function () {
+
+    var photoCollection = Backbone.Collection.extend({
+        model: PP.models.Photo,
+        url: '/photopile/photos',
+        parse: function (response) {
+            return response.photos;
         }
     });
 
-    Backbone.history.start();
-});
-
-
-
+    return photoCollection;
+}());

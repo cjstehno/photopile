@@ -20,6 +20,13 @@
     <title>PhotoPile: Your photos, your way.</title>
     <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
     <link href="css/photopile.css" type="text/css" rel="stylesheet" media="screen">
+
+    <script src="js/libs/jquery.js" type="text/javascript"></script>
+    <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
+    <script src="js/libs/underscore.min.js" type="text/javascript"></script>
+    <script src="js/libs/backbone.min.js" type="text/javascript"></script>
+
+
 </head>
 <body>
 
@@ -120,15 +127,27 @@
 
 </div>
 
-<!-- FIXME: not sure why they put these at the bottom, its not really valid is it? -->
-<script src="http://code.jquery.com/jquery-latest.js" type="text/javascript"></script>
-<script src="js/bootstrap.min.js" type="text/javascript"></script>
-<script src="js/underscore-min.js" type="text/javascript"></script>
-<script src="js/backbone-min.js" type="text/javascript"></script>
-<script src="js/pp.models.js" type="text/javascript"></script>
-<script src="js/pp.views.js" type="text/javascript"></script>
-<script src="js/pp.routes.js" type="text/javascript"></script>
-<script src="js/photopile.js" type="text/javascript"></script>
+<script src="js/main.js" type="text/javascript"></script>
+
+<script src="js/models/Photo.js" type="text/javascript"></script>
+<script src="js/models/PhotoImport.js" type="text/javascript"></script>
+<script src="js/models/UserMessage.js" type="text/javascript"></script>
+
+<script src="js/collections/Photos.js" type="text/javascript"></script>
+<script src="js/collections/UserMessages.js" type="text/javascript"></script>
+
+<script src="js/views/ImporterDialog.js" type="text/javascript"></script>
+<script src="js/views/UserMessageDialog.js" type="text/javascript"></script>
+<script src="js/views/PhotoGallery.js" type="text/javascript"></script>
+
+<script src="js/app.js" type="text/javascript"></script>
+<script src="js/router.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $(function() {
+        new PP.App().initialize();
+    });
+</script>
 </body>
 </html>
 
