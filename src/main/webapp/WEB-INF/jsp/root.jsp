@@ -64,7 +64,7 @@
             </div>
 
             <ul class="nav pull-right">
-                <li><a href="#messages">Messages <span class="badge badge-success">2</span></a></li>
+                <li><a href="#messages">Messages <span class="badge badge-success">${unreadCount}</span></a></li>
                 <li><a href="#">Selected <span class="badge badge-info">8</span></a></li>
                 <li class="divider-vertical"></li>
                 <li>

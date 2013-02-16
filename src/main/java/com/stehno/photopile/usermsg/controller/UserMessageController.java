@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -48,5 +50,21 @@ public class UserMessageController {
         final ResponseEntity<List<UserMessage>> responseEntity = new ResponseEntity<>( list, HttpStatus.ACCEPTED );
 
         return responseEntity;
+    }
+
+    @RequestMapping(value="/messages/{messageId}", method= RequestMethod.PUT, consumes="application/json", produces="application/json")
+    public ResponseEntity<?> save( @PathVariable final long messageId, final RequestBody requestBody ){
+//        content is json for saved data.data..
+
+//        // FIXME: need to get the current user
+//        final String username = "Admin";
+//
+//        final List<UserMessage> list = userMessageService.list( username );
+//
+//        // FIXME: is there a better response status for this
+//        final ResponseEntity<List<UserMessage>> responseEntity = new ResponseEntity<>( list, HttpStatus.ACCEPTED );
+//
+//        return responseEntity;
+        return null;
     }
 }

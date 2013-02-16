@@ -21,30 +21,45 @@ PP.views.UserMessageDialog = (function () {
         collection:new PP.collections.UserMessages(),
 
         initialize:function(){
-//            this.listenTo(this.collection, "reset", this.render);
-
-            this.collection.fetch(
-                { contentType:'application/json' }
-            );
+            this.listenTo(this.collection, "reset", this.render);
         },
 
         events:{
-            'click button[data-dismiss=modal]': 'onDialogHidden'
+            'click button[data-dismiss=modal]': 'onDialogHidden',
+            'click button[data-cmd=mark]': 'onMarkRead',
+            'click button[data-cmd=delete]': 'onDelete'
+        },
+
+        onMarkRead:function(evt){
+            var mid = $(evt.target).parent().attr('data-id');
+
+            this.collection.get(mid).save('read','true');
+
+            /* update the read field of the selected record.
+                push the record to the server
+                refresh the view
+             */
+        },
+
+        onDelete:function(evt){
+            PP.logger.warn($(evt.target).parent().attr('data-id'));
         },
 
         onDialogHidden: function (evt) {
-            console.log('doin it')
             location.hash = '';
         },
 
         openDialog: function( messageId ){
             this.messageId = messageId;
 
-            this.render();
-            $(this.el).modal();
+            this.collection.fetch(
+                { contentType:'application/json' }
+            );
         },
 
         render:function(){
+            $(this.el).modal();
+
             if( this.messageId ){
                 // render the single message template
                 $('div.modal-body',this.el).html( _.template($('#message-view-template').html(), { message:this.collection.get(this.messageId)}) );
