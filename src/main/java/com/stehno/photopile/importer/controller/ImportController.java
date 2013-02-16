@@ -59,7 +59,7 @@ public class ImportController {
             }
 
         } else {
-            return new ResponseEntity<String>( "You do not understand what you are doing!", HttpStatus.BAD_REQUEST );
+            return new ResponseEntity<>( "You do not understand what you are doing!", HttpStatus.BAD_REQUEST );
         }
 
         return new ResponseEntity<>( serverImport, HttpStatus.ACCEPTED );

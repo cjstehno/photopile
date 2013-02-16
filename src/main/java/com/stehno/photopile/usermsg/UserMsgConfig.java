@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan({
     "com.stehno.photopile.usermsg.dao",
     "com.stehno.photopile.usermsg.service",
+    "com.stehno.photopile.usermsg.controller",
     "com.stehno.photopile.usermsg.component",
 })
 public class UserMsgConfig {

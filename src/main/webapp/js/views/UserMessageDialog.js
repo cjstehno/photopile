@@ -18,8 +18,13 @@ PP.namespace('PP.views.UserMessageDialog');
 
 PP.views.UserMessageDialog = (function () {
     var userMessageDialogView = Backbone.View.extend({
-//        el: '#messages-dialog',
-//        model:new PP.models.PhotoImport(),
+        el: '#messages-dialog',
+        collection:new PP.collections.UserMessages(),
+
+        initialize:function(){
+            this.listTemplate = $('#message-list-template').html();
+            this.viewTemplate = $('#message-view-template').html();
+        },
 
         events:{
             'click button[data-dismiss=modal]': 'onDialogHidden'
@@ -29,8 +34,42 @@ PP.views.UserMessageDialog = (function () {
             location.hash = '';
         },
 
-        openDialog: function () {
-            $(this.el).modal();
+        openDialog: function( messageId ){
+            this.messageId = messageId;
+
+            var dialog = this;
+            if( this.messageId ){
+                this.render();
+                $(this.el).modal();
+
+            } else {
+                // render the message list template
+                this.collection.fetch(
+                    {
+                        contentType:'application/json',
+                        success:function(){
+                            dialog.render();
+                            $(this.el).modal();
+                        }
+                    }
+                );
+            }
+        },
+
+        render:function(){
+            if( this.messageId ){
+                // render the single message template
+                $('div.modal-body',this.el).html( _.template(this.viewTemplate, {}) );
+
+            } else {
+                // render the message list template
+                var tpt = _.template(this.listTemplate, { messages:this.collection });
+                console.log(tpt);
+
+                $('div.modal-body',this.el).html( tpt );
+            }
+
+            return this;
         }
     });
 

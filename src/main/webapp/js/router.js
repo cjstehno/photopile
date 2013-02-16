@@ -16,12 +16,15 @@
 
 PP.Router = (function () {
     var importDialog = new PP.views.ImporterDialog();
+    var messagesDialog = new PP.views.UserMessageDialog();
 
     var router = Backbone.Router.extend({
         routes: {
             'photos': 'listPhotos',
             'photoImport': 'photoImport',
-            'messages': 'listMessages',
+
+            'messages(/:messageId)': 'messages',
+
             '*actions': 'listPhotos'
         },
 
@@ -35,9 +38,9 @@ PP.Router = (function () {
 //                });
 //            },
 
-//            listMessages:function(){
-//                UserMessageDialog.openDialog();
-//            },
+        messages:function( messageId ){
+            messagesDialog.openDialog( messageId );
+        },
 
         photoImport: function () {
             importDialog.openDialog();

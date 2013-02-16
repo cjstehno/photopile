@@ -35,3 +35,21 @@ PP.namespace = function (ns_string) {
     }
     return parent;
 };
+
+/**
+ * Pre-loads the templates by adding them to the end of the document body.
+ *
+ * @param templates an array of template paths to be loaded
+ */
+PP.loadTemplates = function( templates ){
+    var count = templates.length;
+    var loaded = 0;
+
+    _.each( templates, function(tpt){
+        console.log('loading ' + tpt + '...');
+
+        $('#templates').add('div').load(current, function(){
+            loaded++;
+        });
+    });
+};

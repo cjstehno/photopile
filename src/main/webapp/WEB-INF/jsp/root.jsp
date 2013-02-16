@@ -21,17 +21,18 @@
     <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
     <link href="css/photopile.css" type="text/css" rel="stylesheet" media="screen">
 
+    <link href="templates/messages_dialog.html" type="text/html" rel="script" />
+
+    <!-- libraries -->
+
     <script src="js/libs/jquery.js" type="text/javascript"></script>
     <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
     <script src="js/libs/underscore.min.js" type="text/javascript"></script>
     <script src="js/libs/backbone.min.js" type="text/javascript"></script>
-
-
 </head>
 <body>
 
 <jsp:directive.include file="_import_dialog.jsp"/>
-<jsp:directive.include file="_messages_dialog.jsp"/>
 
 <div class="container-fluid">
     <div class="navbar navbar-fixed-top">
@@ -127,6 +128,7 @@
 
 </div>
 
+
 <script src="js/main.js" type="text/javascript"></script>
 
 <script src="js/models/Photo.js" type="text/javascript"></script>
@@ -148,6 +150,9 @@
         new PP.App().initialize();
     });
 </script>
+
+<div id="templates" />
+
 </body>
 </html>
 
