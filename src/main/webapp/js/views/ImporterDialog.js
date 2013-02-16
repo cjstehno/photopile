@@ -18,7 +18,6 @@ PP.namespace('PP.views.ImporterDialog');
 
 PP.views.ImporterDialog = (function () {
     var importDialogView = Backbone.View.extend({
-        el: '#import-dialog',
         model:new PP.models.PhotoImport(),
 
         initialize:function(){

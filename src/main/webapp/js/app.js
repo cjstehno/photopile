@@ -16,19 +16,8 @@
 
 PP.App = (function () {
     var ctor = function(){};
-
     ctor.prototype = {
         initialize:function(){
-            PP.loadTemplates([
-                'templates/messages_dialog.html',
-                'templates/import_dialog.html'
-            ]);
-
-            // use moustache style template variables
-            _.templateSettings = {
-                interpolate: /\{\{(.+?)\}\}/g
-            };
-
             new PP.Router();
 
             Backbone.history.start();

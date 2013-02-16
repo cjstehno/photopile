@@ -1,13 +1,13 @@
 
-<div id="messages-dialog" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="messages-dialog" class="modal hide fade" tabindex="-1" role="dialog">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
-        <h3 id="myModalLabel">Messages</h3>
+        <button type="button" class="close" data-dismiss="modal">x</button>
+        <h3>Messages</h3>
     </div>
     <div class="modal-body"></div>
     <div class="modal-footer">
         <button class="btn btn-link pull-left">Help</button>
-        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+        <button class="btn" data-dismiss="modal">Close</button>
     </div>
 </div>
 
@@ -16,27 +16,36 @@
         <thead>
         <tr>
             <th>Type</th>
+            <th>Read</th>
             <th>Title</th>
             <th>Date</th>
-            <th>Read</th>
+            <th>&nbsp;</th>
             <th>&nbsp;</th>
         </tr>
         </thead>
         <tbody>
-        {{ for( var m=0; m<messages.length; m++ ){ var msg = messages.get(m);  }}
-        <tr>
-            <td>{{msg.messageType}}</td>
-            <td><a href="#messages/{{msg.id}}" class="title">{{msg.title}}</a></td>
-            <td>{{msg.dateCreated}}</td>
-            <td>{{msg.read}}</td>
-            <td><i class="icon-ok" title="Mark as read"></i> <i class="icon-remove" title="Remove"></i></td>
-        </tr>
-        {{ } }}
+        <% messages.each(function(msg){ %>
+            <tr>
+                <% if( msg.get('messageType') == 'ERROR' ){ %>
+                    <td><span class="label label-important"><%= msg.get('messageType') %></span></td>
+                <% } else { %>
+                    <td><span class="label label-info"><%= msg.get('messageType') %></span></td>
+                <% } %>
+                <td>
+                    <% if( msg.get('read') != 'true' ){ %><i class="icon-envelope" title="Unread message"></i><% } %>
+                </td>
+                <td><a href="#messages/<%= msg.id %>" class="title"><%= msg.get('title') %></a></td>
+                <td><%= msg.get('dateCreated') %></td>
+                <td><i class="icon-ok" title="Mark as read"></i></td>
+                <td><i class="icon-trash" title="Remove"></i></td>
+            </tr>
+        <% }); %>
         </tbody>
     </table>
 </script>
 
 <script type="text/template" id="message-view-template">
-    <p>Message for you sir!</p>
+    <p><strong><%= message.get('title') %></strong></p>
+    <p><%= message.get('content') %></p>
     <p class="pull-right"><a href="#messages">Delete</a> ~ <a href="#messages">Back</a></p>
 </script>

@@ -20,10 +20,7 @@ PP.collections.UserMessages = (function () {
 
     var userMessageCollection = Backbone.Collection.extend({
         model:PP.models.UserMessage,
-        url:'/photopile/messages',
-        parse:function(response){
-            return response.messages;
-        }
+        url:'/photopile/messages'
     });
 
     return userMessageCollection;

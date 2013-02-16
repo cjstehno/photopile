@@ -15,8 +15,8 @@
  */
 
 PP.Router = (function () {
-    var importDialog = new PP.views.ImporterDialog();
-    var messagesDialog = new PP.views.UserMessageDialog();
+    var importDialog = new PP.views.ImporterDialog({el:'#import-dialog'});
+    var messagesDialog = new PP.views.UserMessageDialog({el:'#messages-dialog'});
 
     var router = Backbone.Router.extend({
         routes: {

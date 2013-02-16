@@ -63,10 +63,10 @@
 </div>
 
 
-<script src="http://code.jquery.com/jquery-latest.js"></script>
-<script src="/photopile/js/bootstrap.min.js"></script>
-<script src="/photopile/js/underscore-min.js"></script>
-<script src="/photopile/js/backbone-min.js"></script>
+<script src="http://localhost:8080/photopile/js/libs/jquery.js"></script>
+<script src="http://localhost:8080/photopile/js/libs/bootstrap.min.js"></script>
+<script src="http://localhost:8080/photopile/js/libs/underscore.min.js"></script>
+<script src="http://localhost:8080/photopile/js/libs/backbone.min.js"></script>
 </body>
 </html>
 

@@ -21,18 +21,16 @@
     <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
     <link href="css/photopile.css" type="text/css" rel="stylesheet" media="screen">
 
-    <link href="templates/messages_dialog.html" type="text/html" rel="script" />
-
     <!-- libraries -->
 
     <script src="js/libs/jquery.js" type="text/javascript"></script>
     <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
     <script src="js/libs/underscore.min.js" type="text/javascript"></script>
     <script src="js/libs/backbone.min.js" type="text/javascript"></script>
+
+    <script src="js/main.js" type="text/javascript"></script>
 </head>
 <body>
-
-<jsp:directive.include file="_import_dialog.jsp"/>
 
 <div class="container-fluid">
     <div class="navbar navbar-fixed-top">
@@ -127,31 +125,6 @@
     <div id="gallery-container"></div>
 
 </div>
-
-
-<script src="js/main.js" type="text/javascript"></script>
-
-<script src="js/models/Photo.js" type="text/javascript"></script>
-<script src="js/models/PhotoImport.js" type="text/javascript"></script>
-<script src="js/models/UserMessage.js" type="text/javascript"></script>
-
-<script src="js/collections/Photos.js" type="text/javascript"></script>
-<script src="js/collections/UserMessages.js" type="text/javascript"></script>
-
-<script src="js/views/ImporterDialog.js" type="text/javascript"></script>
-<script src="js/views/UserMessageDialog.js" type="text/javascript"></script>
-<script src="js/views/PhotoGallery.js" type="text/javascript"></script>
-
-<script src="js/app.js" type="text/javascript"></script>
-<script src="js/router.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-    $(function() {
-        new PP.App().initialize();
-    });
-</script>
-
-<div id="templates" />
 
 </body>
 </html>
