@@ -22,6 +22,8 @@ PP.views.UserMessageDialog = (function () {
 
         initialize:function(){
             this.listenTo(this.collection, "reset", this.render);
+            this.listenTo(this.collection, "change", this.render);
+            this.listenTo(this.collection, "remove", this.render);
         },
 
         events:{
@@ -32,17 +34,12 @@ PP.views.UserMessageDialog = (function () {
 
         onMarkRead:function(evt){
             var mid = $(evt.target).parent().attr('data-id');
-
             this.collection.get(mid).save('read','true');
-
-            /* update the read field of the selected record.
-                push the record to the server
-                refresh the view
-             */
         },
 
         onDelete:function(evt){
-            PP.logger.warn($(evt.target).parent().attr('data-id'));
+            var mid = $(evt.target).parent().attr('data-id');
+            this.collection.get(mid).destroy({ contentType:'application/json' });
         },
 
         onDialogHidden: function (evt) {

@@ -33,7 +33,7 @@
         </h1>
     </div>
 
-    <spring:form commandName="credentials" method="POST" class="form-horizontal">
+    <spring:form action="" commandName="credentials" method="POST" class="form-horizontal">
         <spring:errors/>
         <div class="control-group">
             <label class="control-label" for="username">Username:</label>
@@ -62,11 +62,6 @@
     </spring:form>
 </div>
 
-
-<script src="http://localhost:8080/photopile/js/libs/jquery.js"></script>
-<script src="http://localhost:8080/photopile/js/libs/bootstrap.min.js"></script>
-<script src="http://localhost:8080/photopile/js/libs/underscore.min.js"></script>
-<script src="http://localhost:8080/photopile/js/libs/backbone.min.js"></script>
 </body>
 </html>
 

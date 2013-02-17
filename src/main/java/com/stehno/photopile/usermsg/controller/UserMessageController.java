@@ -18,6 +18,7 @@ package com.stehno.photopile.usermsg.controller;
 
 import com.stehno.photopile.usermsg.UserMessageService;
 import com.stehno.photopile.usermsg.domain.UserMessage;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,36 +36,39 @@ import java.util.List;
 @Controller
 public class UserMessageController {
     // FIXME: document this service
+    // FIXME: needs error handling
 
     @Autowired
     private UserMessageService userMessageService;
 
     @RequestMapping(value="/messages", method= RequestMethod.GET, consumes="application/json", produces="application/json")
-    public ResponseEntity<?> messages(){
-        // FIXME: need to get the current user
-        final String username = "Admin";
+    public ResponseEntity<?> list(){
+        final List<UserMessage> list = userMessageService.list( currentUsername() );
 
-        final List<UserMessage> list = userMessageService.list( username );
-
-        // FIXME: is there a better response status for this
-        final ResponseEntity<List<UserMessage>> responseEntity = new ResponseEntity<>( list, HttpStatus.ACCEPTED );
-
+        final ResponseEntity<List<UserMessage>> responseEntity = new ResponseEntity<>( list, HttpStatus.OK );
         return responseEntity;
     }
 
     @RequestMapping(value="/messages/{messageId}", method= RequestMethod.PUT, consumes="application/json", produces="application/json")
-    public ResponseEntity<?> save( @PathVariable final long messageId, final RequestBody requestBody ){
-//        content is json for saved data.data..
+    public ResponseEntity<?> save( @PathVariable final long messageId, @RequestBody final UserMessage userMessage ){
 
-//        // FIXME: need to get the current user
-//        final String username = "Admin";
-//
-//        final List<UserMessage> list = userMessageService.list( username );
-//
-//        // FIXME: is there a better response status for this
-//        final ResponseEntity<List<UserMessage>> responseEntity = new ResponseEntity<>( list, HttpStatus.ACCEPTED );
-//
-//        return responseEntity;
-        return null;
+        // the only field that can change is the "read" status
+        if( userMessage.isRead() ){
+            userMessageService.markRead( currentUsername(), messageId );
+        }
+
+        return new ResponseEntity<>( HttpStatus.ACCEPTED );
+    }
+
+    @RequestMapping(value="/messages/{messageId}", method= RequestMethod.DELETE, consumes="application/json", produces="application/json")
+    public ResponseEntity<?> delete( @PathVariable final long messageId ){
+
+        userMessageService.delete( currentUsername(), messageId );
+
+        return new ResponseEntity<>( HttpStatus.OK );
+    }
+
+    private String currentUsername(){
+        return (String)SecurityUtils.getSubject().getPrincipal();
     }
 }

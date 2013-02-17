@@ -32,11 +32,17 @@
                     <td><span class="label label-info"><%= msg.get('messageType') %></span></td>
                 <% } %>
                 <td>
-                    <% if( msg.get('read') != 'true' ){ %><i class="icon-envelope" title="Unread message"></i><% } %>
+                    <% if( msg.get('read') != 'true' ){ %>
+                        <i class="icon-envelope" title="Unread message"></i>
+                    <% } %>
                 </td>
                 <td><a href="#messages/<%= msg.id %>" class="title"><%= msg.get('title') %></a></td>
                 <td><%= msg.get('dateCreated') %></td>
-                <td><button class="btn" data-cmd="mark" data-id="<%= msg.get('id') %>"><i class="icon-ok" title="Mark as read"></i></button></td>
+                <td>
+                    <% if( msg.get('read') != 'true' ){ %>
+                        <button class="btn" data-cmd="mark" data-id="<%= msg.get('id') %>"><i class="icon-ok" title="Mark as read"></i></button>
+                    <% } %>
+                </td>
                 <td><button class="btn" data-cmd="delete" data-id="<%= msg.get('id') %>"><i class="icon-trash" title="Remove"></i></button></td>
             </tr>
         <% }); %>
