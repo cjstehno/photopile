@@ -27,8 +27,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
+import org.springframework.http.HttpStatus
 
 import static junit.framework.Assert.assertEquals
+import static org.mockito.Matchers.anyLong
+import static org.mockito.Matchers.anyString
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner)
@@ -60,11 +63,39 @@ class UserMessageControllerTest {
 
         def entity = controller.list()
 
+        assertEquals( HttpStatus.OK, entity.statusCode )
         assertEquals( 2, entity.body.size() )
         assertEquals( 100, entity.body[0].id )
         assertEquals( 200, entity.body[1].id )
 
         verify(userMessageService).list( USERNAME )
+    }
+
+    @Test
+    void 'save: read message'(){
+        def entity = controller.save( 123l, new UserMessage( username:USERNAME, read:true ) )
+
+        assertEquals( HttpStatus.OK, entity.statusCode )
+
+        verify(userMessageService).markRead( USERNAME, 123l )
+    }
+
+    @Test
+    void 'save: unread message'(){
+        def entity = controller.save( 123l, new UserMessage( username:USERNAME, read:false ) )
+
+        assertEquals( HttpStatus.OK, entity.statusCode )
+
+        verify(userMessageService, never()).markRead( anyString(), anyLong() )
+    }
+
+    @Test
+    void delete(){
+        def entity = controller.delete( 123l )
+
+        assertEquals( HttpStatus.OK, entity.statusCode )
+
+        verify userMessageService delete USERNAME, 123l
     }
 
     @After

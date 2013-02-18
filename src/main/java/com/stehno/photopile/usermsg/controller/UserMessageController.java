@@ -57,7 +57,7 @@ public class UserMessageController {
             userMessageService.markRead( currentUsername(), messageId );
         }
 
-        return new ResponseEntity<>( HttpStatus.ACCEPTED );
+        return new ResponseEntity<>( HttpStatus.OK );
     }
 
     @RequestMapping(value="/messages/{messageId}", method= RequestMethod.DELETE, consumes="application/json", produces="application/json")
