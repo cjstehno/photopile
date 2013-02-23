@@ -11,6 +11,8 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.stehno.photopile.security.SecurityUtils.currentUsername;
+
 /**
  * Root web application controller.
  */
@@ -22,17 +24,12 @@ public class RootController {
     @Autowired
     private UserMessageService userMessageService;
 
-//    @RequiresAuthentication
     @RequestMapping("/")
     public ModelAndView root(){
-//        SecurityUtils.getSubject().runAs(new SimplePrincipalCollection("admin","admin"));
-
-//        System.out.println("I am running as ADMIN: " + SecurityUtils.getSubject().isRunAs());
-
         // TODO: just going to write this in for now, will look at sockets/push later
 
         final Map<String,Object> model = new HashMap<>();
-        model.put("unreadCount", userMessageService.count( "Admin", false ));
+        model.put("unreadCount", userMessageService.count( currentUsername(), false ));
 
         return new ModelAndView( "root", model );
     }

@@ -16,6 +16,7 @@
 
 package com.stehno.photopile.security.component;
 
+import com.stehno.photopile.security.Role;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class UserBootstrap {
     // FIXME: it may be better to provide a crash shell command to do this
 
     private static final Logger log = LogManager.getLogger( UserBootstrap.class );
+    private static final String BS_USER_PASS = "admin";
 
     @Autowired
     private UserDetailsManager userDetailsManager;
@@ -52,13 +54,15 @@ public class UserBootstrap {
         // TDOD: see if there is a better way to do this...
 
         try {
-            userDetailsManager.loadUserByUsername( "admin" );
+            userDetailsManager.loadUserByUsername( BS_USER_PASS );
         } catch( UsernameNotFoundException unfe ){
             log.warn( "No admin user found, bootstrapping one in - this should only happen on first install." );
 
-            final String codedPass = passwordEncoder.encode( "admin" );
-
-            userDetailsManager.createUser( new User( "admin", codedPass, Arrays.asList( new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_ADMIN") ) ) );
+            final String codedPass = passwordEncoder.encode( BS_USER_PASS );
+            userDetailsManager.createUser( new User( BS_USER_PASS, codedPass, Arrays.asList(
+                new SimpleGrantedAuthority(Role.ADMIN.fullName()),
+                new SimpleGrantedAuthority(Role.USER.fullName())
+            ) ) );
         }
     }
 }

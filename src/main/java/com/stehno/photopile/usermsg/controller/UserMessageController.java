@@ -18,7 +18,6 @@ package com.stehno.photopile.usermsg.controller;
 
 import com.stehno.photopile.usermsg.UserMessageService;
 import com.stehno.photopile.usermsg.domain.UserMessage;
-import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.util.List;
+
+import static com.stehno.photopile.security.SecurityUtils.currentUsername;
 
 /**
  * Controller end-point for the user messages service.
@@ -66,9 +67,5 @@ public class UserMessageController {
         userMessageService.delete( currentUsername(), messageId );
 
         return new ResponseEntity<>( HttpStatus.OK );
-    }
-
-    private String currentUsername(){
-        return (String)SecurityUtils.getSubject().getPrincipal();
     }
 }

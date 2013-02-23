@@ -33,6 +33,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+import static com.stehno.photopile.security.SecurityUtils.currentUsername;
+
 /**
  * Queue handler task used to process import scan requests.
  *
@@ -63,7 +65,8 @@ public class ScanTask extends MessagingRunnable<String> {
     protected void doRun( final String dir ){
         final Clock clock = new Clock( RUN_TIME, log );
 
-        final String username = "Admin"; // FIXME: need to figure out how to get this
+        // FIXME: ensure this works on different threads
+        final String username = currentUsername();
 
         try {
             final ScanResults results = scan( dir );
