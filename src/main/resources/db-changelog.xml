@@ -67,6 +67,36 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <!-- spring security DAO tables -->
+
+        <createTable tableName="users">
+            <column name="username" type="varchar(50)"><constraints nullable="false" primaryKey="true" /></column>
+            <column name="password" type="varchar(200)"><constraints nullable="false" /></column>
+            <column name="enabled" type="boolean"><constraints nullable="false" /></column>
+        </createTable>
+
+        <createTable tableName="authorities">
+            <column name="username" type="varchar(50)"><constraints nullable="false" /></column>
+            <column name="authority" type="varchar(50)"><constraints nullable="false" /></column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="fk_authorities_users"
+                                 baseTableName="authorities" baseColumnNames="username"
+                                 referencedTableName="users" referencedColumnNames="username" />
+        <createIndex tableName="authorities" indexName="ix_auth_username" unique="true">
+            <column name="username" />
+            <column name="authority" />
+        </createIndex>
+
+        <!-- spring security remember me table -->
+
+        <createTable tableName="persistent_logins">
+            <column name="username" type="varchar(64)"><constraints nullable="false" /></column>
+            <column name="series" type="varchar(64)"><constraints primaryKey="true" /></column>
+            <column name="token" type="varchar(64)"><constraints nullable="false" /></column>
+            <column name="last_used" type="timestamp"><constraints nullable="false" /></column>
+        </createTable>
+
     </changeSet>
 
 </databaseChangeLog>

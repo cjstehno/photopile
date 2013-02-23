@@ -80,7 +80,7 @@
                     </div>
                 </li>
                 <li><a href="#"><i class="icon-wrench"></i> Settings</a></li>
-                <li><a href="auth/logout"><i class="icon-off"></i> Logout</a></li>
+                <li><a href="j_spring_security_logout"><i class="icon-off"></i> Logout</a></li>
             </ul>
 
         </div>

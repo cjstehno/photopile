@@ -16,8 +16,6 @@
 
 <!DOCTYPE html>
 
-<%@ taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
-
 <html lang="en">
 <head>
     <title>PhotoPile: Your photos, your way.</title>
@@ -33,33 +31,30 @@
         </h1>
     </div>
 
-    <spring:form action="" commandName="credentials" method="POST" class="form-horizontal">
-        <spring:errors/>
+    <form action="j_spring_security_check" method="POST" class="form-horizontal">
         <div class="control-group">
             <label class="control-label" for="username">Username:</label>
 
             <div class="controls">
-                <spring:input path="username" id="username" placeholder="Username..."/>
-                <spring:errors path="username"/>
+                <input type="text" name="j_username" id="username" placeholder="Username..."/>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="password">Password:</label>
 
             <div class="controls">
-                <spring:password path="password" id="password" placeholder="Password..."/>
-                <spring:errors path="password"/>
+                <input type="password" name="j_password" id="password" placeholder="Password..."/>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
                 <label class="checkbox">
-                    <spring:checkbox path="rememberMe" id="rememberMe"/> Remember me
+                    <input type="checkbox" name="rememberMe" id="rememberMe"/> Remember me
                 </label>
                 <button type="submit" class="btn">Sign in</button>
             </div>
         </div>
-    </spring:form>
+    </form>
 </div>
 
 </body>

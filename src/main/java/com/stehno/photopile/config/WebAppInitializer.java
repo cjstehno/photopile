@@ -33,6 +33,8 @@ import javax.servlet.ServletRegistration;
 @SuppressWarnings("UnusedDeclaration")
 public class WebAppInitializer implements WebApplicationInitializer {
 
+    private static final String SECURITY_FILTER_NAME = "springSecurityFilterChain";
+
     @Override
     public void onStartup( ServletContext servletContext ) throws ServletException{
         final AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
@@ -51,7 +53,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         // ----- filter configuration -----
 
-        FilterRegistration.Dynamic filter = servletContext.addFilter( "securityFilter", new DelegatingFilterProxy( "securityFilter" ) );
+        FilterRegistration.Dynamic filter = servletContext.addFilter( SECURITY_FILTER_NAME, new DelegatingFilterProxy( SECURITY_FILTER_NAME ) );
         filter.addMappingForUrlPatterns( null, true, "/*" );
     }
 }
