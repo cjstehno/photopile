@@ -15,72 +15,34 @@
  */
 
 package com.stehno.photopile
-
-import org.apache.shiro.SecurityUtils
-import org.apache.shiro.UnavailableSecurityManagerException
-import org.apache.shiro.subject.Subject
-import org.apache.shiro.subject.support.SubjectThreadState
-import org.apache.shiro.util.LifecycleUtils
-import org.apache.shiro.util.ThreadState
 import org.junit.rules.ExternalResource
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
+
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
 
 /**
- * Provides a test-implementation of the Shiro security environment to be used in unit tests. Generally, this
- * should be used as a ClassRule.
- *
- * As a class rule, this environment will only clean up after all tests have run for the class; however, you may
- * want to call clearSubject() after each individual test to clean up the subject settings.
- *
- * This class is based on the suggested unit test base class provided by the Shiro team (http://shiro.apache.org/testing.html).
+ *  Provides a mock implementation of the spring-security context for unit testing.
  */
 class SecurityEnvironment extends ExternalResource {
 
-    private static ThreadState THREAD_STATE
+    String username
 
-    /**
-     *
-     * @param subject the Subject instance
-     */
-    void setSubject(Subject subject) {
-        clearSubject()
-        THREAD_STATE = new SubjectThreadState(subject)
-        THREAD_STATE.bind()
-    }
+    @Override
+    protected void before() throws Throwable {
+        def userDetails = mock(UserDetails)
+        when(userDetails.getUsername()).thenReturn(username)
 
-    Subject getSubject() {
-        return SecurityUtils.getSubject()
-    }
+        def auth = mock(Authentication)
+        when( auth.getPrincipal() ).thenReturn(userDetails)
 
-    void clearSubject(){
-        doClearSubject()
-    }
-
-    void setSecurityManager(SecurityManager securityManager) {
-        SecurityUtils.setSecurityManager(securityManager);
-    }
-
-    SecurityManager getSecurityManager() {
-        return SecurityUtils.getSecurityManager();
+        SecurityContextHolder.getContext().setAuthentication(auth)
     }
 
     @Override
     protected void after() {
-        doClearSubject()
-
-        try {
-            SecurityManager securityManager = getSecurityManager();
-            LifecycleUtils.destroy(securityManager);
-        } catch (UnavailableSecurityManagerException e) {
-            /* we don't care about this when cleaning up the test environment */
-        }
-
-        setSecurityManager(null);
-    }
-
-    private static void doClearSubject() {
-        if (THREAD_STATE != null) {
-            THREAD_STATE.clear();
-            THREAD_STATE = null;
-        }
+        SecurityContextHolder.getContext().setAuthentication(null);
     }
 }

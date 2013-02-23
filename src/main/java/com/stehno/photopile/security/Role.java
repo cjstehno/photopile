@@ -17,11 +17,7 @@
 package com.stehno.photopile.security;
 
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 2/23/13
- * Time: 11:25 AM
- * To change this template use File | Settings | File Templates.
+ * Defines the enumeration of allowed roles in the system.
  */
 public enum Role {
 

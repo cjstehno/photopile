@@ -16,6 +16,7 @@
 
 package com.stehno.photopile.importer.scanner
 
+import com.stehno.photopile.SecurityEnvironment
 import com.stehno.photopile.usermsg.domain.MessageType
 import com.stehno.photopile.usermsg.domain.UserMessage
 import com.stehno.photopile.util.WorkQueue
@@ -42,6 +43,9 @@ class ScanTaskTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
+
+    @Rule
+    public SecurityEnvironment securityEnvironment = new SecurityEnvironment( username:'Admin' )
 
     private ScanTask task
 

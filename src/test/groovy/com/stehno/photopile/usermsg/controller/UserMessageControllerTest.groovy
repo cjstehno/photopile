@@ -15,12 +15,9 @@
  */
 
 package com.stehno.photopile.usermsg.controller
-
 import com.stehno.photopile.SecurityEnvironment
 import com.stehno.photopile.usermsg.UserMessageService
 import com.stehno.photopile.usermsg.domain.UserMessage
-import org.apache.shiro.subject.Subject
-import org.junit.After
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Test
@@ -28,6 +25,9 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
 import org.springframework.http.HttpStatus
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 
 import static junit.framework.Assert.assertEquals
 import static org.mockito.Matchers.anyLong
@@ -40,7 +40,7 @@ class UserMessageControllerTest {
     private static final String USERNAME = 'someuser'
 
     @ClassRule
-    public static SecurityEnvironment securityEnvironment = new SecurityEnvironment()
+    public static SecurityEnvironment securityEnvironment = new SecurityEnvironment( username:USERNAME )
 
     private UserMessageController controller
 
@@ -49,7 +49,13 @@ class UserMessageControllerTest {
 
     @Before
     void before(){
-        securityEnvironment.setSubject( mockSubject(USERNAME) )
+        def prince = mock(UserDetails)
+        when(prince.getUsername()).thenReturn(USERNAME)
+
+        def auth = mock(Authentication)
+        when( auth.getPrincipal() ).thenReturn(prince)
+
+        SecurityContextHolder.getContext().setAuthentication(auth)
 
         controller = new UserMessageController( userMessageService:userMessageService )
     }
@@ -96,16 +102,5 @@ class UserMessageControllerTest {
         assertEquals( HttpStatus.OK, entity.statusCode )
 
         verify userMessageService delete USERNAME, 123l
-    }
-
-    @After
-    void after(){
-        securityEnvironment.clearSubject()
-    }
-
-    private Subject mockSubject( String username ){
-        Subject subject = mock(Subject)
-        when(subject.getPrincipal()).thenReturn(username)
-        return subject
     }
 }
