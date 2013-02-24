@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer.scanner;
+package com.stehno.photopile.importer.component;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

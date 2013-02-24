@@ -21,13 +21,14 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Represents a simple user message. The messages are persisted due to the fact that they may be created by operations
  * running in the background; this allows the user to see them when they login.
  */
-public class UserMessage {
+public class UserMessage implements Serializable {
 
     private Long id;
     private String username;

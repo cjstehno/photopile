@@ -19,9 +19,11 @@ package com.stehno.photopile.usermsg.component;
 import com.stehno.photopile.usermsg.UserMessageService;
 import com.stehno.photopile.usermsg.domain.UserMessage;
 import com.stehno.photopile.util.Clock;
-import groovyx.gpars.MessagingRunnable;
+import org.apache.commons.lang.SerializationUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,7 +31,7 @@ import org.springframework.stereotype.Component;
  * A work queue task used to create info messages in an asynchronous manner.
  */
 @Component
-public class UserMessageSaveTask extends MessagingRunnable<UserMessage> {
+public class UserMessageSaveTask implements MessageListener {
 
     private static final Logger log = LogManager.getLogger( UserMessageSaveTask.class );
     private static final String TAG = "run-time: {} ms";
@@ -38,10 +40,19 @@ public class UserMessageSaveTask extends MessagingRunnable<UserMessage> {
     private UserMessageService userMessageService;
 
     @Override
-    protected void doRun( final UserMessage userMessage ){
+    public void onMessage( final Message message ){
         final Clock clock = new Clock( TAG, log );
 
-        userMessageService.create( userMessage );
+        try {
+            final UserMessage userMessage = (UserMessage)SerializationUtils.deserialize( message.getBody() );
+
+            log.debug( "Creating user message for {}", userMessage.getUsername() );
+
+            userMessageService.create( userMessage );
+
+        } catch( Exception ex ){
+            ex.printStackTrace();
+        }
 
         clock.stop();
     }

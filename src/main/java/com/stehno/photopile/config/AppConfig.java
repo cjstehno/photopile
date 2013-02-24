@@ -3,7 +3,6 @@ package com.stehno.photopile.config;
 import com.stehno.photopile.importer.ImporterConfig;
 import com.stehno.photopile.security.SecurityConfig;
 import com.stehno.photopile.usermsg.UserMsgConfig;
-import com.stehno.photopile.util.WorkQueues;
 import org.crsh.spring.SpringWebBootstrap;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -72,12 +71,9 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public WorkQueues workQueues(){
-        return new WorkQueues();
-    }
-
-    @Bean
     public SpringWebBootstrap springWebBootstrap(){
+        // FIXME: this should be disabled unless an env variable is specified on startup or something
+
         final SpringWebBootstrap bootstrap = new SpringWebBootstrap();
         bootstrap.setConfig( new Properties(){
             {

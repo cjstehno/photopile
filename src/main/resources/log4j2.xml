@@ -25,12 +25,17 @@
         <logger name="org.springframework" level="WARN"/>
         <logger name="org.springframework.jdbc" level="WARN"/>
         <logger name="org.springframework.security" level="WARN" />
+        <logger name="org.springframework.amqp" level="INFO" />
+        <logger name="org.springframework.amqp.rabbit" level="INFO" />
 
         <logger name="com.stehno.photopile" level="INFO"/>
         <logger name="com.stehno.photopile.config" level="INFO"/>
         <logger name="com.stehno.photopile.controller" level="INFO"/>
         <logger name="com.stehno.photopile.service" level="INFO"/>
         <logger name="com.stehno.photopile.dao" level="INFO"/>
+        <logger name="com.stehno.photopile.security" level="INFO"/>
+        <logger name="com.stehno.photopile.importer" level="TRACE"/>
+        <logger name="com.stehno.photopile.usermsg" level="INFO"/>
 
         <root level="WARN">
             <appender-ref ref="Console"/>

@@ -16,13 +16,15 @@
 
 package com.stehno.photopile.importer;
 
-import com.stehno.photopile.importer.scanner.ScanTask;
-import com.stehno.photopile.util.SimpleWorkQueue;
-import com.stehno.photopile.util.WorkQueue;
+import com.stehno.photopile.importer.component.ImportScanner;
+import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ErrorHandler;
 
 /**
  * Configures the importer feature.
@@ -30,16 +32,27 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ComponentScan({
     "com.stehno.photopile.importer.controller",
-    "com.stehno.photopile.importer.scanner",
+    "com.stehno.photopile.importer.component",
     "com.stehno.photopile.importer.service"
 })
 public class ImporterConfig {
 
     @Autowired
-    private ScanTask scanTask;
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
+    private ImportScanner importScanner;
+
+    @Autowired
+    private ErrorHandler errorHandler;
 
     @Bean
-    public WorkQueue<String> importScannerQueue(){
-        return new SimpleWorkQueue<>(2, scanTask, String.class);
+    public SimpleMessageListenerContainer importScannerContainer(){
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer( connectionFactory );
+        container.setMessageListener( importScanner );
+        container.setAcknowledgeMode( AcknowledgeMode.AUTO );
+        container.setQueueNames( "queues.import.scanner" );
+        container.setErrorHandler( errorHandler );
+        return container;
     }
 }

@@ -16,6 +16,7 @@
 
 package com.stehno.photopile.importer.scanner
 
+import com.stehno.photopile.importer.component.ScanResults
 import org.junit.Before
 import org.junit.Test
 

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer.scanner;
+package com.stehno.photopile.importer.component;
 
 import java.util.HashMap;
 import java.util.HashSet;

@@ -17,22 +17,44 @@
 package com.stehno.photopile.importer.service;
 
 import com.stehno.photopile.importer.ImportService;
-import com.stehno.photopile.util.WorkQueues;
+import com.stehno.photopile.security.SecurityUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.amqp.AmqpException;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessagePostProcessor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * FIXME: document
+ * Default implementation of the import service.
  */
 @Service
 public class DefaultImportService implements ImportService {
-    // FIXME: is this service needed?
+
+    private static final Logger log = LogManager.getLogger( DefaultImportService.class );
+    private static final String QUEUE_NAME = "queues.import.scanner";
+    private static final String EXCHANGE_NAME = "";
 
     @Autowired
-    private WorkQueues workQueues;
+    public RabbitTemplate rabbitTemplate;
+
+    private MessagePostProcessor postProcessor = new UsernamePostProcessor();
 
     @Override
     public void scheduleImportScan( final String directory ){
-        workQueues.submit( directory );
+        rabbitTemplate.convertAndSend( EXCHANGE_NAME, QUEUE_NAME, directory, postProcessor );
+
+        log.info( "Scheduled import scan for directory ({}) for '{}'", directory, SecurityUtils.currentUsername() );
+    }
+
+    private static class UsernamePostProcessor implements MessagePostProcessor {
+
+        @Override
+        public Message postProcessMessage( final Message message ) throws AmqpException {
+            message.getMessageProperties().setHeader( "username", SecurityUtils.currentUsername() );
+            return message;
+        }
     }
 }

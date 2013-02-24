@@ -17,13 +17,14 @@
 package com.stehno.photopile.usermsg;
 
 import com.stehno.photopile.usermsg.component.UserMessageSaveTask;
-import com.stehno.photopile.usermsg.domain.UserMessage;
-import com.stehno.photopile.util.SimpleWorkQueue;
-import com.stehno.photopile.util.WorkQueue;
+import org.springframework.amqp.core.AcknowledgeMode;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ErrorHandler;
 
 /**
  * Configures the info messaging feature.
@@ -38,10 +39,21 @@ import org.springframework.context.annotation.Configuration;
 public class UserMsgConfig {
 
     @Autowired
+    private ConnectionFactory connectionFactory;
+
+    @Autowired
     private UserMessageSaveTask userMessageSaveTask;
 
+    @Autowired
+    private ErrorHandler errorHandler;
+
     @Bean
-    public WorkQueue<UserMessage> userMessageSaveQueue(){
-        return new SimpleWorkQueue<>(2, userMessageSaveTask, UserMessage.class);
+    public SimpleMessageListenerContainer userMessageContainer(){
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer( connectionFactory );
+        container.setMessageListener( userMessageSaveTask );
+        container.setAcknowledgeMode( AcknowledgeMode.AUTO );
+        container.setQueueNames( "queues.user.message" );
+        container.setErrorHandler( errorHandler );
+        return container;
     }
 }

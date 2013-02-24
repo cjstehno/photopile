@@ -16,6 +16,8 @@
 
 package com.stehno.photopile.config;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
@@ -24,6 +26,7 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ErrorHandler;
 
 /**
  * Configures the rabbit mq integrations.
@@ -31,11 +34,20 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitConfig {
 
+    private static final Logger log = LogManager.getLogger(RabbitConfig.class);
+
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory("localhost");
         return connectionFactory;
     }
+
+    // TODO: spring amqp references outdated version of jackson
+//    @Bean
+//    public MessageConverter messageConverter(){
+//        final JsonMessageConverter messageConverter = new JsonMessageConverter();
+//        return messageConverter;
+//    }
 
     @Bean
     public AmqpAdmin amqpAdmin() {
@@ -44,12 +56,29 @@ public class RabbitConfig {
 
     @Bean
     public RabbitTemplate rabbitTemplate() {
-        return new RabbitTemplate(connectionFactory());
+        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
+//        rabbitTemplate.setMessageConverter( messageConverter() );
+        return rabbitTemplate;
+    }
+
+    // FIXME: may want to move into the importer module
+    @Bean
+    public Queue importScannerQueue() {
+        return new Queue("queues.import.scanner");
     }
 
     @Bean
-    public Queue myQueue() {
-        return new Queue("myqueue");
+    public Queue userMessageQueue() {
+        return new Queue("queues.user.message");
     }
 
+    @Bean
+    public ErrorHandler errorHandler(){
+        return new ErrorHandler() {
+            @Override
+            public void handleError( final Throwable throwable ){
+                log.error( "Rabbit queue error: " + throwable.getMessage(), throwable );
+            }
+        };
+    }
 }
