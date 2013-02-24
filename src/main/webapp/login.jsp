@@ -19,14 +19,14 @@
 <html lang="en">
 <head>
     <title>PhotoPile: Your photos, your way.</title>
-    <link href="http://localhost:8080/photopile/css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
-    <link href="http://localhost:8080/photopile/css/login.css" type="text/css" rel="stylesheet" media="screen">
+    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
+    <link href="css/login.css" type="text/css" rel="stylesheet" media="screen">
 </head>
 <body>
 
 <div class="container-fluid">
     <div class="page-header">
-        <h1><img src="../img/icon.png"/>PhotoPile:
+        <h1><img src="img/icon.png"/>PhotoPile:
             <small>Your photos, your way.</small>
         </h1>
     </div>
