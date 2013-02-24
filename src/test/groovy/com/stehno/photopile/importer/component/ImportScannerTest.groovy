@@ -15,7 +15,6 @@
  */
 
 package com.stehno.photopile.importer.component
-
 import com.stehno.photopile.SecurityEnvironment
 import com.stehno.photopile.usermsg.domain.MessageType
 import com.stehno.photopile.usermsg.domain.UserMessage
@@ -25,7 +24,6 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatcher
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
@@ -35,9 +33,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.support.StaticMessageSource
 
 import static junit.framework.Assert.assertEquals
-import static org.mockito.Matchers.argThat
 import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.*
+import static org.mockito.Mockito.verify
 
 @RunWith(MockitoJUnitRunner)
 class ImportScannerTest {
@@ -74,43 +71,15 @@ class ImportScannerTest {
     void 'doRun: success'(){
         def dir = temporaryFolder.getRoot().toString()
 
-        importScanner.onMessage( new Message( dir.bytes, new MessageProperties() ) )
+        def message = new Message( dir.bytes, new MessageProperties() )
+        message.messageProperties.headers['username'] = 'Admin'
+        importScanner.onMessage( message )
 
-        verify(rabbitTemplate).convertAndSend(eq(''), eq('queues.user.message'), userMessageCaptor.capture())
+        verify(rabbitTemplate).convertAndSend(eq(''), (String)eq('queues.user.message'), (UserMessage)userMessageCaptor.capture())
 
         def argument = userMessageCaptor.value
         assertEquals 'Admin', argument.username
         assertEquals MessageType.INFO, argument.messageType
         assertEquals "$dir,1,17,1,{.txt=1}", argument.content
-    }
-
-    @Test
-    void 'doRun: error'(){
-        doThrow(new RuntimeException('bad')).when(rabbitTemplate).convertAndSend(argThat(new IsMessageType(messageType:MessageType.INFO)))
-        doNothing().when(workQueues).submit(argThat(new IsMessageType(messageType:MessageType.ERROR)))
-
-        def dir = temporaryFolder.getRoot().toString()
-
-        importScanner.onMessage( new Message( dir.bytes, new MessageProperties() ) )
-
-        verify(rabbitTemplate, times(2)).convertAndSend(eq(''), eq('queues.user.message'), userMessageCaptor.capture())
-
-        def argument = userMessageCaptor.allValues[1]
-        assertEquals 'Admin', argument.username
-        assertEquals MessageType.ERROR, argument.messageType
-        assertEquals "$dir,bad", argument.content
-    }
-}
-
-class IsMessageType extends ArgumentMatcher<UserMessage>{
-
-    MessageType messageType
-
-    @Override
-    boolean matches(final Object o) {
-        if( o instanceof UserMessage ){
-            return ((UserMessage)o).messageType == messageType
-        }
-        return false
     }
 }

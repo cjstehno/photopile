@@ -99,6 +99,8 @@ public class ImportScanner implements MessageListener {
             log.debug( "Submitted results for ({} : {}) to user message queue.", dir, username );
 
         } catch( Exception ex ){
+            ex.printStackTrace();
+
             rabbitTemplate.convertAndSend( EXCHANGE_NAME, MESSAGE_QUEUE_NAME, new UserMessage(
                 username,
                 messageSource.getMessage( ERROR_TITLE, new Object[0], Locale.getDefault() ),
