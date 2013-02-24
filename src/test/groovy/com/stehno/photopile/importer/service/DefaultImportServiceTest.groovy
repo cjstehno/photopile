@@ -16,32 +16,40 @@
 
 package com.stehno.photopile.importer.service
 
-import com.stehno.photopile.util.WorkQueues
+import com.stehno.photopile.SecurityEnvironment
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
+import org.springframework.amqp.core.MessagePostProcessor
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 
+import static org.mockito.Matchers.any
+import static org.mockito.Matchers.eq
 import static org.mockito.Mockito.verify
 
 @RunWith(MockitoJUnitRunner)
 class DefaultImportServiceTest {
 
+    @Rule
+    public SecurityEnvironment securityEnvironment = new SecurityEnvironment( username:'fooser' )
+
     private DefaultImportService importService
 
     @Mock
-    private WorkQueues workQueues
+    private RabbitTemplate rabbitTemplate
 
     @Before
     void before(){
-        importService = new DefaultImportService( workQueues:workQueues )
+        importService = new DefaultImportService( rabbitTemplate: rabbitTemplate )
     }
 
     @Test
     void scheduleImportScan(){
         importService.scheduleImportScan('foo')
 
-        verify(workQueues).submit('foo')
+        verify(rabbitTemplate).convertAndSend( eq(''), eq('queues.import.scanner'), (String)eq('foo'), (MessagePostProcessor)any(MessagePostProcessor))
     }
 }

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer.scanner
+package com.stehno.photopile.importer.component
 
 import com.stehno.photopile.SecurityEnvironment
 import com.stehno.photopile.usermsg.domain.MessageType
 import com.stehno.photopile.usermsg.domain.UserMessage
-import com.stehno.photopile.util.WorkQueue
-import com.stehno.photopile.util.WorkQueues
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,15 +29,18 @@ import org.mockito.ArgumentMatcher
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
+import org.springframework.amqp.core.Message
+import org.springframework.amqp.core.MessageProperties
+import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.context.support.StaticMessageSource
 
 import static junit.framework.Assert.assertEquals
-import static org.mockito.Matchers.any
 import static org.mockito.Matchers.argThat
+import static org.mockito.Matchers.eq
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner)
-class ScanTaskTest {
+class ImportScannerTest {
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -47,13 +48,10 @@ class ScanTaskTest {
     @Rule
     public SecurityEnvironment securityEnvironment = new SecurityEnvironment( username:'Admin' )
 
-    private ScanTask task
+    private ImportScanner importScanner
 
     @Mock
-    private WorkQueues workQueues
-
-    @Mock
-    private WorkQueue<UserMessage> queue
+    private RabbitTemplate rabbitTemplate
 
     @Captor
     private ArgumentCaptor<UserMessage> userMessageCaptor
@@ -63,24 +61,22 @@ class ScanTaskTest {
         temporaryFolder.newFile('some.jpg').bytes = 'somefakeimagedata'.getBytes()
         temporaryFolder.newFile('some.txt').text = 'some fake text data'
 
-        when(workQueues.findWorkQueue(any())).thenReturn(queue)
-
         def messageSource = new StaticMessageSource()
-        messageSource.addMessage(ScanTask.SUCCESS_TITLE, Locale.getDefault(), 'success_title')
-        messageSource.addMessage(ScanTask.SUCCESS_MESSAGE, Locale.getDefault(), '{0},{1},{2},{3},{4}')
-        messageSource.addMessage(ScanTask.ERROR_TITLE, Locale.getDefault(), 'error_title')
-        messageSource.addMessage(ScanTask.ERROR_MESSAGE, Locale.getDefault(), '{0},{1}')
+        messageSource.addMessage(ImportScanner.SUCCESS_TITLE, Locale.getDefault(), 'success_title')
+        messageSource.addMessage(ImportScanner.SUCCESS_MESSAGE, Locale.getDefault(), '{0},{1},{2},{3},{4}')
+        messageSource.addMessage(ImportScanner.ERROR_TITLE, Locale.getDefault(), 'error_title')
+        messageSource.addMessage(ImportScanner.ERROR_MESSAGE, Locale.getDefault(), '{0},{1}')
 
-        task = new ScanTask( workQueues:workQueues, messageSource:messageSource )
+        importScanner = new ImportScanner( rabbitTemplate: rabbitTemplate, messageSource:messageSource )
     }
 
     @Test
     void 'doRun: success'(){
         def dir = temporaryFolder.getRoot().toString()
 
-        task.doRun(dir)
+        importScanner.onMessage( new Message( dir.bytes, new MessageProperties() ) )
 
-        verify(workQueues).submit(userMessageCaptor.capture())
+        verify(rabbitTemplate).convertAndSend(eq(''), eq('queues.user.message'), userMessageCaptor.capture())
 
         def argument = userMessageCaptor.value
         assertEquals 'Admin', argument.username
@@ -90,14 +86,14 @@ class ScanTaskTest {
 
     @Test
     void 'doRun: error'(){
-        doThrow(new RuntimeException('bad')).when(workQueues).submit(argThat(new IsMessageType(messageType:MessageType.INFO)))
+        doThrow(new RuntimeException('bad')).when(rabbitTemplate).convertAndSend(argThat(new IsMessageType(messageType:MessageType.INFO)))
         doNothing().when(workQueues).submit(argThat(new IsMessageType(messageType:MessageType.ERROR)))
 
         def dir = temporaryFolder.getRoot().toString()
 
-        task.doRun(dir)
+        importScanner.onMessage( new Message( dir.bytes, new MessageProperties() ) )
 
-        verify(workQueues, times(2)).submit(userMessageCaptor.capture())
+        verify(rabbitTemplate, times(2)).convertAndSend(eq(''), eq('queues.user.message'), userMessageCaptor.capture())
 
         def argument = userMessageCaptor.allValues[1]
         assertEquals 'Admin', argument.username

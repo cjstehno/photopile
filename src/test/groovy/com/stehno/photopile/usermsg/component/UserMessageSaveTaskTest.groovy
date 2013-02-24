@@ -18,11 +18,14 @@ package com.stehno.photopile.usermsg.component
 
 import com.stehno.photopile.usermsg.UserMessageService
 import com.stehno.photopile.usermsg.domain.UserMessage
+import org.apache.commons.lang.SerializationUtils
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
+import org.springframework.amqp.core.Message
+import org.springframework.amqp.core.MessageProperties
 
 import static org.mockito.Mockito.verify
 
@@ -41,9 +44,10 @@ class UserMessageSaveTaskTest {
 
     @Test
     void running(){
-        def message = new UserMessage('someuser','title','some content')
-        task.doRun(message)
+        def userMessage = new UserMessage('someuser','title','some content')
 
-        verify(userMessageService).create(message)
+        task.onMessage( new Message( SerializationUtils.serialize(userMessage), new MessageProperties() ) )
+
+        verify(userMessageService).create(userMessage)
     }
 }

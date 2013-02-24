@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer.scanner
+package com.stehno.photopile.importer.component
 
-import com.stehno.photopile.importer.component.ScanningVisitor
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
