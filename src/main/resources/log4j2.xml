@@ -22,10 +22,9 @@
         </Console>
     </appenders>
     <loggers>
-        <logger name="org.apache.shiro" level="WARN"/>
-        <logger name="org.springframework" level="INFO"/>
-        <logger name="org.springframework.jdbc" level="INFO"/>
-        <logger name="org.springframework.integration" level="INFO" />
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="org.springframework.jdbc" level="WARN"/>
+        <logger name="org.springframework.security" level="WARN" />
 
         <logger name="com.stehno.photopile" level="INFO"/>
         <logger name="com.stehno.photopile.config" level="INFO"/>
