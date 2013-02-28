@@ -73,3 +73,17 @@ BOOTSTRAP
 
 mouse over photo to display name
 click photo to open in full view (full content) with details side panel) x to return to previous view
+
+
+------------------------------------
+domain
+------------------------------------
+
+album
+    id
+    name
+    description
+
+album_photos
+    photo_id
+    album_id

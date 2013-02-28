@@ -26,8 +26,12 @@ import static org.mockito.Mockito.when
  */
 class ResultSetMocks {
 
-    void whenDouble(  ResultSet resultSet, String field, Double value ) throws SQLException{
+    void whenDouble( ResultSet resultSet, String field, Double value ) throws SQLException {
         when( resultSet.getDouble( field ) ).thenReturn( value )
+    }
+
+    void whenObject( ResultSet resultSet, String field, Object value ) throws SQLException {
+        when( resultSet.getObject( field ) ).thenReturn( value )
     }
 
     void whenDate( ResultSet resultSet, String field, java.sql.Date date ) throws SQLException{

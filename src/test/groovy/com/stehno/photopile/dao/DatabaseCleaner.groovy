@@ -41,7 +41,7 @@ class DatabaseCleaner extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         tables.each { table->
-            jdbcTemplate.execute("truncate table $table")
+            jdbcTemplate.execute("truncate table $table cascade")
         }
     }
 

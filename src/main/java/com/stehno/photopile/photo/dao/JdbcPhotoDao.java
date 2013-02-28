@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.dao;
+package com.stehno.photopile.photo.dao;
 
-import com.stehno.photopile.domain.Photo;
+import com.stehno.photopile.photo.PhotoDao;
+import com.stehno.photopile.photo.domain.Location;
+import com.stehno.photopile.photo.domain.Photo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -55,9 +57,17 @@ public class JdbcPhotoDao implements PhotoDao {
         photo.setId( null );
         photo.setVersion( 0L );
 
+        final Location location = photo.getLocation();
+
         final PreparedStatementCreator saveStatementCreator = saveCreatorFactory.newPreparedStatementCreator(
             new Object[]{
-                photo.getVersion(), photo.getName(), photo.getDescription(), photo.getCameraInfo(), photo.getDateTaken(), photo.getLatitude(), photo.getLongitude()
+                photo.getVersion(),
+                photo.getName(),
+                photo.getDescription(),
+                photo.getCameraInfo(),
+                photo.getDateTaken(),
+                location != null ? location.getLatitude() : null,
+                location != null ? location.getLongitude() : null
             }
         );
 

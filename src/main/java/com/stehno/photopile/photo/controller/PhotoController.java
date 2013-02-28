@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.controller;
+package com.stehno.photopile.photo.controller;
 
-import com.stehno.photopile.service.PhotoService;
+import com.stehno.photopile.photo.PhotoService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

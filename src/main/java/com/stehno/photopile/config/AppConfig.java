@@ -1,6 +1,7 @@
 package com.stehno.photopile.config;
 
 import com.stehno.photopile.importer.ImporterConfig;
+import com.stehno.photopile.photo.PhotoConfig;
 import com.stehno.photopile.security.SecurityConfig;
 import com.stehno.photopile.usermsg.UserMsgConfig;
 import org.crsh.spring.SpringWebBootstrap;
@@ -30,12 +31,12 @@ import java.util.Properties;
 @EnableWebMvc
 @Import({
     SecurityConfig.class,
+    PhotoConfig.class,
     ImporterConfig.class,
     UserMsgConfig.class
 })
 @ComponentScan({
-    "com.stehno.photopile.controller",
-    "com.stehno.photopile.service"
+    "com.stehno.photopile.controller"
 })
 public class AppConfig extends WebMvcConfigurerAdapter {
 

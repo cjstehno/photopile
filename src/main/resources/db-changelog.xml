@@ -20,32 +20,6 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
     <changeSet id="1" author="cjstehno">
-        <createTable tableName="photos">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="version" type="bigint" defaultValueNumeric="0">
-                <constraints nullable="false"/>
-            </column>
-
-            <column name="name" type="varchar(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="description" type="varchar(2000)"/>
-            <column name="camera_info" type="varchar(100)"/>
-
-            <column name="date_uploaded" type="datetime" defaultValueComputed="now()">
-                <constraints nullable="false"/>
-            </column>
-            <column name="date_updated" type="datetime" defaultValueComputed="now()">
-                <constraints nullable="false"/>
-            </column>
-            <column name="date_taken" type="datetime"/>
-
-            <column name="latitude" type="double"/>
-            <column name="longitude" type="double"/>
-        </createTable>
-
         <createTable tableName="user_messages">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -95,6 +69,39 @@
             <column name="series" type="varchar(64)"><constraints primaryKey="true" /></column>
             <column name="token" type="varchar(64)"><constraints nullable="false" /></column>
             <column name="last_used" type="timestamp"><constraints nullable="false" /></column>
+        </createTable>
+
+        <!-- photo tables -->
+
+        <createTable tableName="photos">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="version" type="bigint" defaultValueNumeric="0"><constraints nullable="false"/></column>
+            <column name="name" type="varchar(50)"><constraints nullable="false"/></column>
+            <column name="description" type="varchar(2000)"/>
+            <column name="camera_info" type="varchar(100)"/>
+            <column name="date_uploaded" type="datetime" defaultValueComputed="now()"><constraints nullable="false"/></column>
+            <column name="date_updated" type="datetime" defaultValueComputed="now()"><constraints nullable="false"/></column>
+            <column name="date_taken" type="datetime"/>
+            <column name="latitude" type="double"/>
+            <column name="longitude" type="double"/>
+        </createTable>
+        <createTable tableName="images">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="photo_id" type="bigint"><constraints nullable="false"/></column>
+            <column name="scale" type="varchar(10)"><constraints nullable="false"/></column>
+            <column name="width" type="int"><constraints nullable="false"/></column>
+            <column name="height" type="int"><constraints nullable="false"/></column>
+            <column name="content_length" type="bigint"><constraints nullable="false"/></column>
+            <column name="content_type" type="varchar(50)"><constraints nullable="false"/></column>
+            <column name="content" type="bytea"><constraints nullable="false" /></column>
+        </createTable>
+        <addForeignKeyConstraint constraintName="fk_images_photos"
+                                 baseTableName="images" baseColumnNames="photo_id"
+                                 referencedTableName="photos" referencedColumnNames="id" />
+
+        <createTable tableName="photo_tags">
+            <column name="photo_id" type="bigint"><constraints nullable="false"/></column>
+            <column name="tag" type="varchar(25)"><constraints nullable="false" /></column>
         </createTable>
 
     </changeSet>

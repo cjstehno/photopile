@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.dao;
+package com.stehno.photopile.photo;
 
-import com.stehno.photopile.domain.Photo;
+
+import com.stehno.photopile.photo.domain.Photo;
 
 import java.util.List;
 

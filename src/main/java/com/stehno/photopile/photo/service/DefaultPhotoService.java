@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.service;
+package com.stehno.photopile.photo.service;
 
-import com.stehno.photopile.dao.PhotoDao;
-import com.stehno.photopile.domain.Photo;
+import com.stehno.photopile.photo.PhotoDao;
+import com.stehno.photopile.photo.PhotoService;
+import com.stehno.photopile.photo.domain.Photo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

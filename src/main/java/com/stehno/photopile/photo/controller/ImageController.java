@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.controller;
+package com.stehno.photopile.photo.controller;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;

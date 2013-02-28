@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.dao;
+package com.stehno.photopile.photo.dao;
 
-import com.stehno.photopile.domain.Photo;
+import com.stehno.photopile.photo.domain.Location;
+import com.stehno.photopile.photo.domain.Photo;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -42,8 +43,12 @@ public class PhotoRowMapper implements RowMapper<Photo> {
         photo.setDateUpdated( resultSet.getDate( "date_updated" ) );
         photo.setDateUploaded( resultSet.getDate( "date_uploaded" ) );
 
-        photo.setLatitude( resultSet.getDouble( "latitude" ) );
-        photo.setLongitude( resultSet.getDouble( "longitude" ) );
+        final Double latitude = (Double)resultSet.getObject( "latitude" );
+        final Double longitude = (Double)resultSet.getObject( "longitude" );
+
+        if( latitude != null && longitude != null ){
+            photo.setLocation( new Location( latitude, longitude ) );
+        }
 
         return photo;
     }

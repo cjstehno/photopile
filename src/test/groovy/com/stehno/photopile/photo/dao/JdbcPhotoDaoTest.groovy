@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.dao
+package com.stehno.photopile.photo.dao
 
-import com.stehno.photopile.domain.Photo
+import com.stehno.photopile.dao.DatabaseCleaner
+import com.stehno.photopile.dao.DatabaseEnvironment
+import com.stehno.photopile.dao.Integration
+import com.stehno.photopile.photo.domain.Photo
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.Rule
@@ -25,6 +28,7 @@ import org.junit.experimental.categories.Category
 
 import static junit.framework.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
+import static org.junit.Assert.assertNull
 
 @Category(Integration)
 class JdbcPhotoDaoTest {
@@ -33,7 +37,7 @@ class JdbcPhotoDaoTest {
     public static DatabaseEnvironment databaseEnvironment = new DatabaseEnvironment()
 
     @Rule
-    public DatabaseCleaner databaseCleaner = new DatabaseCleaner( jdbcTemplate:databaseEnvironment.jdbcTemplate, tables:['photos'] )
+    public DatabaseCleaner databaseCleaner = new DatabaseCleaner( jdbcTemplate:databaseEnvironment.jdbcTemplate, tables:['images','photos'] )
 
     private static final String CAMERA_INFO = '6000-SUX'
     private JdbcPhotoDao photoDao
@@ -70,8 +74,7 @@ class JdbcPhotoDaoTest {
         assertNotNull dateTaken
         assertNotNull loadedPhoto.getDateUploaded()
         assertNotNull loadedPhoto.getDateUpdated()
-        assertEquals 0D, loadedPhoto.getLatitude()
-        assertEquals 0D, loadedPhoto.getLongitude()
+        assertNull loadedPhoto.getLocation()
     }
 
     @Test
