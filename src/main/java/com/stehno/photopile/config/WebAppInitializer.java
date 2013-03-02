@@ -29,16 +29,21 @@ import javax.servlet.ServletRegistration;
 
 /**
  * Web application spring context configuration.
+ *
+ * -Dspring.profiles.active="profile1,profile2"
  */
 @SuppressWarnings("UnusedDeclaration")
 public class WebAppInitializer implements WebApplicationInitializer {
 
     private static final String SECURITY_FILTER_NAME = "springSecurityFilterChain";
+    private static final String PROFILE_PROD = "prod";
+    private static final String PROFILE_SHELL = "shell";
 
     @Override
     public void onStartup( ServletContext servletContext ) throws ServletException{
         final AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
         root.setServletContext( servletContext );
+        root.getEnvironment().setDefaultProfiles( PROFILE_PROD, PROFILE_SHELL );
         root.scan("com.stehno.photopile.config");
         root.refresh();
 

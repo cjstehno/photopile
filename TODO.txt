@@ -1,4 +1,17 @@
 
+photo importer
+    -   actual import rather than scan
+        1.  perform scan to gather files - store scan results somewhere
+        2.  add each import file path to import queue
+            1.  load file & extract its meta data
+            2.  save photo, image, tags
+            3.  add to scaling queue
+            4.  note completion of specific file path
+        3.  when all files uploaded create result message on usermsg queue
+
+-   store current job details in memory (ehcache persistent cache?)
+
+
 Project To Do
 -------------
 
@@ -17,10 +30,6 @@ Project To Do
     -   details available in side panel
 
 -   formatting rules
--   setup db realm
-
--   crash setup
-    -   for some reason there are classloader issues when I try to integrate the crash server
 
 -   project analysis and reporting
 -   maybe break down packages by functional area

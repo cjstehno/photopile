@@ -1,0 +1,19 @@
+
+
+
+# user has a large number of photos to import (bulk server import)
+    * this is basically the same as initial photo bootstrap (but only admin and allows any directory on server)
+    -   limits directory to UPLOAD_DIR + username
+    1   user copies photos to their upload directory on server
+    2   user initiates import via ui (background job)
+        -   request queued on import scanner
+            -   each file added to file processing queue
+                -   when done results added to message queue (and email queue if requested)
+    3   user notified (email or web) when job is done
+
+# user has a few photos to import (web upload)
+
+
+--------------------- not supported ---------------------
+
+4.  user has a large number of photos to import (no server fs access)
