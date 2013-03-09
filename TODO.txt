@@ -1,4 +1,7 @@
 
+!   break up the db changelogs
+
+
 photo importer
     -   actual import rather than scan
         1.  perform scan to gather files - store scan results somewhere
