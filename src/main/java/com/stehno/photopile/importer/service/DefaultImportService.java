@@ -37,16 +37,35 @@ public class DefaultImportService implements ImportService {
     private static final String QUEUE_NAME = "queues.import.scanner";
     private static final String EXCHANGE_NAME = "";
 
+    // FIXME: this needs to be configured
+    public String rootImportDir = "p:/";
+
     @Autowired
     public RabbitTemplate rabbitTemplate;
 
     private MessagePostProcessor postProcessor = new UsernamePostProcessor();
 
     @Override
-    public void scheduleImportScan( final String directory ){
+    public void scheduleImport( final String directory ){
+        verifyDirectoryAccess( directory );
+
         rabbitTemplate.convertAndSend( EXCHANGE_NAME, QUEUE_NAME, directory, postProcessor );
 
         log.info( "Scheduled import scan for directory ({}) for '{}'", directory, SecurityUtils.currentUsername() );
+    }
+
+    @Override
+    public String defaultPath(){
+        return rootImportDir + SecurityUtils.currentUsername();
+    }
+
+    private void verifyDirectoryAccess( final String dir ){
+        // FIXME: need to limit USERs to their own directory (role based)
+        // FIXME: admin can load from anywhere
+
+//        if( SecurityUtils.currentUsername() != "admin" && !dir.startsWith( defaultPath() ) ){
+//            throw new IllegalArgumentException( "Not allowed" ); // TODO: custom exception
+//        }
     }
 
     private static class UsernamePostProcessor implements MessagePostProcessor {

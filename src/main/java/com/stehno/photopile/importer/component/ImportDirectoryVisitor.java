@@ -26,29 +26,29 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * FileVisitor implementation used to process a single filesystem scan operation.
+ * FileVisitor implementation used to process a single filesystem scan operation (should be created for each job).
  */
-class ScanningVisitor extends SimpleFileVisitor<Path> {
+class ImportDirectoryVisitor extends SimpleFileVisitor<Path> {
 
-    private static final Logger log = LogManager.getLogger( ScanningVisitor.class );
+    private static final Logger log = LogManager.getLogger( ImportDirectoryVisitor.class );
     private static final String ALLOWED_EXTENSION = ".jpg";
-    private static final char PERIOD = '.';
-    private final ScanResults results = new ScanResults();
+    private final ImportDirectoryVisitObserver observer;
 
-    ScanResults getResults(){
-        return results;
+    /**
+     */
+    ImportDirectoryVisitor( final ImportDirectoryVisitObserver observer ){
+        this.observer = observer;
     }
 
     @Override
     public FileVisitResult visitFile( final Path path, final BasicFileAttributes attributes ) throws IOException{
-        final String fileName = path.getFileName().toString();
-        final boolean canRead = path.toFile().canRead();
+        final boolean allowedExt = path.getFileName().toString().toLowerCase().endsWith( ALLOWED_EXTENSION );
 
-        if( attributes.isRegularFile() && canRead && isAllowedExtension(fileName) ){
-            results.addAcceptedFile( path.toString(), attributes.size() );
+        if( attributes.isRegularFile() && path.toFile().canRead() && allowedExt ){
+            observer.accepted( path, attributes );
 
         } else {
-            results.addSkippedExtension( extractExtension(fileName) );
+            observer.skipped( path, attributes );
         }
 
         return super.visitFile( path, attributes );
@@ -58,14 +58,8 @@ class ScanningVisitor extends SimpleFileVisitor<Path> {
     public FileVisitResult visitFileFailed( final Path path, final IOException e ) throws IOException{
         log.warn( "File visit failed for {}, with {}", path, e.getMessage() );
 
+        observer.failed( path, e );
+
         return FileVisitResult.CONTINUE;
-    }
-
-    private boolean isAllowedExtension( final String fileName ){
-        return fileName.toLowerCase().endsWith( ALLOWED_EXTENSION );
-    }
-
-    private String extractExtension( final String fileName ){
-        return fileName.substring( fileName.lastIndexOf( PERIOD ) );
     }
 }

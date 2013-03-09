@@ -27,8 +27,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public class ServerImport {
 
     private String path;
-    private boolean preview;
-    private boolean understand;
 
     public String getPath(){
         return path;
@@ -38,28 +36,10 @@ public class ServerImport {
         this.path = path;
     }
 
-    public boolean isPreview(){
-        return preview;
-    }
-
-    public void setPreview( final boolean preview ){
-        this.preview = preview;
-    }
-
-    public boolean isUnderstand(){
-        return understand;
-    }
-
-    public void setUnderstand( final boolean understand ){
-        this.understand = understand;
-    }
-
     @Override
     public int hashCode(){
         return new HashCodeBuilder()
             .append(path)
-            .append( preview )
-            .append( understand )
             .toHashCode();
     }
 
@@ -70,8 +50,6 @@ public class ServerImport {
             final ServerImport otr = (ServerImport)other;
             eq = new EqualsBuilder()
                 .append(path, otr.path)
-                .append( preview, otr.preview )
-                .append( understand, otr.understand )
                 .isEquals();
         }
         return eq;
@@ -81,8 +59,6 @@ public class ServerImport {
     public String toString(){
         return new ToStringBuilder( this, ToStringStyle.DEFAULT_STYLE )
             .append( "path", path )
-            .append( "preview", preview )
-            .append( "understand", understand )
             .toString();
     }
 }

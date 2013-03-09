@@ -16,7 +16,10 @@
 
 package com.stehno.photopile.importer;
 
-import com.stehno.photopile.importer.component.ImportScanner;
+import com.stehno.photopile.importer.component.CommonsImagingMetadataExtractor;
+import com.stehno.photopile.importer.component.ImportMessageListener;
+import com.stehno.photopile.importer.component.ImportProcessingListener;
+import com.stehno.photopile.importer.component.PhotoMetadataExtractor;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
@@ -41,17 +44,36 @@ public class ImporterConfig {
     private ConnectionFactory connectionFactory;
 
     @Autowired
-    private ImportScanner importScanner;
+    private ImportMessageListener importMessageListener;
+
+    @Autowired
+    private ImportProcessingListener importProcessingListener;
 
     @Autowired
     private ErrorHandler errorHandler;
 
     @Bean
+    public PhotoMetadataExtractor photoMetadataExtractor(){
+        return new CommonsImagingMetadataExtractor();
+    }
+
+    @Bean
     public SimpleMessageListenerContainer importScannerContainer(){
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer( connectionFactory );
-        container.setMessageListener( importScanner );
+        container.setMessageListener( importMessageListener );
         container.setAcknowledgeMode( AcknowledgeMode.AUTO );
         container.setQueueNames( "queues.import.scanner" );
+        container.setErrorHandler( errorHandler );
+        return container;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer importProcessingContainer(){
+        SimpleMessageListenerContainer container = new SimpleMessageListenerContainer( connectionFactory );
+        container.setMessageListener( importProcessingListener );
+        container.setAcknowledgeMode( AcknowledgeMode.AUTO );
+        container.setQueueNames( "queues.import.processing" );
+        container.setConcurrentConsumers( 2 );
         container.setErrorHandler( errorHandler );
         return container;
     }

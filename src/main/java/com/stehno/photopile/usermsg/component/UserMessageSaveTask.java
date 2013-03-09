@@ -16,6 +16,7 @@
 
 package com.stehno.photopile.usermsg.component;
 
+import com.stehno.photopile.usermsg.UserMessageBuilder;
 import com.stehno.photopile.usermsg.UserMessageService;
 import com.stehno.photopile.usermsg.domain.UserMessage;
 import com.stehno.photopile.util.Clock;
@@ -25,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -39,12 +41,16 @@ public class UserMessageSaveTask implements MessageListener {
     @Autowired
     private UserMessageService userMessageService;
 
+    @Autowired
+    private MessageSource messageSource;
+
     @Override
     public void onMessage( final Message message ){
         final Clock clock = new Clock( TAG, log );
 
         try {
-            final UserMessage userMessage = (UserMessage)SerializationUtils.deserialize( message.getBody() );
+            final UserMessageBuilder builder = (UserMessageBuilder)SerializationUtils.deserialize( message.getBody() );
+            final UserMessage userMessage = builder.build( messageSource );
 
             log.debug( "Creating user message for {}", userMessage.getUsername() );
 

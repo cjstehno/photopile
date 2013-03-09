@@ -14,19 +14,28 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer;
+package com.stehno.photopile.importer.component;
+
 
 /**
- * FIXME: document
+ * Storage and management for the import coordinators.
  */
-public interface ImportService {
+interface ImportCoordinatorProvider {
 
     /**
-     * Schedules the background job which will run the filesystem scan of the given directory and import its photos.
+     * Creates a new import coordinator and stores it in an implementation-dependent storage area.
      *
-     * @param directory the directory (on the server) to be scanned
+     * @return a new empty ImportCoordinator
      */
-    void scheduleImport( final String directory );
+    ImportCoordinator create();
 
-    String defaultPath();
+    /**
+     * Registers the coordinator to watch for its completion.
+     * This method should return right away so that other execution may continue.
+     *
+     * @param coordinator
+     */
+    void watch( ImportCoordinator coordinator );
+
+    ImportCoordinator find( final String coordinatorId );
 }

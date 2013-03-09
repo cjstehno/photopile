@@ -30,9 +30,7 @@ PP.views.ImporterDialog = (function () {
 
         events: {
             'click button.btn-primary': 'onImportClicked',
-            'click button[data-dismiss=modal]': 'onDialogHidden',
-            'change input[type=checkbox]': 'onUnderstandChanged'
-            // FIXME: fix checkbox resolution
+            'click button[data-dismiss=modal]': 'onDialogHidden'
         },
 
         openDialog: function () {
@@ -72,9 +70,7 @@ PP.views.ImporterDialog = (function () {
                 var theModel = this.model;
                 theModel.save(
                     {
-                        path:$('form input[name=path]', this.el).val(),
-                        preview:$('form input[name=preview]', this.el).is(':checked'),
-                        understand:$('form input[name=understand]', this.el).is(':checked')
+                        path:$('form input[name=path]', this.el).val()
                     },
                     {
                         success:function(){

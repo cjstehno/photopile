@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer;
+package com.stehno.photopile.importer.component;
 
 /**
- * FIXME: document
+ * Provides a means of extracting any relevant metadata from the image content.
  */
-public interface ImportService {
+public interface PhotoMetadataExtractor {
 
     /**
-     * Schedules the background job which will run the filesystem scan of the given directory and import its photos.
+     * Extracts the metadata from the image content data and builds a PhotoMetadata instance.
      *
-     * @param directory the directory (on the server) to be scanned
+     * @param content the image content
+     * @return a PhotoMetadata object populated with all available data
      */
-    void scheduleImport( final String directory );
-
-    String defaultPath();
+    PhotoMetadata extract( final byte[] content );
 }

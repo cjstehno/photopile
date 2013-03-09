@@ -15,39 +15,59 @@
  */
 
 package com.stehno.photopile.usermsg.component
-
+import com.stehno.photopile.usermsg.UserMessageBuilder
 import com.stehno.photopile.usermsg.UserMessageService
 import com.stehno.photopile.usermsg.domain.UserMessage
 import org.apache.commons.lang.SerializationUtils
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
+import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
 import org.springframework.amqp.core.Message
 import org.springframework.amqp.core.MessageProperties
+import org.springframework.context.MessageSource
+import org.springframework.context.support.StaticMessageSource
 
+import static groovy.util.GroovyTestCase.assertEquals
 import static org.mockito.Mockito.verify
 
 @RunWith(MockitoJUnitRunner)
 class UserMessageSaveTaskTest {
 
     private UserMessageSaveTask task
+    private MessageSource messageSource
 
     @Mock
     private UserMessageService userMessageService
 
+    @Captor
+    private ArgumentCaptor<UserMessage> userMessageCaptor
+
     @Before
     void before(){
-        task = new UserMessageSaveTask(userMessageService:userMessageService)
+        messageSource = new StaticMessageSource()
+        messageSource.addMessage('msg.title', Locale.getDefault(), 'title')
+        messageSource.addMessage('msg.text', Locale.getDefault(), 'some content')
+
+        task = new UserMessageSaveTask(
+            messageSource:messageSource,
+            userMessageService:userMessageService
+        )
     }
 
     @Test
     void running(){
-        def userMessage = new UserMessage('someuser','title','some content')
+        def builder = new UserMessageBuilder('someuser','msg.title', 'msg.text')
 
-        task.onMessage( new Message( SerializationUtils.serialize(userMessage), new MessageProperties() ) )
+        task.onMessage( new Message( SerializationUtils.serialize(builder), new MessageProperties() ) )
 
-        verify(userMessageService).create(userMessage)
+        verify(userMessageService).create(userMessageCaptor.capture())
+
+        assertEquals( 'someuser', userMessageCaptor.value.username )
+        assertEquals( 'title', userMessageCaptor.value.title )
+        assertEquals( 'some content', userMessageCaptor.value.content )
     }
 }

@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer;
+package com.stehno.photopile.importer.component;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * FIXME: document
+ * Created with IntelliJ IDEA.
+ * User: cjstehno
+ * Date: 3/2/13
+ * Time: 11:28 AM
+ * To change this template use File | Settings | File Templates.
  */
-public interface ImportService {
+interface ImportDirectoryVisitObserver {
 
-    /**
-     * Schedules the background job which will run the filesystem scan of the given directory and import its photos.
-     *
-     * @param directory the directory (on the server) to be scanned
-     */
-    void scheduleImport( final String directory );
+    void accepted( final Path path, final BasicFileAttributes attrs );
 
-    String defaultPath();
+    void skipped( final Path path, final BasicFileAttributes attrs );
+
+    void failed( final Path path, IOException ioe );
 }

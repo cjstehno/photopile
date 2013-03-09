@@ -15,7 +15,6 @@
  */
 
 package com.stehno.photopile.importer.component
-
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -29,13 +28,13 @@ import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 
 import static junit.framework.Assert.assertEquals
-import static junit.framework.Assert.assertTrue
+import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
 
 @RunWith(MockitoJUnitRunner)
-class ScanningVisitorTest {
+class ImportDirectoryVisitorTest {
 
-    private ScanningVisitor visitor
+    private ImportDirectoryVisitor visitor
 
     @Rule
     public final TemporaryFolder temporaryFolder = new TemporaryFolder()
@@ -43,12 +42,15 @@ class ScanningVisitorTest {
     @Mock
     private BasicFileAttributes fileAttributes
 
+    @Mock
+    private ImportDirectoryVisitObserver observer
+
     @Before
     void before(){
         temporaryFolder.newFile('some.jpg')
         temporaryFolder.newFile('some.txt')
 
-        visitor = new ScanningVisitor()
+        visitor = new ImportDirectoryVisitor(observer)
     }
 
     @Test
@@ -60,9 +62,7 @@ class ScanningVisitorTest {
 
         assertEquals FileVisitResult.CONTINUE, visitor.visitFile( path, fileAttributes )
 
-        def results = visitor.getResults()
-        assertCounts 1, 0, results
-        assertTrue results.getAcceptedFiles().contains(path.toString())
+        verify(observer).accepted( path, fileAttributes )
     }
 
     @Test
@@ -73,16 +73,11 @@ class ScanningVisitorTest {
 
         assertEquals FileVisitResult.CONTINUE, visitor.visitFile( path, fileAttributes )
 
-        assertCounts 0, 1, visitor.getResults()
+        verify(observer).skipped(path,fileAttributes)
     }
 
     @Test
     void visitFileFailed(){
         assertEquals FileVisitResult.CONTINUE, visitor.visitFileFailed( Paths.get(temporaryFolder.getRoot().toURI()), new IOException() )
-    }
-
-    private void assertCounts( int accepted, int skipped, results ){
-        assertEquals accepted, results.getAcceptedCount()
-        assertEquals skipped, results.getSkippedCount()
     }
 }

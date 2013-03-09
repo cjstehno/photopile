@@ -68,6 +68,11 @@ public class RabbitConfig {
     }
 
     @Bean
+    public Queue importProcessingQueue() {
+        return new Queue("queues.import.processing");
+    }
+
+    @Bean
     public Queue userMessageQueue() {
         return new Queue("queues.user.message");
     }
@@ -77,6 +82,7 @@ public class RabbitConfig {
         return new ErrorHandler() {
             @Override
             public void handleError( final Throwable throwable ){
+                throwable.printStackTrace();
                 log.error( "Rabbit queue error: " + throwable.getMessage(), throwable );
             }
         };

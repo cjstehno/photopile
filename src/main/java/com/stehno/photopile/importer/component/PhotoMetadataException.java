@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer;
+package com.stehno.photopile.importer.component;
 
 /**
- * FIXME: document
+ * Created with IntelliJ IDEA.
+ * User: cjstehno
+ * Date: 3/9/13
+ * Time: 6:21 AM
+ * To change this template use File | Settings | File Templates.
  */
-public interface ImportService {
+public class PhotoMetadataException extends RuntimeException {
 
-    /**
-     * Schedules the background job which will run the filesystem scan of the given directory and import its photos.
-     *
-     * @param directory the directory (on the server) to be scanned
-     */
-    void scheduleImport( final String directory );
-
-    String defaultPath();
+    public PhotoMetadataException( final String message, final Exception cause ){
+        super( message, cause );
+    }
 }

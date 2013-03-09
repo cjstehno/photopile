@@ -37,12 +37,10 @@ public class ImportController {
     @Autowired
     private ImportService importService;
 
+    // FIXME: need to provide default path for import based on the user
+
     /**
-     * Initiates the scanning or actual import of photo data from a location on the server itself.
      *
-     * A ServerImport.preview value of true will only run the scan and not actually import any files.
-     *
-     * The ServerImport.understand property must be true to proceed.
      *
      * @param serverImport the incoming data from the client
      * @return a response entity populated with either an error or the current state of the ServerImport object
@@ -50,17 +48,9 @@ public class ImportController {
     @RequestMapping(value="/import", method=RequestMethod.POST, consumes="application/json", produces="application/json")
     public ResponseEntity<?> serverImport( @RequestBody final ServerImport serverImport ){
         // TODO: use validation?
-        if( serverImport.isUnderstand() ){
-            if( serverImport.isPreview() ){
-                importService.scheduleImportScan( serverImport.getPath() );
+        // TODO: error handling
 
-            } else {
-                // FIXME: schedule actual import
-            }
-
-        } else {
-            return new ResponseEntity<>( "You do not understand what you are doing!", HttpStatus.BAD_REQUEST );
-        }
+        importService.scheduleImport( serverImport.getPath() );
 
         return new ResponseEntity<>( serverImport, HttpStatus.ACCEPTED );
     }
