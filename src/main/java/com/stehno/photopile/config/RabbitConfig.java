@@ -62,15 +62,6 @@ public class RabbitConfig {
     }
 
     // FIXME: may want to move into the importer module
-    @Bean
-    public Queue importScannerQueue() {
-        return new Queue("queues.import.scanner");
-    }
-
-    @Bean
-    public Queue importProcessingQueue() {
-        return new Queue("queues.import.processing");
-    }
 
     @Bean
     public Queue userMessageQueue() {

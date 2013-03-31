@@ -37,7 +37,7 @@
             <column name="content" type="varchar(2000)">
                 <constraints nullable="false"/>
             </column>
-            <column name="date_created" type="datetime" defaultValueComputed="now()">
+            <column name="date_created" type="timestamp" defaultValueComputed="now()">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -71,7 +71,7 @@
             <column name="last_used" type="timestamp"><constraints nullable="false" /></column>
         </createTable>
 
-        <!-- photo tables -->
+        <!-- buildPhoto tables -->
 
         <createTable tableName="photos">
             <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" nullable="false"/></column>
@@ -79,22 +79,23 @@
             <column name="name" type="varchar(50)"><constraints nullable="false"/></column>
             <column name="description" type="varchar(2000)"/>
             <column name="camera_info" type="varchar(100)"/>
-            <column name="date_uploaded" type="datetime" defaultValueComputed="now()"><constraints nullable="false"/></column>
-            <column name="date_updated" type="datetime" defaultValueComputed="now()"><constraints nullable="false"/></column>
-            <column name="date_taken" type="datetime"/>
+            <column name="date_uploaded" type="timestamp" defaultValueComputed="now()"><constraints nullable="false"/></column>
+            <column name="date_updated" type="timestamp" defaultValueComputed="now()"><constraints nullable="false"/></column>
+            <column name="date_taken" type="timestamp"/>
             <column name="latitude" type="double"/>
             <column name="longitude" type="double"/>
         </createTable>
         <createTable tableName="images">
-            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="version" type="bigint" defaultValueNumeric="0"><constraints nullable="false"/></column>
             <column name="photo_id" type="bigint"><constraints nullable="false"/></column>
             <column name="scale" type="varchar(10)"><constraints nullable="false"/></column>
             <column name="width" type="int"><constraints nullable="false"/></column>
             <column name="height" type="int"><constraints nullable="false"/></column>
             <column name="content_length" type="bigint"><constraints nullable="false"/></column>
             <column name="content_type" type="varchar(50)"><constraints nullable="false"/></column>
-            <column name="content" type="bytea"><constraints nullable="false" /></column>
+            <column name="content" type="oid"><constraints nullable="false" /></column>
         </createTable>
+        <addUniqueConstraint tableName="images" columnNames="photo_id,scale" constraintName="unique_photo_scale"/>
         <addForeignKeyConstraint constraintName="fk_images_photos"
                                  baseTableName="images" baseColumnNames="photo_id"
                                  referencedTableName="photos" referencedColumnNames="id" />
