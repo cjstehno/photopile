@@ -22,6 +22,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
+import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -65,6 +67,12 @@ public class DataSourceConfig {
     @Bean
     public JdbcTemplate jdbcTemplate(){
         return new JdbcTemplate( dataSource() );
+    }
+
+    @Bean public LobHandler lobHandler(){
+        final DefaultLobHandler lobHandler = new DefaultLobHandler();
+        lobHandler.setWrapAsLob( true );
+        return lobHandler;
     }
 
     @Bean

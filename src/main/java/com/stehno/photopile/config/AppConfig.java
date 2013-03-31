@@ -1,5 +1,6 @@
 package com.stehno.photopile.config;
 
+import com.stehno.photopile.image.ImageConfig;
 import com.stehno.photopile.importer.ImporterConfig;
 import com.stehno.photopile.photo.PhotoConfig;
 import com.stehno.photopile.security.SecurityConfig;
@@ -32,6 +33,7 @@ import java.util.Properties;
 @Import({
     SecurityConfig.class,
     PhotoConfig.class,
+    ImageConfig.class,
     ImporterConfig.class,
     UserMsgConfig.class
 })
