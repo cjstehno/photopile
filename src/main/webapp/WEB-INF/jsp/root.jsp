@@ -23,7 +23,7 @@
 
     <!-- libraries -->
 
-    <script src="js/libs/jquery.js" type="text/javascript"></script>
+    <script src="js/libs/jquery-1.9.1.min.js" type="text/javascript"></script>
     <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
     <script src="js/libs/underscore.min.js" type="text/javascript"></script>
     <script src="js/libs/backbone.min.js" type="text/javascript"></script>
