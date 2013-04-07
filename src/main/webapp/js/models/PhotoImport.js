@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.models.PhotoImport');
+Photopile.ns('models.PhotoImport');
 
-PP.models.PhotoImport = (function () {
-
-    var photoImportModel = Backbone.Model.extend({
+Photopile.models.PhotoImport = (function () {
+    return Backbone.Model.extend({
         url:'/photopile/import',
         defaults:{
             'path':'',
@@ -35,6 +34,4 @@ PP.models.PhotoImport = (function () {
 
         }
     });
-
-    return photoImportModel;
 }());

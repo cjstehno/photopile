@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.models.UserMessage');
+Photopile.ns('models.UserMessage');
 
-PP.models.UserMessage = (function () {
-
-    var userMessageModel = Backbone.Model.extend({
-    });
-
-    return userMessageModel;
+Photopile.models.UserMessage = (function () {
+    return Backbone.Model.extend({ });
 }());

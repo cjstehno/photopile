@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.views.UserMessageDialog');
+Photopile.ns('views.UserMessageDialog');
 
-PP.views.UserMessageDialog = (function () {
-    var userMessageDialogView = Backbone.View.extend({
-        collection:new PP.collections.UserMessages(),
+Photopile.views.UserMessageDialog = (function () {
+    return Backbone.View.extend({
+        collection:new Photopile.collections.UserMessages(),
 
         initialize:function(){
             this.listenTo(this.collection, "reset", this.render);
@@ -49,8 +49,15 @@ PP.views.UserMessageDialog = (function () {
         openDialog: function( messageId ){
             this.messageId = messageId;
 
+            // TODO: this is a bit hacky, need to just add polling to keep status current
+            var that = this;
             this.collection.fetch(
-                { contentType:'application/json' }
+                {
+                    contentType:'application/json',
+                    success:function(){
+                        that.render();
+                    }
+                }
             );
         },
 
@@ -69,6 +76,4 @@ PP.views.UserMessageDialog = (function () {
             return this;
         }
     });
-
-    return userMessageDialogView;
 }());

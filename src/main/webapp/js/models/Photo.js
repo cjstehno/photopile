@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.models.Photo');
+Photopile.ns('models.Photo');
 
-PP.models.Photo = (function () {
-
-    var photoModel = Backbone.Model.extend({});
-
-    return photoModel;
+Photopile.models.Photo = (function () {
+    return Backbone.Model.extend({});
 }());

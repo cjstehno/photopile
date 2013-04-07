@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.views.PhotoGallery');
+Photopile.ns('views.PhotoGallery');
 
-PP.views.PhotoGallery = (function () {
+Photopile.views.PhotoGallery = (function () {
     var photoGalleryView = Backbone.View.extend({
 //        el: '#messages-dialog',
 //        model:new PP.models.PhotoImport(),

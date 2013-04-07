@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.collections.Photos');
+Photopile.ns('collections.Photos');
 
-PP.collections.Photos = (function () {
-
-    var photoCollection = Backbone.Collection.extend({
-        model: PP.models.Photo,
+Photopile.collections.Photos = (function () {
+    return Backbone.Collection.extend({
+        model: Photopile.models.Photo,
         url: '/photopile/photos',
         parse: function (response) {
             return response.photos;
         }
     });
-
-    return photoCollection;
 }());

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-PP.Router = (function () {
-    var importDialog = new PP.views.ImporterDialog({el:'#import-dialog'});
-    var messagesDialog = new PP.views.UserMessageDialog({el:'#messages-dialog'});
+Photopile.Router = (function () {
+    var importDialog = new Photopile.views.ImporterDialog({el:'#import-dialog'});
+    var messagesDialog = new Photopile.views.UserMessageDialog({el:'#messages-dialog'});
 
-    var router = Backbone.Router.extend({
+    return Backbone.Router.extend({
         routes: {
             'photos': 'listPhotos',
             'photoImport': 'photoImport',
@@ -46,6 +46,4 @@ PP.Router = (function () {
             importDialog.openDialog();
         }
     });
-
-    return router;
 }());

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.views.ImporterDialog');
+Photopile.ns('views.ImporterDialog');
 
-PP.views.ImporterDialog = (function () {
-    var importDialogView = Backbone.View.extend({
-        model:new PP.models.PhotoImport(),
+Photopile.views.ImporterDialog = (function () {
+    return Backbone.View.extend({
+        model:new Photopile.models.PhotoImport(),
 
         initialize:function(){
             this.model.on('error',function(e){
@@ -90,6 +90,4 @@ PP.views.ImporterDialog = (function () {
             }
         }
     });
-
-    return importDialogView;
 }());

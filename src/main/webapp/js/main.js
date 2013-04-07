@@ -14,79 +14,60 @@
  * limitations under the License.
  */
 
-// FIXME: integrate a real dependency loading library
+var Photopile = Photopile || {
+    ns:function(ns_string){
+        var parts = ns_string.split('.'),
+            parent = Photopile,
+            i;
 
-var PP = PP || {};
-
-PP.namespace = function (ns_string) {
-    var parts = ns_string.split('.'),
-        parent = PP,
-        i;
-
-    // strip redundant leading global
-    if (parts[0] === "PP") {
-        parts = parts.slice(1);
-    }
-
-    for (i = 0; i < parts.length; i += 1) {
-        // create a property if it doesn't exist
-        if (typeof parent[parts[i]] === "undefined") {
-            parent[parts[i]] = {};
+        // strip redundant leading global
+        if (parts[0] === "Photopile") {
+            parts = parts.slice(1);
         }
-        parent = parent[parts[i]];
-    }
-    return parent;
-};
 
-PP.logger = {
-    enabled:true,
-
-    debug:function(msg){
-        if(PP.logger.enabled) console.debug(msg);
-    },
-
-    warn:function(msg){
-        if(PP.logger.enabled) console.warn(msg);
-    },
-
-    error:function(msg){
-        if(PP.logger.enabled) console.error(msg);
-    }
-};
-
-PP.loadExternals = function( defn ){
-    PP.loaders.template( _.first(defn.templates), _.rest(defn.templates), function(){
-        PP.loaders.script( defn.scripts, defn.loaded )
-    });
-};
-
-PP.loaders = {
-    template:function( f, r, d ){
-        $('<div />').load(f, function(){
-            PP.logger.debug('loaded template: ' + f);
-
-            if(r.length > 0 ){
-                PP.loaders.template(_.first(r), _.rest(r), d);
-            } else {
-                d();
+        for (i = 0; i < parts.length; i += 1) {
+            // create a property if it doesn't exist
+            if (typeof parent[parts[i]] === "undefined") {
+                parent[parts[i]] = {};
             }
-        }).appendTo('body');
+            parent = parent[parts[i]];
+        }
+        return parent;
     },
 
-    script:function( scripts, done ){
-        _.each( scripts, function(s){
-            PP.logger.debug('loaded script: ' + s);
+    loaders:{
+        template:function( f, r, d ){
+            $('<div />').load(f, function(){
+                console.debug('loaded template: ' + f);
 
-            $('<script type="text/javascript" src="' + s + '"></script>').appendTo('head')
+                if(r.length > 0 ){
+                    Photopile.loaders.template(_.first(r), _.rest(r), d);
+                } else {
+                    d();
+                }
+            }).appendTo('body');
+        },
+
+        script:function( scripts, done ){
+            _.each( scripts, function(s){
+                console.debug('loaded script: ' + s);
+
+                $('<script type="text/javascript" src="' + s + '"></script>').appendTo('head')
+            });
+
+            done();
+        }
+    },
+
+    load:function( defn ){
+        Photopile.loaders.template( _.first(defn.templates), _.rest(defn.templates), function(){
+            Photopile.loaders.script( defn.scripts, defn.loaded )
         });
-
-        done();
     }
 };
-
 
 $(function() {
-    PP.loadExternals({
+    Photopile.load({
         templates:[
             'templates/messages_dialog.html',
             'templates/import_dialog.html'
@@ -104,9 +85,9 @@ $(function() {
             'js/router.js'
         ],
         loaded:function(){
-            PP.logger.debug('Done loading.');
+            console.debug('Done loading.');
 
-            new PP.App().initialize();
+            new Photopile.App().initialize();
         }
     });
 });

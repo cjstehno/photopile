@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-PP.namespace('PP.collections.UserMessages');
+Photopile.ns('collections.UserMessages');
 
-PP.collections.UserMessages = (function () {
-
-    var userMessageCollection = Backbone.Collection.extend({
-        model:PP.models.UserMessage,
+Photopile.collections.UserMessages = (function () {
+    return Backbone.Collection.extend({
+        model:Photopile.models.UserMessage,
         url:'/photopile/messages'
     });
-
-    return userMessageCollection;
 }());

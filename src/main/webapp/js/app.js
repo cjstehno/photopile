@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-PP.App = (function () {
+Photopile.App = (function () {
     var ctor = function(){};
     ctor.prototype = {
         initialize:function(){
-            new PP.Router();
+            new Photopile.Router();
 
             Backbone.history.start();
         }
