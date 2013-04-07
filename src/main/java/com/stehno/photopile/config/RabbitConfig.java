@@ -17,7 +17,6 @@
 package com.stehno.photopile.config;
 
 import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -56,13 +55,5 @@ public class RabbitConfig {
         final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
 //        rabbitTemplate.setMessageConverter( messageConverter() );
         return rabbitTemplate;
-    }
-
-    // FIXME: may want to move into the importer module
-    public static final String USER_MESSAGE_QUEUE_NAME = "queues.user.message";
-
-    @Bean
-    public Queue userMessageQueue() {
-        return new Queue(USER_MESSAGE_QUEUE_NAME);
     }
 }
