@@ -22,7 +22,6 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
@@ -38,13 +37,15 @@ public class WebAppInitializer implements WebApplicationInitializer {
     static final String PROFILE_PROD = "prod";
     static final String PROFILE_SHELL = "shell";
 
-    private static final String SECURITY_FILTER_NAME = "springSecurityFilterChain";
+    private static final String SECURITY_FILTER = "springSecurityFilterChain";
+    private static final String METRICS_FILTER = "webappMetricsFilter";
+    private static final String ALL_PATTERN = "/*";
 
     @Override
     public void onStartup( ServletContext servletContext ) throws ServletException{
         final AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
         root.setServletContext( servletContext );
-        root.getEnvironment().setDefaultProfiles( PROFILE_PROD/*, PROFILE_SHELL */);
+        root.getEnvironment().setDefaultProfiles( PROFILE_PROD /*, PROFILE_SHELL */);
         root.scan("com.stehno.photopile.config");
         root.refresh();
 
@@ -59,7 +60,11 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         // ----- filter configuration -----
 
-        FilterRegistration.Dynamic filter = servletContext.addFilter( SECURITY_FILTER_NAME, new DelegatingFilterProxy( SECURITY_FILTER_NAME ) );
-        filter.addMappingForUrlPatterns( null, true, "/*" );
+        servletContext.addFilter(SECURITY_FILTER, new DelegatingFilterProxy(SECURITY_FILTER))
+            .addMappingForUrlPatterns( null, true, ALL_PATTERN );
+
+        // TODO: the filter (and probably servlets) pull registry from servletContext - not where I have it
+//        servletContext.addFilter(METRICS_FILTER, new DefaultWebappMetricsFilter())
+//            .addMappingForUrlPatterns( null, true, ALL_PATTERN );
     }
 }
