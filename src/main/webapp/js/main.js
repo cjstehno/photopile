@@ -73,14 +73,14 @@ $(function() {
             'templates/import_dialog.html'
         ],
         scripts:[
-            'js/models/Photo.js',
-            'js/models/PhotoImport.js',
-            'js/models/UserMessage.js',
-            'js/collections/Photos.js',
-            'js/collections/UserMessages.js',
-            'js/views/ImporterDialog.js',
-            'js/views/UserMessageDialog.js',
-            'js/views/PhotoGallery.js',
+            'js/models/photo.js',
+            'js/models/photo-import.js',
+            'js/models/user-message.js',
+            'js/collections/photos.js',
+            'js/collections/user-messages.js',
+            'js/views/import-dialog.js',
+            'js/views/user-messages-dialog.js',
+            'js/views/gallery.js',
             'js/app.js',
             'js/router.js'
         ],
