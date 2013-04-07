@@ -16,17 +16,15 @@
 
 package com.stehno.photopile.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.ErrorHandler;
 
 /**
  * Configures the rabbit mq integrations.
@@ -34,12 +32,11 @@ import org.springframework.util.ErrorHandler;
 @Configuration
 public class RabbitConfig {
 
-    private static final Logger log = LogManager.getLogger(RabbitConfig.class);
+    @Value("${queues.host}") private String rabbitHost;
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory("localhost");
-        return connectionFactory;
+        return new CachingConnectionFactory(rabbitHost);
     }
 
     // TODO: spring amqp references outdated version of jackson
@@ -62,20 +59,10 @@ public class RabbitConfig {
     }
 
     // FIXME: may want to move into the importer module
+    public static final String USER_MESSAGE_QUEUE_NAME = "queues.user.message";
 
     @Bean
     public Queue userMessageQueue() {
-        return new Queue("queues.user.message");
-    }
-
-    @Bean
-    public ErrorHandler errorHandler(){
-        return new ErrorHandler() {
-            @Override
-            public void handleError( final Throwable throwable ){
-                throwable.printStackTrace();
-                log.error( "Rabbit queue error: " + throwable.getMessage(), throwable );
-            }
-        };
+        return new Queue(USER_MESSAGE_QUEUE_NAME);
     }
 }

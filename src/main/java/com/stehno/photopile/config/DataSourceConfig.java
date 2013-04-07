@@ -16,18 +16,20 @@
 
 package com.stehno.photopile.config;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
 
 /**
  * Configuration for the database connections.
@@ -37,35 +39,36 @@ import javax.sql.DataSource;
 @ComponentScan("com.stehno.photopile.dao")
 public class DataSourceConfig {
 
-    /* FIXME: not sure why but transactions dont work when JNDI data source is used - keeps erroring that
-        DataSource is closed.
+    private static final String JDBC_DRIVER = "org.postgresql.Driver";
+
+    @Value("${jdbc.url}") private String jdbcUrl;
+    @Value("${jdbc.username}") private String jdbcUsername;
+    @Value("${jdbc.password}") private String jdbcPassword;
+    @Value("${jdbc.pool.size.min}") private int minPoolSize;
+    @Value("${jdbc.pool.size.max}") private int maxPoolSize;
+    @Value("${jdbc.pool.increment}") private int acquireIncrement;
+    @Value("${jdbc.pool.idle}") private int maxIdleTime;
+
+    // TODO: look into the c3p0 statement pooling as well
 
     @Bean
-    public JndiObjectFactoryBean dataSourceFactory(){
-        final JndiObjectFactoryBean jndiDataSource = new JndiObjectFactoryBean();
-        jndiDataSource.setCache( true );
-        jndiDataSource.setJndiName( "java:/comp/env/jdbc/PhotopileDS" );
-        return jndiDataSource;
-    }
+    public DataSource dataSource() throws PropertyVetoException {
+        final ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setDriverClass( JDBC_DRIVER );
+        dataSource.setJdbcUrl( jdbcUrl );
+        dataSource.setUser( jdbcUsername );
+        dataSource.setPassword( jdbcPassword );
 
-    @Bean
-    public DataSource dataSource(){
-        return (DataSource)dataSourceFactory().getObject();
-    }
-    */
+        dataSource.setMinPoolSize(minPoolSize);
+        dataSource.setAcquireIncrement(acquireIncrement);
+        dataSource.setMaxPoolSize(maxPoolSize);
+        dataSource.setMaxIdleTime(maxIdleTime);
 
-    @Bean
-    public DataSource dataSource(){
-        final DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName( "org.postgresql.Driver" );
-        dataSource.setUrl( "jdbc:postgresql://localhost:5432/photopile_dev" );
-        dataSource.setUsername( "photopile" );
-        dataSource.setPassword( "photopile" );
         return dataSource;
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate(){
+    public JdbcTemplate jdbcTemplate() throws PropertyVetoException {
         return new JdbcTemplate( dataSource() );
     }
 
@@ -76,7 +79,7 @@ public class DataSourceConfig {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(){
+    public PlatformTransactionManager transactionManager() throws PropertyVetoException {
         final DataSourceTransactionManager tx = new DataSourceTransactionManager();
         tx.setDataSource( dataSource() );
         return tx;
