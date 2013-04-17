@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-Photopile.ns('collections.UserMessages');
-
-Photopile.collections.UserMessages = (function () {
+define([
+    'models/user-message'
+], function( UserMessage ){
     return Backbone.Collection.extend({
-        model:Photopile.models.UserMessage,
+        model:UserMessage,
         url:'/photopile/messages'
     });
-}());
+});

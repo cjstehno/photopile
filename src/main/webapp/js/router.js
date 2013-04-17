@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-Photopile.Router = (function () {
-    var importDialog = new Photopile.views.ImporterDialog({el:'#import-dialog'});
-    var messagesDialog = new Photopile.views.UserMessageDialog({el:'#messages-dialog'});
+define([
+    'views/import-dialog',
+    'views/user-messages-dialog'
+], function( ImportDialog, UserMessagesDialog ){
+
+    var importDialog = new ImportDialog();
+    var messagesDialog = new UserMessagesDialog();
 
     return Backbone.Router.extend({
         routes: {
@@ -46,4 +50,4 @@ Photopile.Router = (function () {
             importDialog.openDialog();
         }
     });
-}());
+});

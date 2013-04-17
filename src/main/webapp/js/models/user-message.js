@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-Photopile.ns('models.UserMessage');
-
-Photopile.models.UserMessage = (function () {
+define([], function(){
     return Backbone.Model.extend({ });
-}());
+});

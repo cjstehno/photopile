@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-Photopile.App = (function () {
+define([
+    'router'
+], function( Router ){
+
     var ctor = function(){};
+
     ctor.prototype = {
         initialize:function(){
-            new Photopile.Router();
+            new Router();
 
             Backbone.history.start();
         }
     };
 
     return ctor;
-}());
+});

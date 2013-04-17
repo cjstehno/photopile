@@ -28,7 +28,7 @@
     <script src="js/libs/underscore.min.js" type="text/javascript"></script>
     <script src="js/libs/backbone.min.js" type="text/javascript"></script>
 
-    <script src="js/main.js" type="text/javascript"></script>
+    <script data-main="js/main" src="js/libs/require.min.js" type="text/javascript"></script>
 </head>
 <body>
 

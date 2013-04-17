@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-Photopile.ns('collections.Photos');
-
-Photopile.collections.Photos = (function () {
+define([
+    'models/photo'
+], function( Photo ){
     return Backbone.Collection.extend({
-        model: Photopile.models.Photo,
+        model: Photo,
         url: '/photopile/photos',
+
         parse: function (response) {
             return response.photos;
         }
     });
-}());
+});

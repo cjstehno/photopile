@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-Photopile.ns('models.Photo');
-
-Photopile.models.Photo = (function () {
+define([], function(){
     return Backbone.Model.extend({});
-}());
+});

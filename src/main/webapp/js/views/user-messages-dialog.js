@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-Photopile.ns('views.UserMessageDialog');
-
-Photopile.views.UserMessageDialog = (function () {
+define([
+    'collections/user-messages',
+    'text!templates/messages/messages-dialog.html',
+    'text!templates/messages/message-list.html',
+    'text!templates/messages/message-view.html'
+], function( UserMessages, dialogTemplate, listTemplate, viewTemplate ){
     return Backbone.View.extend({
-        collection:new Photopile.collections.UserMessages(),
+        collection:new UserMessages(),
 
         initialize:function(){
+            $(dialogTemplate).appendTo('body');
+
+            this.el = '#messages-dialog';
+
             this.listenTo(this.collection, "reset", this.render);
             this.listenTo(this.collection, "change", this.render);
             this.listenTo(this.collection, "remove", this.render);
@@ -66,14 +73,14 @@ Photopile.views.UserMessageDialog = (function () {
 
             if( this.messageId ){
                 // render the single message template
-                $('div.modal-body',this.el).html( _.template($('#message-view-template').html(), { message:this.collection.get(this.messageId)}) );
+                $('div.modal-body',this.el).html( _.template(viewTemplate, { message:this.collection.get(this.messageId)}) );
 
             } else {
                 // render the message list template
-                $('div.modal-body',this.el).html( _.template( $('#message-list-template').html(), { messages:this.collection }) );
+                $('div.modal-body',this.el).html( _.template(listTemplate, { messages:this.collection }) );
             }
 
             return this;
         }
     });
-}());
+});

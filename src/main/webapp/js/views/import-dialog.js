@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-Photopile.ns('views.ImporterDialog');
-
-Photopile.views.ImporterDialog = (function () {
+define([
+    'models/photo-import',
+    'text!templates/import_dialog.html'
+], function( PhotoImport, dialogTemplate ){
     return Backbone.View.extend({
-        model:new Photopile.models.PhotoImport(),
+        model:new PhotoImport(),
 
         initialize:function(){
+            $(dialogTemplate).appendTo('body');
+
+            this.el = '#import-dialog';
+
             this.model.on('error',function(e){
                 // FIXME: implement error handling
                 console.log('error ' + e);
@@ -90,4 +95,4 @@ Photopile.views.ImporterDialog = (function () {
             }
         }
     });
-}());
+});

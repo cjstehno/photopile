@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-Photopile.ns('models.PhotoImport');
-
-Photopile.models.PhotoImport = (function () {
+define([], function(){
     return Backbone.Model.extend({
         url:'/photopile/import',
         defaults:{
@@ -34,4 +32,4 @@ Photopile.models.PhotoImport = (function () {
 
         }
     });
-}());
+});
