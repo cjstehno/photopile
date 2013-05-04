@@ -17,6 +17,7 @@
 package com.stehno.photopile.config;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.stehno.sjdbcx.annotation.EnableJdbcDao;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -37,6 +38,7 @@ import java.beans.PropertyVetoException;
 @Configuration
 @EnableTransactionManagement
 @ComponentScan("com.stehno.photopile.dao")
+@EnableJdbcDao
 public class DataSourceConfig {
 
     private static final String JDBC_DRIVER = "org.postgresql.Driver";
