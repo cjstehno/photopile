@@ -19,8 +19,8 @@ package com.stehno.photopile.controller;
 import com.stehno.photopile.usermsg.UserMessageService;
 import com.yammer.metrics.Meter;
 import com.yammer.metrics.MetricRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +39,7 @@ import static com.yammer.metrics.MetricRegistry.name;
 @Controller
 public class RootController {
 
-    private static final Logger log = LogManager.getLogger(RootController.class);
+    private static final Logger log = LoggerFactory.getLogger( RootController.class );
 
     @Autowired private UserMessageService userMessageService;
     @Autowired private MetricRegistry metricRegistry;
