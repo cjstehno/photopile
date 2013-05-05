@@ -32,3 +32,7 @@ ul.breadcrumb {
     width: 300px;
     height: 300px;
 }
+
+.more-bar {
+    cursor: hand;
+}

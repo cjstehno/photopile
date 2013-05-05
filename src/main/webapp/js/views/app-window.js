@@ -17,7 +17,7 @@
 define([
     'text!templates/app-window.html',
     'views/app-menu',
-    'views/gallery-panel'
+    'views/gallery/gallery-panel'
 ], function( appTemplate, AppMenu, GalleryPanel ){
 
     return Backbone.View.extend({

@@ -15,18 +15,35 @@
  */
 
 define([
-    'text!templates/gallery-panel.html',
     'collections/photos',
-    'text!templates/gallery-photo.html'
-], function( panel, Photos, photoTemplate ){
+    'text!templates/gallery/gallery-panel.html',
+    'text!templates/gallery/gallery-photo.html'
+], function( Photos, panel, photoTemplate ){
+
+    var FETCH_LIMIT = 12;
 
     return Backbone.View.extend({
         tpt: _.template(panel),
         photoTpt: _.template(photoTemplate),
 
+        currentOffset:0,
+
+        events:{
+            'click .more-bar':'onMore'
+        },
+
         initialize:function(){
             this.collection = new Photos();
-            this.collection.on('reset', _.bind(this.onContentChange, this));
+        },
+
+        onMore:function(){
+            this.requestPhotos( this.currentOffset + FETCH_LIMIT );
+            /*
+                request more
+                are there still more?
+                    y: keep button available
+                    n: disable button
+             */
         },
 
         onContentChange:function(){
@@ -38,13 +55,24 @@ define([
         render:function(){
             this.$el.append( this.tpt() );
 
-            this.collection.fetch({
-                contentType:'application/json',
-                data:{ start:0, limit:12 },
-                reset:true
-            });
+            this.requestPhotos(0);
 
             return this;
+        },
+
+        requestPhotos:function( offset ){
+            var that = this;
+
+            var changer = _.bind(this.onContentChange, this)
+
+            this.collection.fetch({
+                contentType:'application/json',
+                data:{ start:offset, limit:FETCH_LIMIT },
+                success:function(){
+                    that.currentOffset = offset;
+                    changer();
+                }
+            });
         }
     });
 });
