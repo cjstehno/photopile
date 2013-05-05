@@ -27,3 +27,8 @@ ul.breadcrumb {
 .no-top-margin {
     margin-top: 0px;
 }
+
+.gallery-photo {
+    width: 300px;
+    height: 300px;
+}

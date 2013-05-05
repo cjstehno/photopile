@@ -22,10 +22,6 @@ require.config({
     shim: {}
 });
 
-require([
-    'app'
-], function( App ) {
-    console.debug('Done loading.');
-
+require([ 'app' ], function( App ) {
     new App().initialize();
 });

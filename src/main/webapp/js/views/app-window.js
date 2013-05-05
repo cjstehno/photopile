@@ -14,9 +14,23 @@
  * limitations under the License.
  */
 
-define([ 'models/photo' ], function( Photo ){
-    return Backbone.Collection.extend({
-        model: Photo,
-        url:'/photopile/photos'
+define([
+    'text!templates/app-window.html',
+    'views/app-menu',
+    'views/gallery-panel'
+], function( appTemplate, AppMenu, GalleryPanel ){
+
+    return Backbone.View.extend({
+        tpt: _.template(appTemplate),
+
+        render:function(){
+            this.$el.append( this.tpt() );
+
+            new AppMenu({ el:'.app-menu' }).render();
+
+            new GalleryPanel({ el:'.panel-container' }).render();
+
+            return this;
+        }
     });
 });
