@@ -1,0 +1,11 @@
+<div class="pagination pagination-mini pull-right">
+    <ul>
+        <li <% if(current.page == 1){ %>class="disabled"<% } %>><a href="#<%= Math.max( current.page - 1, 1) %>">Prev</a></li>
+
+        <% for( var p=1; p<=pages; p++ ){ %>
+            <li <% if(current.page == p){ %>class="active"<% } %>><a href="#<%= p %>"><%= p %></a></li>
+        <% } %>
+
+        <li <% if(current.page == pages){ %>class="disabled"<% } %>><a href="#<%= Math.min( current.page + 1, pages) %>">Next</a></li>
+    </ul>
+</div>

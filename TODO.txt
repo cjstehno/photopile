@@ -1,43 +1,42 @@
 
+
+
+
+View
+	Grid
+		All
+		Album
+		Tag
+		Camera
+		Search
+	Single
+	Map
+
+FILTER > [SUB-FILTER] > SORT > ORDER
+All >
+	Date Taken (Recent / Oldest)
+	Date Uploaded (Recent / Oldest)
+
+Album >
+	[Album Name]
+		Date Taken (Recent / Oldest)
+		Date Uploaded (Recent / Oldest)
+
+Tag >
+	[Tag]
+		Date Taken (Recent / Oldest)
+		Date Uploaded (Recent / Oldest)
+
+Camera >
+	[Camera]
+		Date Taken (Recent / Oldest)
+		Date Uploaded (Recent / Oldest)
+
+
+
 !   break up the db changelogs
 
 
-photo importer
-    -   actual import rather than scan
-        1.  perform scan to gather files - store scan results somewhere
-        2.  add each import file path to import queue
-            1.  load file & extract its meta data
-            2.  save photo, image, tags
-            3.  add to scaling queue
-            4.  note completion of specific file path
-        3.  when all files uploaded create result message on usermsg queue
-
--   store current job details in memory (ehcache persistent cache?)
-
-
-Project To Do
--------------
-
--   details page
-    -   larger preview
-    -   map of location
-    -   all properties
-    -   (editable)
-    -   ability to download photo or view in tab
-    -   (deletable)
-    -   share with XYZ
-    -   open in window (as if double click)
-
--   doubleclick on photo item to open in separate dialog
-    -   fullsize, scalable view
-    -   details available in side panel
-
--   formatting rules
-
--   project analysis and reporting
--   maybe break down packages by functional area
-
--   consider template framework like tiles or whatever grails uses
 
 
 Tomcat Stuff
@@ -52,39 +51,6 @@ Notes
 
 -   remember me is setup but not deeply used
 
-
-
-
-BOOTSTRAP
-
-
-
--	Select All (or defailt view)
-	-	Main display is all photos in order by most recent taken
-	-	Filter by...
-		-	Albums
-		-	Tags
-		-	Date Taken
-		*	any of these filter options opens a modal dialog with a list of available options
-			-	once selected that filter is applied and listed in bread crumbs
-			-	filter is additive
-			-	clicking on any level of filter will remove all up to that level
-			-	allows progressive filtering
-
-
--	Select an Albums
-	-	Main display becomes a
-
--	Select Tags
-
-
--	Select Date Taken
-
-
-
-
-mouse over photo to display name
-click photo to open in full view (full content) with details side panel) x to return to previous view
 
 
 ------------------------------------

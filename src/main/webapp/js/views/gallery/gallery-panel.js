@@ -16,63 +16,58 @@
 
 define([
     'collections/photos',
+    'views/gallery/pager',
     'text!templates/gallery/gallery-panel.html',
     'text!templates/gallery/gallery-photo.html'
-], function( Photos, panel, photoTemplate ){
-
-    var FETCH_LIMIT = 12;
+], function( Photos, Pager, panel, photoTemplate ){
 
     return Backbone.View.extend({
         tpt: _.template(panel),
         photoTpt: _.template(photoTemplate),
 
-        currentOffset:0,
-
         events:{
-            'click .more-bar':'onMore'
+            'click img.gallery-photo':'onPhotoClick'
         },
 
         initialize:function(){
             this.collection = new Photos();
         },
 
-        onMore:function(){
-            this.requestPhotos( this.currentOffset + FETCH_LIMIT );
-            /*
-                request more
-                are there still more?
-                    y: keep button available
-                    n: disable button
-             */
-        },
-
-        onContentChange:function(){
-            this.collection.each(function(it){
-                this.$('.thumbnails').append( this.photoTpt(it) );
-            }, this);
-        },
-
         render:function(){
             this.$el.append( this.tpt() );
 
-            this.requestPhotos(0);
+            this.pager = new Pager({ el:this.$('.gallery-pages'), collection: this.collection });
+            this.pager.on('gallery:page-change', _.bind(this.requestPhotos, this));
+
+            this.requestPhotos( this.pager.getCurrent() );
 
             return this;
         },
 
-        requestPhotos:function( offset ){
-            var that = this;
-
-            var changer = _.bind(this.onContentChange, this)
-
+        requestPhotos:function( page ){
             this.collection.fetch({
                 contentType:'application/json',
-                data:{ start:offset, limit:FETCH_LIMIT },
-                success:function(){
-                    that.currentOffset = offset;
-                    changer();
-                }
+                data:{
+                    start:page.offset,
+                    limit:page.pageSize
+                },
+                success:_.bind(this.renderPhotos, this)
             });
+        },
+
+        renderPhotos:function(){
+            this.pager.render();
+
+            var photoRoot = this.$('.thumbnails');
+            photoRoot.empty();
+
+            this.collection.each(function(it){
+                photoRoot.append( this.photoTpt(it) );
+            }, this);
+        },
+
+        onPhotoClick:function(evt){
+            console.log('Someday, I will open a photo...');
         }
     });
 });

@@ -22,6 +22,12 @@ ul.breadcrumb {
     font-size: small;
     padding: 2px;
     background-color: white;
+    margin-bottom: 5px;
+}
+
+.gallery-pages .pagination {
+    margin-bottom: 5px;
+    margin-top: 0px;
 }
 
 .no-top-margin {
@@ -31,8 +37,4 @@ ul.breadcrumb {
 .gallery-photo {
     width: 300px;
     height: 300px;
-}
-
-.more-bar {
-    cursor: hand;
 }

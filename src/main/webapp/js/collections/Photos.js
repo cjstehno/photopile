@@ -17,6 +17,14 @@
 define([ 'models/photo' ], function( Photo ){
     return Backbone.Collection.extend({
         model: Photo,
-        url:'/photopile/photos'
+        url:'/photopile/photos',
+
+        total: 0,
+
+        parse:function( response ){
+            this.total = response.meta.total;
+
+            return response.data;
+        }
     });
 });
