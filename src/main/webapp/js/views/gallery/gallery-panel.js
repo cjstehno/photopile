@@ -26,7 +26,6 @@ define([
         collection:new Photos(),
 
         tpt: _.template(panel),
-        photoTpt: _.template(photoTemplate),
 
         events:{
             'click img.gallery-photo':'onPhotoClick'
@@ -62,15 +61,24 @@ define([
             this.breadcrumbs.render();
             this.pager.render( this.collection.total );
 
-            var photoRoot = this.$('.thumbnails');
+            var photoRoot = this.$('.gallery-content');
             photoRoot.empty();
 
-            this.collection.each(function(it){
-                photoRoot.append( this.photoTpt(it) );
-            }, this);
+            var limit = this.pager.itemsPerPage / 3;
+
+            for( var i=0; i<3; i++ ){
+                var start = i * limit;
+
+                photoRoot.append( _.template(photoTemplate, {
+                    photos: this.collection,
+                    start: start,
+                    end: start + limit
+                }) );
+            }
         },
 
         onPhotoClick:function(evt){
+            evt.preventDefault();
             console.log('Someday, I will open a photo...');
         }
     });
