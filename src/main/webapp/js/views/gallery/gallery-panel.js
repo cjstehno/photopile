@@ -19,7 +19,7 @@ define([
     'views/gallery/pager',
     'views/gallery/gallery-breadcrumbs',
     'text!templates/gallery/gallery-panel.html',
-    'text!templates/gallery/gallery-photo.html'
+    'text!templates/gallery/gallery-row.html'
 ], function( Photos, Pager, Breadcrumbs, panel, photoTemplate ){
 
     return Backbone.View.extend({

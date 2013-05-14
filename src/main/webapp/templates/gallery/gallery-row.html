@@ -1,0 +1,16 @@
+<div class="row-fluid">
+    <ul class="thumbnails">
+        <% for( var p=start; p<end; p++ ){
+            var photo = photos.at(p); %>
+            <li class="span3">
+                <% if( photo ){ %>
+                <a href="#" class="thumbnail">
+                    <img src="/photopile/image/MINI/<%= photo.get('id') %>" data-id="<%= photo.get('id') %>" class="gallery-photo img-rounded" />
+                </a>
+                <% } %>
+            </li>
+        <% } %>
+    </ul>
+</div>
+
+
