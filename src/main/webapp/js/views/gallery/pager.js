@@ -36,14 +36,17 @@ define([ 'text!templates/gallery/pager.html' ], function( template ){
             return _.extend({ pageSize:this.itemsPerPage }, this.current);
         },
 
-        render:function(){
-            this.renderPages();
+        render:function( total ){
+            this.renderPages(total || 0);
             return this;
         },
 
-        renderPages:function(){
+        renderPages:function(total){
             this.$el.empty();
-            this.$el.append( this.tpt({ pages:this.calculateTotalPages(), current:this.current }) );
+            this.$el.append( this.tpt({
+                pages:Math.ceil(total / this.itemsPerPage),
+                current:this.current
+            }));
         },
 
         onPageClicked:function(evt){
@@ -64,12 +67,8 @@ define([ 'text!templates/gallery/pager.html' ], function( template ){
                     offset: newState.offset
                 };
 
-                this.trigger('gallery:page-change', newState);
+                this.trigger('page-change', newState);
             }
-        },
-
-        calculateTotalPages:function(){
-            return Math.ceil(this.collection.total / this.itemsPerPage);
         },
 
         offsetFromPage:function( pg ){

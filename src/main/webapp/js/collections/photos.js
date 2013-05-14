@@ -25,6 +25,22 @@ define([ 'models/photo' ], function( Photo ){
             this.total = response.meta.total;
 
             return response.data;
+        },
+
+        fetchPage:function( page, filter ){
+            var urlSuffix = '/' + filter.filter + (filter.subfilter ? '/' + filter.subfilter : '') + '/' + filter.sort;
+
+            this.fetch({
+                url:this.url + urlSuffix,
+                reset:true,
+                contentType:'application/json',
+                data:{
+                    start:page.offset,
+                    limit:page.pageSize,
+                    order:filter.order
+                }
+            });
         }
+
     });
 });

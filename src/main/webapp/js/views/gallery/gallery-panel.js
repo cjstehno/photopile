@@ -17,11 +17,14 @@
 define([
     'collections/photos',
     'views/gallery/pager',
+    'views/gallery/gallery-breadcrumbs',
     'text!templates/gallery/gallery-panel.html',
     'text!templates/gallery/gallery-photo.html'
-], function( Photos, Pager, panel, photoTemplate ){
+], function( Photos, Pager, Breadcrumbs, panel, photoTemplate ){
 
     return Backbone.View.extend({
+        collection:new Photos(),
+
         tpt: _.template(panel),
         photoTpt: _.template(photoTemplate),
 
@@ -30,33 +33,34 @@ define([
         },
 
         initialize:function(){
-            this.collection = new Photos();
+            this.collection.on('reset', _.bind(this.renderPhotos, this));
         },
 
         render:function(){
             this.$el.append( this.tpt() );
 
-            this.pager = new Pager({ el:this.$('.gallery-pages'), collection: this.collection });
-            this.pager.on('gallery:page-change', _.bind(this.requestPhotos, this));
+            this.breadcrumbs = new Breadcrumbs({ el:this.$('.breadcrumbs') });
+            this.breadcrumbs.on('filter-change', _.bind(this.onFilterChange, this));
 
-            this.requestPhotos( this.pager.getCurrent() );
+            this.pager = new Pager({ el:this.$('.gallery-pages') });
+            this.pager.on('page-change', _.bind(this.onPageChange, this));
+
+            this.collection.fetchPage( this.pager.getCurrent(), this.breadcrumbs.getCurrent() );
 
             return this;
         },
 
-        requestPhotos:function( page ){
-            this.collection.fetch({
-                contentType:'application/json',
-                data:{
-                    start:page.offset,
-                    limit:page.pageSize
-                },
-                success:_.bind(this.renderPhotos, this)
-            });
+        onFilterChange:function( filter ){
+            this.collection.fetchPage( this.pager.getCurrent(), filter );
+        },
+
+        onPageChange:function( page ){
+            this.collection.fetchPage( page, this.breadcrumbs.getCurrent() );
         },
 
         renderPhotos:function(){
-            this.pager.render();
+            this.breadcrumbs.render();
+            this.pager.render( this.collection.total );
 
             var photoRoot = this.$('.thumbnails');
             photoRoot.empty();
