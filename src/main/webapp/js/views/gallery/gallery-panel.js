@@ -18,9 +18,10 @@ define([
     'collections/photos',
     'views/gallery/pager',
     'views/gallery/gallery-breadcrumbs',
+    'views/gallery/gallery-photo',
     'text!templates/gallery/gallery-panel.html',
     'text!templates/gallery/gallery-row.html'
-], function( Photos, Pager, Breadcrumbs, panel, photoTemplate ){
+], function( Photos, Pager, Breadcrumbs, GalleryPhoto, panel, photoTemplate ){
 
     return Backbone.View.extend({
         collection:new Photos(),
@@ -79,7 +80,10 @@ define([
 
         onPhotoClick:function(evt){
             evt.preventDefault();
-            console.log('Someday, I will open a photo...');
+
+            var photoId = $(evt.target).attr('data-id');
+
+            new GalleryPhoto({ el:$('body'), model:this.collection.get(photoId) }).render();
         }
     });
 });

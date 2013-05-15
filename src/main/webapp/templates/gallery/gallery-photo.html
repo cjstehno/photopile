@@ -1,3 +1,12 @@
-Single photo view...
-
-
+<div class="photo-preview">
+    <div class="content">
+        <div class="header">
+            <%- photo.get('name') %>
+            <div class="pull-right">
+                <i class="icon-white icon-picture show-details"></i>
+                <i class="icon-white icon-remove close-photo"></i>
+            </div>
+        </div>
+        <img src="https://localhost:8443/photopile/image/LARGE/<%= photo.id %>" />
+    </div>
+</div>
