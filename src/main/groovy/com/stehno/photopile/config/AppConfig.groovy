@@ -20,17 +20,13 @@ import com.stehno.photopile.importer.ImporterConfig
 import com.stehno.photopile.photo.PhotoConfig
 import com.stehno.photopile.security.SecurityConfig
 import com.stehno.photopile.usermsg.UserMsgConfig
-import org.hibernate.SessionFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.context.annotation.*
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
-import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor
 import org.springframework.web.servlet.ViewResolver
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver
 import org.springframework.web.servlet.view.InternalResourceViewResolver
@@ -46,14 +42,8 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView
 @PropertySource('classpath:/config.properties')
 class AppConfig extends WebMvcConfigurerAdapter {
 
-    @Autowired private SessionFactory sessionFactory
-
     @Override void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable()
-    }
-
-    @Override void addInterceptors(final InterceptorRegistry registry) {
-        registry.addWebRequestInterceptor(new OpenSessionInViewInterceptor(sessionFactory:sessionFactory))
     }
 
     @Bean static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer(){

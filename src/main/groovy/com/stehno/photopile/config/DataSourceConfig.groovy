@@ -17,16 +17,14 @@
 package com.stehno.photopile.config
 
 import com.mchange.v2.c3p0.ComboPooledDataSource
-import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.support.lob.DefaultLobHandler
 import org.springframework.jdbc.support.lob.LobHandler
-import org.springframework.orm.hibernate4.HibernateTransactionManager
-import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
@@ -74,19 +72,8 @@ class DataSourceConfig {
         new DefaultLobHandler( wrapAsLob:true )
     }
 
-    @Bean SessionFactory sessionFactory(){
-        // TODO: Hibernate 4 seems to deprecate Springs method of support - assuming next Spring version will correct this
-        new LocalSessionFactoryBuilder( dataSource() )
-//            .addAnnotatedClasses(Visitor)
-            .addProperties([
-                'hibernate.dialect':'org.hibernate.dialect.PostgreSQL82Dialect',
-                'hibernate.show_sql':'true',
-                'hibernate.hbm2ddl.auto':'validate'
-            ] as Properties)
-            .buildSessionFactory()
-    }
-
-    @Bean PlatformTransactionManager transactionManager() throws PropertyVetoException {
-        new HibernateTransactionManager( sessionFactory: sessionFactory() )
+    @Bean
+    public PlatformTransactionManager transactionManager(){
+        new DataSourceTransactionManager( dataSource:dataSource() )
     }
 }

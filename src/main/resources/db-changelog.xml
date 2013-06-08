@@ -86,7 +86,6 @@
             <column name="longitude" type="double"/>
         </createTable>
         <createTable tableName="images">
-            <column name="version" type="bigint" defaultValueNumeric="0"><constraints nullable="false"/></column>
             <column name="photo_id" type="bigint"><constraints nullable="false"/></column>
             <column name="scale" type="varchar(10)"><constraints nullable="false"/></column>
             <column name="width" type="int"><constraints nullable="false"/></column>
