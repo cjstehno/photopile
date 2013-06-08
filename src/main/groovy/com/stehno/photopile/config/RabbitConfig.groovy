@@ -14,28 +14,27 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.config;
+package com.stehno.photopile.config
 
-import org.springframework.amqp.core.AmqpAdmin;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.amqp.rabbit.connection.ConnectionFactory;
-import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.amqp.core.AmqpAdmin
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
+import org.springframework.amqp.rabbit.connection.ConnectionFactory
+import org.springframework.amqp.rabbit.core.RabbitAdmin
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
 
 /**
  * Configures the rabbit mq integrations.
  */
 @Configuration
-public class RabbitConfig {
+class RabbitConfig {
 
-    @Value("${queues.host}") private String rabbitHost;
+    @Value('${queues.host}') private String rabbitHost;
 
-    @Bean
-    public ConnectionFactory connectionFactory() {
-        return new CachingConnectionFactory(rabbitHost);
+    @Bean ConnectionFactory connectionFactory() {
+        new CachingConnectionFactory(rabbitHost)
     }
 
     // TODO: spring amqp references outdated version of jackson
@@ -45,15 +44,13 @@ public class RabbitConfig {
 //        return messageConverter;
 //    }
 
-    @Bean
-    public AmqpAdmin amqpAdmin() {
-        return new RabbitAdmin(connectionFactory());
+    @Bean AmqpAdmin amqpAdmin() {
+        new RabbitAdmin(connectionFactory())
     }
 
-    @Bean
-    public RabbitTemplate rabbitTemplate() {
-        final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
+    @Bean RabbitTemplate rabbitTemplate() {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate( connectionFactory() )
 //        rabbitTemplate.setMessageConverter( messageConverter() );
-        return rabbitTemplate;
+        return rabbitTemplate
     }
 }
