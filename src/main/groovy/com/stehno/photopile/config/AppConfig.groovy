@@ -25,7 +25,6 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.*
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
-import org.springframework.security.access.SecurityConfig
 import org.springframework.web.servlet.ViewResolver
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
