@@ -25,8 +25,8 @@
         <logger name="org.springframework" level="WARN"/>
         <logger name="org.springframework.jdbc" level="WARN"/>
         <logger name="org.springframework.security" level="WARN" />
-        <logger name="org.springframework.amqp" level="INFO" />
-        <logger name="org.springframework.amqp.rabbit" level="INFO" />
+        <logger name="org.springframework.amqp" level="WARN" />
+        <logger name="org.springframework.amqp.rabbit" level="WARN" />
 
         <logger name="com.stehno.photopile" level="INFO"/>
 

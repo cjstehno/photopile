@@ -15,6 +15,7 @@
  */
 
 package com.stehno.photopile.config
+
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.importer.ImporterConfig
 import com.stehno.photopile.photo.PhotoConfig
@@ -24,6 +25,7 @@ import org.springframework.context.MessageSource
 import org.springframework.context.annotation.*
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
+import org.springframework.security.access.SecurityConfig
 import org.springframework.web.servlet.ViewResolver
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
@@ -32,6 +34,7 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver
 import org.springframework.web.servlet.view.InternalResourceViewResolver
 import org.springframework.web.servlet.view.JstlView
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView
+
 /**
  * Spring-based web application context configuration.
  */
