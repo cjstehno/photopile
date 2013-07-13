@@ -18,18 +18,8 @@ define([], function(){
     return Backbone.Model.extend({
         url:'/photopile/import',
         defaults:{
-            'path':'',
-            'preview': true,
-            'understand': false
-        },
-        validate:function(attrs, options){
-            // FIXME: put this back
-//        if( !attrs.understand ){
-//            return 'You must understand what you are doing.'
-//        } else if( !attrs.path ){
-//            return 'A path must be specified.'
-//        }
-
+            directory: '',
+            scheduled: false
         }
     });
 });

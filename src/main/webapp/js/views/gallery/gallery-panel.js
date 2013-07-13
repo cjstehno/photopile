@@ -78,7 +78,7 @@ define([
             }
         },
 
-        I think it would be better to have the main view swap out for the single photo
+//        I think it would be better to have the main view swap out for the single photo
 
         onPhotoClick:function(evt){
             evt.preventDefault();

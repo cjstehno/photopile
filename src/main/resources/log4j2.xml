@@ -23,12 +23,11 @@
     </appenders>
     <loggers>
         <logger name="org.springframework" level="WARN"/>
+        <logger name="org.springframework.web" level="WARN"/>
         <logger name="org.springframework.jdbc" level="WARN"/>
         <logger name="org.springframework.security" level="WARN" />
-        <logger name="org.springframework.amqp" level="WARN" />
-        <logger name="org.springframework.amqp.rabbit" level="WARN" />
 
-        <logger name="com.stehno.photopile" level="INFO"/>
+        <logger name="com.stehno.photopile" level="DEBUG"/>
 
         <root level="WARN">
             <appender-ref ref="Console"/>

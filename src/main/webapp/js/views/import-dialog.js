@@ -15,84 +15,81 @@
  */
 
 define([
-    'models/photo-import',
-    'text!templates/import_dialog.html'
-], function( PhotoImport, dialogTemplate ){
+    'models/active-import',
+    'text!templates/import-dialog.html',
+    'text!templates/import-dialog-confirm.html'
+], function( ActiveImport, template, confirmTemplate ){
+
     return Backbone.View.extend({
-        model:new PhotoImport(),
+        template: _.template(template),
+        confirmTemplate: _.template(confirmTemplate),
+        model:new ActiveImport(),
 
-        initialize:function(){
-            $(dialogTemplate).appendTo('body');
-
-            this.el = '#import-dialog';
-
-            this.model.on('error',function(e){
-                // FIXME: implement error handling
-                console.log('error ' + e);
-            });
-            this.listenTo( this.model, 'change', this.render );
+        attributes:{
+            class:'modal hide fade'
         },
 
         events: {
-            'click button.btn-primary': 'onImportClicked',
-            'click button[data-dismiss=modal]': 'onDialogHidden'
+            'click .scan-button': 'onScanClicked',
+            'click .import-button': 'onImportClicked'
         },
 
-        openDialog: function () {
-            this.model.clear();
-
-            $(this.el).modal();
+        openDialog:function(){
+            this.model.fetch({
+                headers:{
+                    Accept:'application/json'
+                },
+                accepts:'application/json',
+                contentType:'application/json',
+                success: _.bind(this.render, this)
+            });
         },
 
-        render:function(){
-            $('div.modal-body div.alert', this.el).hide();
+        render:function( data ){
+            this.$el.html( this.template(data.toJSON() || {}) );
+            this.$el.modal();
 
-            var cards = $('div.modal-body .card', this.el);
-            $(cards[0]).show();
-            $(cards[1]).hide();
-            $(cards[2]).show();
-            $(cards[3]).hide();
-
-            $('form input[name=path]',this.el).val(this.model.get('path'));
-            $('form input[name=preview]',this.el).prop('checked', true);
-            $('form input[name=understand]',this.el).prop('checked', false);
+            this.$('.carousel').carousel('pause');
 
             return this;
         },
 
-        onDialogHidden: function (evt) {
-            location.hash = '';
+        onScanClicked:function(){
+            this.model.save(
+                {
+                    directory:this.$('input[type="text"]').val()
+                },
+                {
+                    contentType:'application/json',
+                    success: _.bind(this.displaySummary, this)
+                }
+            );
         },
 
-        onUnderstandChanged: function (evt) {
-            $('button.btn-primary', this.el).toggleClass('disabled');
+        displaySummary:function(){
+            this.$('.confirm-panel').html( this.confirmTemplate(this.model.toJSON()) );
+
+            this.$('.import-button').toggleClass('hide');
+            this.$('.scan-button').toggleClass('hide');
+
+            this.$('.carousel').carousel('next');
         },
 
-        onImportClicked: function (evt) {
-            if (!$('button.btn-primary', this.el).hasClass('disabled')) {
-                location.hash = '';
+        onImportClicked:function(){
+            this.model.save(
+                {
+                    scheduled: true
+                },
+                {
+                    contentType:'application/json',
+                    success: _.bind(this.finish, this)
+                }
+            );
+        },
 
-                var theModel = this.model;
-                theModel.save(
-                    {
-                        path:$('form input[name=path]', this.el).val()
-                    },
-                    {
-                        success:function(){
-                            console.log('succeeded...');
-
-                            $($('div.modal-body div.card p',this.el)[1]).html('Your scan of ' + theModel.get('path') + ' has started.')
-                            $('div.card', this.el).toggle();
-                        },
-
-                        error:function(model, xhr, options){
-                            console.log('failed: ' + xhr);
-                            $('div.modal-body div.alert div', this.el).text(xhr.responseText);
-                            $('div.modal-body div.alert', this.el).show();
-                        }
-                    }
-                );
-            }
+        finish:function(){
+            this.$el.modal('toggle');
         }
+
     });
 });

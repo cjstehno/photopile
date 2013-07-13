@@ -14,40 +14,13 @@
  * limitations under the License.
  */
 
-define([
-    'views/import-dialog',
-    'views/user-messages-dialog'
-], function( ImportDialog, UserMessagesDialog ){
-
-    var importDialog = new ImportDialog();
-    var messagesDialog = new UserMessagesDialog();
+define([], function(){
 
     return Backbone.Router.extend({
         routes: {
             'photos': 'listPhotos',
-            'photoImport': 'photoImport',
-
-            'messages(/:messageId)': 'messages',
 
             '*actions': 'listPhotos'
-        },
-
-//            allPhotos: function () {
-//                Photos.fetch({
-//                    data: {start: 0, limit: 22},
-//                    success: function (collection, response, options) {
-//                        collection.total = response.total;
-//                        console.log('Total = ' + collection.total);
-//                    }
-//                });
-//            },
-
-        messages:function( messageId ){
-            messagesDialog.openDialog( messageId );
-        },
-
-        photoImport: function () {
-            importDialog.openDialog();
         }
     });
 });

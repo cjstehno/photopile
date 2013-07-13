@@ -14,15 +14,34 @@
  * limitations under the License.
  */
 
-define([ 'text!templates/app-menu.html' ], function( template ){
+define([
+    'views/import-dialog',
+    'text!templates/app-menu.html'
+], function( ImportDialog, template ){
 
     return Backbone.View.extend({
         tpt: _.template(template),
+
+        events:{
+            'click a.add-photo-item': 'onAddPhotoItem',
+            'click a.import-photo-item': 'onImportPhotoItem'
+        },
 
         render:function(){
             this.$el.append( this.tpt() );
 
             return this;
+        },
+
+        onAddPhotoItem:function(evt){
+            evt.preventDefault();
+            console.log('adding photo');
+        },
+
+        onImportPhotoItem:function(evt){
+            evt.preventDefault();
+
+            new ImportDialog().openDialog();
         }
     });
 });
