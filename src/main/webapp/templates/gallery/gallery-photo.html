@@ -1,12 +1,15 @@
-<div class="photo-preview">
-    <div class="content">
-        <div class="header">
-            <%- photo.get('name') %>
-            <div class="pull-right">
-                <i class="icon-white icon-picture show-details"></i>
-                <i class="icon-white icon-remove close-photo"></i>
-            </div>
+<div class="row-fluid photo-overlay">
+    <div class="span6">
+        <a href="#" class="back-button"><i class="icon icon-chevron-left"></i> Back to Gallery</a>
+    </div>
+    <div class="span6">
+        <a href="#" class="details-button pull-right" style="padding-right:15px;"><i class="icon icon-eye-open"></i> Details</a>
+    </div>
+</div>
+<div>
+    <div class="row-fluid">
+        <div class="span12">
+            <img src="https://localhost:8443/photopile/image/MEDIUM/<%= photo.id %>" class="img-rounded full-width" />
         </div>
-        <img src="https://localhost:8443/photopile/image/LARGE/<%= photo.id %>" />
     </div>
 </div>

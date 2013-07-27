@@ -20,9 +20,8 @@ define([ 'text!templates/gallery/gallery-photo.html' ], function( template ){
         tpt: _.template(template),
 
         events:{
-            'click .close-photo':'onClose',
-            'click .photo-preview':'onClose',
-            'click .show-details':'onShowDetails'
+            'click .back-button':'onCloseClick',
+            'click .details-button':'onDetailsClick'
         },
 
         initialize:function(options){
@@ -30,19 +29,20 @@ define([ 'text!templates/gallery/gallery-photo.html' ], function( template ){
         },
 
         render:function(){
-            this.$el.append( this.tpt({ photo:this.model }) );
+            this.$el.html( this.tpt({ photo:this.model }) );
 
             return this;
         },
 
-        onShowDetails:function(evt){
-            console.log('show photo details...');
+        onCloseClick:function(evt){
+            this.trigger('photo-close');
+
+            return false;
         },
 
-        onClose:function(evt){
-            evt.preventDefault();
-
-            this.$('.photo-preview').detach();
+        onDetailsClick:function(){
+            console.log('display the photo details as popup');
+            return false;
         }
     });
 });

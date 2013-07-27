@@ -47,6 +47,8 @@ define([
 
             this.collection.fetchPage( this.pager.getCurrent(), this.breadcrumbs.getCurrent() );
 
+            this.$('.carousel').carousel('pause');
+
             return this;
         },
 
@@ -78,14 +80,22 @@ define([
             }
         },
 
-//        I think it would be better to have the main view swap out for the single photo
-
         onPhotoClick:function(evt){
-            evt.preventDefault();
-
             var photoId = $(evt.target).attr('data-id');
 
-            new GalleryPhoto({ el:$('body'), model:this.collection.get(photoId) }).render();
+            var galleryPhoto = new GalleryPhoto({
+                el:this.$('.item.photo-item'),
+                model:this.collection.get(photoId)
+            });
+            galleryPhoto.on('photo-close',function(){
+                // TODO: should dispose of the photo objects on close
+                this.$('.carousel').carousel('prev');
+            }, this);
+            galleryPhoto.render();
+
+            this.$('.carousel').carousel('next');
+
+            return false;
         }
     });
 });
