@@ -22,7 +22,7 @@
             <i class="icon-envelope" title="Unread message"></i>
             <% } %>
         </td>
-        <td><a href="#messages/<%= msg.id %>" class="title"><%= msg.get('title') %></a></td>
+        <td><a href="#" data-id="<%= msg.id %>" class="message-title"><%= msg.get('title') %></a></td>
         <td><%= msg.get('dateCreated') %></td>
         <td>
             <% if( msg.get('read') != 'true' ){ %>

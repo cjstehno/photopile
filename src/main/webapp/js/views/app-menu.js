@@ -16,21 +16,33 @@
 
 define([
     'views/import-dialog',
+    'views/user-messages-dialog',
     'text!templates/app-menu.html'
-], function( ImportDialog, template ){
+], function( ImportDialog, UserMessagesDialog, template ){
 
     return Backbone.View.extend({
         tpt: _.template(template),
 
         events:{
             'click a.add-photo-item': 'onAddPhotoItem',
-            'click a.import-photo-item': 'onImportPhotoItem'
+            'click a.import-photo-item': 'onImportPhotoItem',
+            'click a.message-menu-item': 'onMessageItem'
         },
 
         render:function(){
             this.$el.append( this.tpt() );
 
             return this;
+        },
+
+        /*
+            FIXME: need to poll for message count
+         */
+
+        onMessageItem:function( evt ){
+            new UserMessagesDialog().openDialog();
+
+            return false;
         },
 
         onAddPhotoItem:function(evt){

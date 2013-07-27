@@ -20,8 +20,17 @@ define([
     'text!templates/messages/message-list.html',
     'text!templates/messages/message-view.html'
 ], function( UserMessages, dialogTemplate, listTemplate, viewTemplate ){
+
+    // FIXME: this is an older dialog - it needs some updating love
+
     return Backbone.View.extend({
         collection:new UserMessages(),
+
+        events:{
+            'click button[data-dismiss=modal]': 'onDialogHidden',
+            'click button[data-cmd=mark]': 'onMarkRead',
+            'click button[data-cmd=delete]': 'onDelete'
+        },
 
         initialize:function(){
             $(dialogTemplate).appendTo('body');
@@ -33,37 +42,71 @@ define([
             this.listenTo(this.collection, "remove", this.render);
         },
 
-        events:{
-            'click button[data-dismiss=modal]': 'onDialogHidden',
-            'click button[data-cmd=mark]': 'onMarkRead',
-            'click button[data-cmd=delete]': 'onDelete'
-        },
-
         onMarkRead:function(evt){
-            var mid = $(evt.target).parent().attr('data-id');
+            var mid;
+            if( this.messageId ){
+
+            } else {
+                mid = $(evt.target).parent().attr('data-id');
+            }
+
             this.collection.get(mid).save('read','true');
         },
 
         onDelete:function(evt){
-            var mid = $(evt.target).parent().attr('data-id');
+            console.log('deleting');
+
+            var goBack = false;
+            var mid;
+            if( this.messageId ){
+                goBack = true;
+                mid = this.messageId;
+                delete this.messageId;
+
+            } else {
+                mid = $(evt.target).parent().attr('data-id');
+            }
+
             this.collection.get(mid).destroy({ contentType:'application/json' });
+
+            if( goBack ){
+                $('.carousel',this.el).carousel('prev');
+                $('.carousel',this.el).carousel('pause');
+            }
         },
 
         onDialogHidden: function (evt) {
             location.hash = '';
         },
 
-        openDialog: function( messageId ){
-            this.messageId = messageId;
+        onMessageClick:function(evt){
+            this.messageId = parseInt( $(evt.currentTarget).attr('data-id') );
 
+            // render the single message template
+            $('div.modal-body .item.details-item',this.el).html(
+                _.template(viewTemplate, { message:this.collection.get(this.messageId)})
+            );
+
+            $('a.delete-button', this.el).click(_.bind(this.onDelete, this));
+            $('a.back-button', this.el).click(_.bind(this.onBack, this));
+
+            $('.carousel',this.el).carousel('next');
+            $('.carousel',this.el).carousel('pause');
+
+            return false;
+        },
+
+        onBack:function(){
+            $('.carousel',this.el).carousel('prev');
+            $('.carousel',this.el).carousel('pause');
+        },
+
+        openDialog: function(){
             // TODO: this is a bit hacky, need to just add polling to keep status current
-            var that = this;
             this.collection.fetch(
                 {
                     contentType:'application/json',
-                    success:function(){
-                        that.render();
-                    }
+                    success: _.bind(this.render, this)
                 }
             );
         },
@@ -71,14 +114,14 @@ define([
         render:function(){
             $(this.el).modal();
 
-            if( this.messageId ){
-                // render the single message template
-                $('div.modal-body',this.el).html( _.template(viewTemplate, { message:this.collection.get(this.messageId)}) );
+            // render the message list template
+            $('div.modal-body .item.list-item',this.el).html(
+                _.template(listTemplate, { messages: this.collection })
+            );
 
-            } else {
-                // render the message list template
-                $('div.modal-body',this.el).html( _.template(listTemplate, { messages:this.collection }) );
-            }
+            $('a.message-title',this.el).click(_.bind(this.onMessageClick, this));
+
+            this.$('.carousel').carousel('pause');
 
             return this;
         }
