@@ -24,8 +24,6 @@ define([
 ], function( Photos, Pager, Breadcrumbs, GalleryPhoto, panel, photoTemplate ){
 
     return Backbone.View.extend({
-        collection:new Photos(),
-
         tpt: _.template(panel),
 
         events:{
@@ -33,6 +31,7 @@ define([
         },
 
         initialize:function(){
+            this.collection = new Photos();
             this.collection.on('reset', _.bind(this.renderPhotos, this));
         },
 

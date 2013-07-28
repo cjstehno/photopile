@@ -15,6 +15,7 @@
  */
 
 define([ 'models/photo' ], function( Photo ){
+
     return Backbone.Collection.extend({
         model: Photo,
         url:'/photopile/photos',
@@ -25,6 +26,14 @@ define([ 'models/photo' ], function( Photo ){
             this.total = response.meta.total;
 
             return response.data;
+        },
+
+        fetchWithin:function( bounds ){
+            this.fetch({
+                url:this.url + '/within/' + bounds,
+                reset:true,
+                contentType:'application/json'
+            });
         },
 
         fetchPage:function( page, filter ){

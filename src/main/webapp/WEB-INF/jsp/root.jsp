@@ -18,8 +18,10 @@
 <html lang="en">
 <head>
     <title>PhotoPile: Your photos, your way.</title>
-    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet" media="screen">
-    <link href="css/photopile.css" type="text/css" rel="stylesheet" media="screen">
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="css/photopile.css" media="screen">
 
     <!-- libraries -->
 
@@ -27,6 +29,7 @@
     <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
     <script src="js/libs/underscore.min.js" type="text/javascript"></script>
     <script src="js/libs/backbone.min.js" type="text/javascript"></script>
+    <script src="js/libs/leaflet.min.js" type="text/javascript"></script>
 
     <script data-main="js/main" src="js/libs/require.min.js" type="text/javascript"></script>
 </head>

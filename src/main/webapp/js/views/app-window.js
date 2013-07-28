@@ -17,8 +17,9 @@
 define([
     'text!templates/app-window.html',
     'views/app-menu',
-    'views/gallery/gallery-panel'
-], function( appTemplate, AppMenu, GalleryPanel ){
+    'views/gallery/gallery-panel',
+    'views/map/map-panel'
+], function( appTemplate, AppMenu, GalleryPanel, MapPanel ){
 
     return Backbone.View.extend({
         tpt: _.template(appTemplate),
@@ -26,11 +27,32 @@ define([
         render:function(){
             this.$el.append( this.tpt() );
 
-            new AppMenu({ el:'.app-menu' }).render();
+            var appMenu = new AppMenu({ el:'.app-menu' });
+            appMenu.on('menu-item-selected', _.bind(this.menuItemSelected, this));
+            appMenu.render();
 
-            new GalleryPanel({ el:'.panel-container' }).render();
+            // FIXME: swithced for debugging
+            new MapPanel({ el:'.panel-container' }).render();
+//            new GalleryPanel({ el:'.panel-container' }).render();
 
             return this;
+        },
+
+        menuItemSelected:function( evt ){
+            // TODO: clean this up
+
+            this.$('.panel-container').empty();
+
+            if( evt.id === 'view-grid-all' ){
+                new GalleryPanel({ el:'.panel-container' }).render();
+
+            } else if( evt.id === 'view-map' ){
+                new MapPanel({ el:'.panel-container' }).render();
+
+            } else {
+                console.log('unsupported option: ' + evt);
+            }
         }
     });
 });
+

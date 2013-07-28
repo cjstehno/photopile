@@ -24,15 +24,26 @@ define([
         tpt: _.template(template),
 
         events:{
-            'click a.add-photo-item': 'onAddPhotoItem',
-            'click a.import-photo-item': 'onImportPhotoItem',
+            'click a.photos-add': 'onAddPhotoItem',
+            'click a.photos-import': 'onImportPhotoItem',
+
+            'click a.view-map':'onViewMap',
+            'click a.view-grid-all':'onViewAllGrid',
+
             'click a.message-menu-item': 'onMessageItem'
         },
 
         render:function(){
             this.$el.append( this.tpt() );
-
             return this;
+        },
+
+        onViewMap:function(){
+            this.trigger('menu-item-selected', { id:'view-map' });
+        },
+
+        onViewAllGrid:function(){
+            this.trigger('menu-item-selected', { id:'view-grid-all' });
         },
 
         /*
@@ -40,6 +51,7 @@ define([
          */
 
         onMessageItem:function( evt ){
+            // TODO: move this out as an event handler
             new UserMessagesDialog().openDialog();
 
             return false;
@@ -51,6 +63,7 @@ define([
         },
 
         onImportPhotoItem:function(evt){
+            // TODO: move this out as handler
             evt.preventDefault();
 
             new ImportDialog().openDialog();
