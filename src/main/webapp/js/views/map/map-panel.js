@@ -16,22 +16,14 @@
 
 define([
     'collections/photos',
-    'text!templates/map/map-panel.html'
-], function( Photos, template ){
-
-    function applyLocation( map ){
-        if( navigator.geolocation ){
-            navigator.geolocation.getCurrentPosition(function(pos){
-                map.setView([pos.coords.latitude, pos.coords.longitude], 9);
-            });
-        } else {
-            map.fitWorld();
-        }
-    }
+    'text!templates/map/map-panel.html',
+    'text!templates/map/map-popup.html'
+], function( Photos, template, popupTemplate ){
 
     return Backbone.View.extend({
 
         template: _.template(template),
+        popupTemplate: _.template(popupTemplate),
 
         initialize:function(){
             this.collection = new Photos();
@@ -65,9 +57,16 @@ define([
         },
 
         renderPhotos:function(){
+            var icon = L.icon({ iconUrl: 'img/camera.png' });
+
             this.collection.each(function(photo){
-                L.marker([50.5, 30.5]).addTo(this.map);
-            });
+                var loc = photo.get('location');
+
+                L.marker([ loc.latitude, loc.longitude ], { icon:icon })
+                    .addTo(this.map)
+                    .bindPopup(this.popupTemplate(photo.toJSON()));
+
+            }, this);
         }
 
     });

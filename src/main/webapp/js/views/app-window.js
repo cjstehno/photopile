@@ -31,7 +31,7 @@ define([
             appMenu.on('menu-item-selected', _.bind(this.menuItemSelected, this));
             appMenu.render();
 
-            // FIXME: swithced for debugging
+            // FIXME: remove this once done with map feature
             new MapPanel({ el:'.panel-container' }).render();
 //            new GalleryPanel({ el:'.panel-container' }).render();
 

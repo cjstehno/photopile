@@ -23,9 +23,11 @@ define([ 'models/photo' ], function( Photo ){
         total: 0,
 
         parse:function( response ){
-            this.total = response.meta.total;
-
-            return response.data;
+            if( response.meta ){
+                this.total = response.meta.total;
+                return response.data;
+            }
+            return response;
         },
 
         fetchWithin:function( bounds ){
