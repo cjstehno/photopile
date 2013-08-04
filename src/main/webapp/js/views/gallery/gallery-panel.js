@@ -24,7 +24,7 @@ define([
 ], function( Photos, Pager, Breadcrumbs, GalleryPhoto, panel, photoTemplate ){
 
     return Backbone.View.extend({
-        tpt: _.template(panel),
+        template: _.template(panel),
 
         events:{
             'click img.gallery-photo':'onPhotoClick'
@@ -36,7 +36,7 @@ define([
         },
 
         render:function(){
-            this.$el.append( this.tpt() );
+            this.$el.append( this.template() );
 
             this.breadcrumbs = new Breadcrumbs({ el:this.$('.breadcrumbs') });
             this.breadcrumbs.on('filter-change', _.bind(this.onFilterChange, this));

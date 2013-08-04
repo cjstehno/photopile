@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-define([ 'text!templates/gallery/gallery-photo.html' ], function( template ){
+define([ 'text!templates/map/map-panel-photo.html' ], function( template ){
+    // TODO: should create common photo panel
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -24,14 +25,16 @@ define([ 'text!templates/gallery/gallery-photo.html' ], function( template ){
             'click .details-button':'onDetailsClick'
         },
 
-        initialize:function(options){
-            this.model = options.model;
+        render:function(){
+            this.renderPhoto({ id:null });
+            return this;
         },
 
-        render:function(){
-            this.$el.html( this.template({ photo:this.model }) );
+        renderPhoto:function( photo ){
+            this.$el.empty();
+            this.$el.html(this.template( photo ));
 
-            return this;
+            this.delegateEvents(this.events);
         },
 
         onCloseClick:function(evt){

@@ -9,17 +9,45 @@ define([
      */
     return Backbone.View.extend({
         carouselTemplate: _.template(template),
+        panelTemplate: _.template('<div class="item<%- first ? " active" : "" %>"></div>'),
 
         initialize:function(){
-            if(this.options.panels){
-                console.log(this.options.panels);
+            if( this.options && this.options.panels ){
+                this.panels = this.options.panels;
             }
         },
 
         render:function(){
+            this.$el.html( this.carouselTemplate() );
 
+            this.$elements = {
+                carousel:this.$('.carousel'),
+                panels:this.$('.carousel-inner')
+            };
+
+            var i = 0
+            _.each(this.panels, function(panel){
+                var $panel = $(this.panelTemplate({ first:(i === 0) }));
+
+                this.$elements.panels.append($panel);
+
+                panel.$el = $panel;
+                panel.render();
+
+                i++;
+            }, this);
+
+            this.$elements.carousel.carousel('pause');
 
             return this;
+        },
+
+        nextPanel:function(){
+            this.$elements.carousel.carousel('next');
+        },
+
+        prevPanel:function(){
+            this.$elements.carousel.carousel('prev');
         }
     });
 });

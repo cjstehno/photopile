@@ -15,58 +15,41 @@
  */
 
 define([
-    'collections/photos',
-    'text!templates/map/map-panel.html',
-    'text!templates/map/map-popup.html'
-], function( Photos, template, popupTemplate ){
+    'common/views/carousel',
+    'views/map/map-panel-map',
+    'views/map/map-panel-photo',
+    'text!templates/map/map-panel.html'
+], function( CarouselView, MapPanel, PhotoPanel, template ){
 
     return Backbone.View.extend({
 
         template: _.template(template),
-        popupTemplate: _.template(popupTemplate),
-
-        initialize:function(){
-            this.collection = new Photos();
-            this.collection.on('reset', _.bind(this.renderPhotos, this));
-        },
 
         render:function(){
-            this.$el.html( this.template() );
+            this.$el.html(this.template());
 
-            this.map = L.map('map');
+            var mapPanel = new MapPanel();
+            var photoPanel = new PhotoPanel();
 
-            var that = this;
-            if( navigator.geolocation ){
-                navigator.geolocation.getCurrentPosition(function(pos){
-                    that.map.setView([pos.coords.latitude, pos.coords.longitude], 9);
+            var carousel = new CarouselView({
+                el: '.carousel-container',
+                panels:[
+                    mapPanel,
+                    photoPanel
+                ]
+            }).render();
 
-                    // add an OpenStreetMap tile layer
-                    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                    }).addTo(that.map);
+            mapPanel.on('photo-selected', function(photo){
+                photoPanel.renderPhoto(photo);
+                carousel.nextPanel();
+            }, this);
 
-                    // FIXME: need to call when map is moved
-
-                    that.collection.fetchWithin( that.map.getBounds().toBBoxString() );
-                });
-            } else {
-                this.map.fitWorld();
-            }
+            photoPanel.on('photo-close', function(){
+                console.log('close');
+                carousel.prevPanel();
+            }, this);
 
             return this;
-        },
-
-        renderPhotos:function(){
-            var icon = L.icon({ iconUrl: 'img/camera.png' });
-
-            this.collection.each(function(photo){
-                var loc = photo.get('location');
-
-                L.marker([ loc.latitude, loc.longitude ], { icon:icon })
-                    .addTo(this.map)
-                    .bindPopup(this.popupTemplate(photo.toJSON()));
-
-            }, this);
         }
 
     });

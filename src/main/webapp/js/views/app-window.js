@@ -22,18 +22,16 @@ define([
 ], function( appTemplate, AppMenu, GalleryPanel, MapPanel ){
 
     return Backbone.View.extend({
-        tpt: _.template(appTemplate),
+        template: _.template(appTemplate),
 
         render:function(){
-            this.$el.append( this.tpt() );
+            this.$el.append( this.template() );
 
             var appMenu = new AppMenu({ el:'.app-menu' });
             appMenu.on('menu-item-selected', _.bind(this.menuItemSelected, this));
             appMenu.render();
 
-            // FIXME: remove this once done with map feature
-            new MapPanel({ el:'.panel-container' }).render();
-//            new GalleryPanel({ el:'.panel-container' }).render();
+            new GalleryPanel({ el:'.panel-container' }).render();
 
             return this;
         },

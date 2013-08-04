@@ -17,7 +17,7 @@
 define([ 'text!templates/gallery/pager.html' ], function( template ){
 
     return Backbone.View.extend({
-        tpt: _.template(template),
+        template: _.template(template),
 
         itemsPerPage: 12,
         current:{ page:1, offset:0 },
@@ -43,7 +43,7 @@ define([ 'text!templates/gallery/pager.html' ], function( template ){
 
         renderPages:function(total){
             this.$el.empty();
-            this.$el.append( this.tpt({
+            this.$el.append( this.template({
                 pages:Math.ceil(total / this.itemsPerPage),
                 current:this.current
             }));

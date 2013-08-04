@@ -21,7 +21,7 @@ define([
 ], function( ImportDialog, UserMessagesDialog, template ){
 
     return Backbone.View.extend({
-        tpt: _.template(template),
+        template: _.template(template),
 
         events:{
             'click a.photos-add': 'onAddPhotoItem',
@@ -34,7 +34,7 @@ define([
         },
 
         render:function(){
-            this.$el.append( this.tpt() );
+            this.$el.append( this.template() );
             return this;
         },
 

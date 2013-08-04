@@ -28,12 +28,11 @@ define([ 'text!templates/gallery/gallery-breadcrumbs.html' ], function( template
     var FILTERS = [
         { id:'all', label:'All' },
         { id:'album', label:'Album' },
-        { id:'tag', label:'Tag' },
-        { id:'camera', label:'Camera' }
+        { id:'tag', label:'Tag' }
     ];
 
     return Backbone.View.extend({
-        tpt: _.template(template),
+        template: _.template(template),
 
         events:{
             'click a.view-filter':'onFilterClick',
@@ -50,7 +49,7 @@ define([ 'text!templates/gallery/gallery-breadcrumbs.html' ], function( template
         },
 
         render:function(){
-            this.$el.html( this.tpt({ context:this.buildContext() }) );
+            this.$el.html( this.template({ context:this.buildContext() }) );
 
             return this;
         },
