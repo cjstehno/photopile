@@ -57,7 +57,8 @@ define([
         onScanClicked:function(){
             this.model.save(
                 {
-                    directory:this.$('input[type="text"]').val()
+                    directory: this.$('input[name="directory"]').val(),
+                    tags: this.$('input[name="tags"]').val()
                 },
                 {
                     contentType:'application/json',

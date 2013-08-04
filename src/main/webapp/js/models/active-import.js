@@ -19,6 +19,7 @@ define([], function(){
         url:'/photopile/import',
         defaults:{
             directory: '',
+            tags:'',
             scheduled: false
         }
     });

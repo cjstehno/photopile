@@ -11,10 +11,12 @@
                     server operation that will be loading files from the server; be sure you know what you are doing.
                 </div>
 
-                <p>Specify the server directory where the files are to be imported from.</p>
-
                 <form>
-                    <input type="text" style="width:95%;" id="directory" value="<%- directory %>" />
+                    <p>Specify the server directory where the files are to be imported from.</p>
+                    <input type="text" style="width:95%;" name="directory" value="<%- directory %>" />
+
+                    <p style="margin-top:10px;">Provide tags (comma-separated) to be applied to all imported photos.</p>
+                    <input type="text" style="width:95%;" name="tags" value="<%- tags %>" />
                 </form>
             </div>
 
