@@ -41,6 +41,10 @@ define([ 'models/photo' ], function( Photo ){
         fetchPage:function( page, filter ){
             var urlSuffix = '/' + filter.filter + (filter.subfilter ? '/' + filter.subfilter : '') + '/' + filter.sort;
 
+            if( filter.tags ){
+                urlSuffix = urlSuffix + '?tags=' + filter.tags.join(',') + '&grouping=' + filter.grouping;
+            }
+
             this.fetch({
                 url:this.url + urlSuffix,
                 reset:true,

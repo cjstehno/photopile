@@ -29,6 +29,7 @@ define([
 
             'click a.view-map':'onViewMap',
             'click a.view-grid-all':'onViewAllGrid',
+            'click a.view-grid-tags':'onViewTagsGrid',
 
             'click a.message-menu-item': 'onMessageItem'
         },
@@ -44,6 +45,10 @@ define([
 
         onViewAllGrid:function(){
             this.trigger('menu-item-selected', { id:'view-grid-all' });
+        },
+
+        onViewTagsGrid:function(){
+            this.trigger('menu-item-selected', { id:'view-grid-tags' });
         },
 
         /*

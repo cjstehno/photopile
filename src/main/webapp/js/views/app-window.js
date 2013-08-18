@@ -18,8 +18,9 @@ define([
     'text!templates/app-window.html',
     'views/app-menu',
     'views/gallery/gallery-panel',
-    'views/map/map-panel'
-], function( appTemplate, AppMenu, GalleryPanel, MapPanel ){
+    'views/map/map-panel',
+    'views/tag-selector-dialog'
+], function( appTemplate, AppMenu, GalleryPanel, MapPanel, TagSelectorDialog ){
 
     return Backbone.View.extend({
         template: _.template(appTemplate),
@@ -46,6 +47,13 @@ define([
 
             } else if( evt.id === 'view-map' ){
                 new MapPanel({ el:'.panel-container' }).render();
+
+            } else if( evt.id === 'view-grid-tags' ){
+                var tagSelector = new TagSelectorDialog().render();
+
+                tagSelector.on('tags-selected', function(evt){
+                    new GalleryPanel({ el:'.panel-container', filter:evt }).render();
+                }, this);
 
             } else {
                 console.log('unsupported option: ' + evt);

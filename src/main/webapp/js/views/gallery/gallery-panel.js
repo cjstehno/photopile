@@ -30,7 +30,8 @@ define([
             'click img.gallery-photo':'onPhotoClick'
         },
 
-        initialize:function(){
+        initialize:function( options ){
+            this.filter = options.filter;
             this.collection = new Photos();
             this.collection.on('reset', _.bind(this.renderPhotos, this));
         },
@@ -44,7 +45,8 @@ define([
             this.pager = new Pager({ el:this.$('.gallery-pages') });
             this.pager.on('page-change', _.bind(this.onPageChange, this));
 
-            this.collection.fetchPage( this.pager.getCurrent(), this.breadcrumbs.getCurrent() );
+//            this.collection.fetchPage( this.pager.getCurrent(), this.breadcrumbs.getCurrent() );
+            this.onPageChange( this.pager.getCurrent() );
 
             this.$('.carousel').carousel('pause');
 
@@ -52,11 +54,12 @@ define([
         },
 
         onFilterChange:function( filter ){
+            this.filter = filter;
             this.collection.fetchPage( this.pager.getCurrent(), filter );
         },
 
         onPageChange:function( page ){
-            this.collection.fetchPage( page, this.breadcrumbs.getCurrent() );
+            this.collection.fetchPage( page, _.extend({}, this.breadcrumbs.getCurrent(), this.filter || {}) );
         },
 
         renderPhotos:function(){
