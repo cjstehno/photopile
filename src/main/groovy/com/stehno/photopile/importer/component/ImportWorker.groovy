@@ -43,8 +43,9 @@ class ImportWorker extends StaticDispatchActor<ImportFile>{
     @Autowired private PhotoService photoService
 
     ImportWorker(){
-        // TODO: this should probably be configurable
-        setParallelGroup( new DefaultPGroup(2) )
+        // TODO: this should probably be configurable (and have min value)
+        int threadCount = Runtime.runtime.availableProcessors()/2
+        setParallelGroup( new DefaultPGroup( threadCount ) )
     }
 
     @Override @SuppressWarnings('GroovyAssignabilityCheck')
@@ -75,6 +76,8 @@ class ImportWorker extends StaticDispatchActor<ImportFile>{
             }
 
         } catch( Exception ex ){
+            ex.printStackTrace()
+
             log.error 'Error during import of ({}) for import-id ({}): {}', importFile.file, importFile.importId, ex.message, ex
 
             reply new ImportFileStatus( importFile:importFile, errorMessage:ex.message )
