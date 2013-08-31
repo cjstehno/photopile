@@ -84,9 +84,13 @@ class DefaultImageService implements ImageService {
 
     private requestScaling( final long photoId ){
         (ImageScale.values() - ImageScale.FULL).each { final ImageScale scale ->
-            imageScalingQueue.enqueue new ImageScaleRequest( photoId:photoId, scale:scale )
+            try {
+                imageScalingQueue.enqueue new ImageScaleRequest( photoId:photoId, scale:scale )
 
-            log.debug 'ScalingRequest sent for photo {} at {} scale.', photoId, scale
+                log.debug 'ScalingRequest sent for photo {} at {} scale.', photoId, scale
+            } catch( Exception ex ){
+                log.error 'Unable to enqueue scaling request for photo {} at {} scale.', photoId, scale
+            }
         }
     }
 
