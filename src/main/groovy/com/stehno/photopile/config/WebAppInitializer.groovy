@@ -45,7 +45,7 @@ class WebAppInitializer implements WebApplicationInitializer {
         final AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext(
             servletContext: servletContext
         )
-        root.getEnvironment().setDefaultProfiles( PROFILE_PROD /*, PROFILE_SHELL */)
+        root.getEnvironment().setDefaultProfiles( PROFILE_PROD, PROFILE_SHELL )
         root.scan 'com.stehno.photopile.config'
         root.refresh()
 

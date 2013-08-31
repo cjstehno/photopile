@@ -33,22 +33,16 @@ class ShellConfig {
     private static final String CRASH_VFS_REFRESH_PERIOD = 'crash.vfs.refresh_period'
     private static final String CRASH_SSH_PORT = 'crash.ssh.port'
     private static final String CRASH_AUTH = 'crash.auth'
-    private static final String CRASH_AUTH_SIMPLE_USERNAME = 'crash.auth.simple.username'
-    private static final String CRASH_AUTH_SIMPLE_PASSWORD = 'crash.auth.simple.password'
 
     @Value('${shell.refresh_period}') private String refreshPeriod
     @Value('${shell.port}') private String port
-    @Value('${shell.username}') private String username
-    @Value('${shell.password}') private String password
 
     @Bean SpringWebBootstrap springWebBootstrap(){
         return new SpringWebBootstrap(
             config:[
                 (CRASH_VFS_REFRESH_PERIOD): refreshPeriod,
                 (CRASH_SSH_PORT): port,
-                (CRASH_AUTH): 'simple',
-                (CRASH_AUTH_SIMPLE_USERNAME): username,
-                (CRASH_AUTH_SIMPLE_PASSWORD): password
+                (CRASH_AUTH): 'photopile'
             ] as Properties
         )
     }

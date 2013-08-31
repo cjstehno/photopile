@@ -26,6 +26,13 @@ import com.stehno.photopile.importer.domain.ActiveImport
 public interface ActiveImportDao {
 
     /**
+     * Lists the active imports.
+     *
+     * @return
+     */
+    List<ActiveImport> listImports()
+
+    /**
      * Creates an import session for the specified username and returns the import id.
      *
      * @param username the owner of the import

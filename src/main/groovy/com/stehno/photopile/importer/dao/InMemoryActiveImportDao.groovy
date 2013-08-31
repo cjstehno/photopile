@@ -56,6 +56,11 @@ class InMemoryActiveImportDao implements ActiveImportDao {
     private final ListMultimap<Long,String> importErrors = Multimaps.synchronizedListMultimap( ArrayListMultimap.create() )
 
     @Override
+    List<ActiveImport> listImports(){
+        [] + activeImports.values()
+    }
+
+    @Override
     long createImport(final String username, final Set<String> tags ) {
         def activeImport = new ActiveImport(
             id:currentId.addAndGet(1),

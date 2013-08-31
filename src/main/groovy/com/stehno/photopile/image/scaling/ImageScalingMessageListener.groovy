@@ -39,7 +39,7 @@ class ImageScalingMessageListener implements MessageListener {
         // FIXME: this is a hack - remove it!
         // basically this message handler can run before the original photo save is committed
         // so it needs to wait a bit to ensure that the image is saved
-        sleep 5000
+//        sleep 60*1000
 
         ImageScaleRequest scaleRequest = message as ImageScaleRequest
         try {
