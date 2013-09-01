@@ -38,3 +38,4 @@ class Photo {
 
     Set<String> tags = [] as Set<String>
 }
+// select id,version,name,description,camera_info,date_uploaded,date_updated,date_taken,longitude,latitude,tag from photos p left outer join photo_tags t on t.photo_id=p.id order by date_taken asc offset ? limit ?

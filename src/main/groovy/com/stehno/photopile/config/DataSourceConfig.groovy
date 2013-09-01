@@ -15,28 +15,26 @@
  */
 
 package com.stehno.photopile.config
-
 import com.mchange.v2.c3p0.ComboPooledDataSource
+import org.hibernate.SessionFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.support.lob.DefaultLobHandler
 import org.springframework.jdbc.support.lob.LobHandler
+import org.springframework.orm.hibernate4.HibernateTransactionManager
+import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
 import javax.sql.DataSource
 import java.beans.PropertyVetoException
-
 /**
  * Configuration for the database connections.
  */
 @Configuration
 @EnableTransactionManagement
-@ComponentScan('com.stehno.photopile.dao')
 class DataSourceConfig {
 
     private static final String JDBC_DRIVER = 'org.postgresql.Driver'
@@ -64,6 +62,16 @@ class DataSourceConfig {
         )
     }
 
+    @Bean SessionFactory sessionFactory(){
+        new LocalSessionFactoryBuilder( dataSource() ).buildSessionFactory()
+        /*return new LocalSessionFactoryBuilder(dataConfig.dataSource())
+            .scanPackages(DatabasePackage)
+            .addPackage(DatabasePackage)
+            .addProperties(dataConfig.hibernateProperties())
+            .addResource("hibernate.local.cfg.xml")
+            .buildSessionFactory();*/
+    }
+
     @Bean JdbcTemplate jdbcTemplate() throws PropertyVetoException {
         new JdbcTemplate( dataSource() )
     }
@@ -74,6 +82,6 @@ class DataSourceConfig {
 
     @Bean
     public PlatformTransactionManager transactionManager(){
-        new DataSourceTransactionManager( dataSource:dataSource() )
+        new HibernateTransactionManager( sessionFactory() )
     }
 }
