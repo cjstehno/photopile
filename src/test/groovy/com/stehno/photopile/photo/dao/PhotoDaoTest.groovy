@@ -44,6 +44,7 @@ import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
 import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
 import static com.stehno.photopile.photo.PhotoFixtures.fixtureFor
 import static com.stehno.photopile.photo.PhotoFixtures.photoName
+import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static com.stehno.photopile.test.Asserts.assertMatches
 import static com.stehno.photopile.test.Asserts.assertToday
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
@@ -157,8 +158,8 @@ class PhotoDaoTest {
         photoList = photoDao.list( paged, sorted, new TaggedAs( tags:['alpha','bravo'] ) )
         assert 2 == photoList.size()
 
-//        photoList = photoDao.list( paged, sorted, new TaggedAs( tags:['alpha','bravo'], grouping:TaggedAs.Grouping.ALL ) )
-//        assert 1 == photoList.size()
+        photoList = photoDao.list( paged, sorted, new TaggedAs( tags:['alpha','bravo'], grouping:ALL ) )
+        assert 1 == photoList.size()
     }
 
     @Test void 'list: limited'(){

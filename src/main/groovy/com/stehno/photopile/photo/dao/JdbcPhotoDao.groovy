@@ -22,6 +22,8 @@ import com.stehno.photopile.photo.domain.Location
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
+import groovy.util.logging.Slf4j
+import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.*
@@ -32,12 +34,13 @@ import java.sql.SQLException
 import java.sql.Timestamp
 
 import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
+import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static org.springframework.dao.support.DataAccessUtils.requiredSingleResult
 /**
  * JDBC-based implementation of the PhotoDao interface using PostgreSql-specific
  * SQL grammar.
  */
-@Repository
+@Repository @Slf4j
 class JdbcPhotoDao implements PhotoDao {
 
     private static final String INSERT_SQL = 'insert into photos (name,description,camera_info,date_uploaded,date_taken,longitude,latitude) values (?,?,?,?,?,?,?) returning id,version,date_updated'
@@ -47,8 +50,6 @@ class JdbcPhotoDao implements PhotoDao {
     private static final String OFFSET_SUFFIX = ' offset ? limit ?'
     private static final String COUNT_SQL = 'select count(*) from photos'
     private static final String DELETE_SQL = 'delete from photos where id=?'
-
-    private static final String INVALID_FIELD_MSG = 'Specified orderBy field (%s) is not allowed, only (%s) are available.'
 
     private static final ORDERINGS = [ name:'name', cameraInfo:'camera_info', dateUploaded:'date_uploaded', dateUpdated:'date_updated', dateTaken:'date_taken' ]
     private static final String CLEAR_TAGS_SQL = 'delete from photo_tags where photo_id=?'
@@ -118,8 +119,42 @@ class JdbcPhotoDao implements PhotoDao {
     }
 
     @Override
-    List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ) {
-        jdbcTemplate.query SELECT_SQL + tagFilteringSql(taggedAs) + orderingSql(sortOrder) + OFFSET_SUFFIX, photoResultSetExtractor, pageBy.start, pageBy.limit
+    List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ){
+        // TODO: this is probably not the best way to do this, but works for now
+        String taggedSql = ''
+        if( taggedAs?.tags ){
+            def taggedPhotoIds = findTaggedPhotos( taggedAs ).join(',')
+            if( taggedPhotoIds ){
+                taggedSql = " where p.id in ($taggedPhotoIds)"
+            } else {
+                // searching for tagged photos and found none, you're done.
+                return []
+            }
+        }
+
+        String sql = SELECT_SQL + taggedSql + orderingSql( sortOrder ) + OFFSET_SUFFIX
+
+        log.debug 'SQL(list): {}', sql
+
+        jdbcTemplate.query(
+            sql,
+            photoResultSetExtractor,
+            pageBy.start,
+            pageBy.limit
+        )
+    }
+
+    // FIXME: protect from sql injection
+    private List<Long> findTaggedPhotos( final TaggedAs taggedAs ){
+        String sql
+        if( taggedAs.grouping == ALL ){
+            sql = taggedAs.tags.collect { "select photo_id from photo_tags where tag='${it.trim()}'" }.join(' intersect distinct ')
+
+        } else {
+            def inTags = taggedAs.tags.collect { "'${it.trim()}'" }.join(',')
+            sql = "select distinct(photo_id) from photo_tags where tag in ($inTags)"
+        }
+        jdbcTemplate.query sql, singleLongMapper
     }
 
     @Override
@@ -149,23 +184,6 @@ class JdbcPhotoDao implements PhotoDao {
         jdbcTemplate.query( TAG_LIST_SQL, singleStringMapper )
     }
 
-    // FIXME: this tag sql needs to be protected from sql injection
-    private String tagFilteringSql( final TaggedAs taggedAs ){
-        if( taggedAs?.tags ){
-            def tagsSql = taggedAs.tags.collect { "'$it'" }.join( ',' )
-
-            if( taggedAs.grouping == TaggedAs.Grouping.ALL ){
-                // FIXME: currently not supported, just return the ANY sql
-                return " where t.tag in ($tagsSql)"
-//                return " where (select count(*) from t where t.photo_id=p.id and tag in ($tagsSql)) = ${taggedAs.tags.size()}"
-
-            } else {
-                return " where t.tag in ($tagsSql)"
-            }
-        }
-        return ''
-    }
-
     private String orderingSql( final SortBy sortOrder ){
         def ordering = ORDERINGS[sortOrder?.field ?: 'dateTaken']
 
@@ -183,7 +201,9 @@ class JdbcPhotoDao implements PhotoDao {
             jdbcTemplate.update CLEAR_TAGS_SQL, photo.id
 
             photo.tags?.each { tag->
-                jdbcTemplate.update INSERT_TAGS_SQL, photo.id, tag
+                if( StringUtils.isNotBlank(tag) ){
+                    jdbcTemplate.update INSERT_TAGS_SQL, photo.id, tag.trim()
+                }
             }
         }
     }
