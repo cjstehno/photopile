@@ -23,32 +23,28 @@ import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import org.hibernate.criterion.Order
+import org.hibernate.criterion.Projections
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Repository
+
+import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
+
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 9/1/13
- * Time: 12:36 PM
- * To change this template use File | Settings | File Templates.
+ * Hibernate-based implementation of the PhotoDao.
  */
 @Repository
 class HibernatePhotoDao implements PhotoDao {
 
     @Autowired SessionFactory sessionFactory
 
-    private Session currentSession(){
+    private Session getSession(){
         sessionFactory.currentSession
     }
 
     @Override
     long create( final Photo photo ){
-        try {
-            return currentSession().save(photo)
-        } catch( ex ){
-            ex.printStackTrace()
-            return null
-        }
+        session.save(photo) as long
     }
 
     @Override
@@ -57,17 +53,17 @@ class HibernatePhotoDao implements PhotoDao {
     }
 
     @Override
-    long count( ){
-        return 0  //To change body of implemented methods use File | Settings | File Templates.
+    long count(){
+        session.createCriteria(Photo).setProjection(Projections.rowCount()).uniqueResult() as long
     }
 
     @Override
-    List<Photo> list( final SortBy sortOrder ){
-        return null  //To change body of implemented methods use File | Settings | File Templates.
+    List<Photo> list( final SortBy sortBy=null ){
+        session.createCriteria(Photo).addOrder( asOrder(sortBy) ).list()
     }
 
     @Override
-    List<Photo> list( final PageBy pageBy, final SortBy sortOrder, final TaggedAs taggedAs ){
+    List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ){
         return null  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -83,11 +79,16 @@ class HibernatePhotoDao implements PhotoDao {
 
     @Override
     Photo fetch( final long photoId ){
-        currentSession().get(Photo,photoId)
+        session.load(Photo,photoId) as Photo
     }
 
     @Override
     List<String> listTags( ){
         return null  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    private Order asOrder( SortBy sortBy=null ){
+        String sortField = sortBy?.field ?: 'dateTaken'
+        sortBy?.direction == ASCENDING ? Order.asc(sortField) : Order.desc(sortField)
     }
 }

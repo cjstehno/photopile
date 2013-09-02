@@ -16,24 +16,21 @@
 
 package com.stehno.photopile.photo.domain
 
+import groovy.transform.ToString
+
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.Id
 import javax.persistence.Table
 
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 9/1/13
- * Time: 1:28 PM
- * To change this template use File | Settings | File Templates.
+ * Entity representation of a photo classification tag.
  */
 @Entity @Table(name='tags')
+@ToString(includeNames=true)
 class Tag {
 
     @Id @GeneratedValue Long id
 
     String name
-
-    String group
 }

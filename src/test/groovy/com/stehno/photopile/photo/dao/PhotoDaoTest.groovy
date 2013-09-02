@@ -20,28 +20,17 @@ import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.photo.PhotoConfig
 import com.stehno.photopile.photo.PhotoDao
+import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
-import com.stehno.photopile.test.Integration
 import com.stehno.photopile.test.config.TestConfig
-import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import org.junit.Test
-import org.junit.experimental.categories.Category
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener
-import org.springframework.transaction.PlatformTransactionManager
-import org.springframework.transaction.TransactionStatus
-import org.springframework.transaction.support.TransactionCallback
-import org.springframework.transaction.support.TransactionTemplate
 
 import static com.stehno.photopile.Fixtures.*
 import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
@@ -52,31 +41,29 @@ import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static com.stehno.photopile.test.Asserts.assertMatches
 import static com.stehno.photopile.test.Asserts.assertToday
 
-@Category(Integration)
-@RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes=[TestConfig, PhotoConfig, ImageConfig])
-@TestExecutionListeners([
-    DatabaseTestExecutionListener, DependencyInjectionTestExecutionListener, TransactionalTestExecutionListener
-])
-class PhotoDaoTest {
+class PhotoDaoTest extends AbstractDaoTest {
 
     static TABLES = ['photos','photo_tags','tags']
 
     @Autowired private PhotoDao photoDao
+    @Autowired private TagDao tagDao
     @Autowired private JdbcTemplate jdbcTemplate
-    @Autowired private PlatformTransactionManager transactionManager
 
     @Test void 'create'(){
         def fixture = fixtureFor(FIX_A)
 
-        def photo = new Photo(fixture)
         def id = withinTransaction {
-            photoDao.create( photo )
-        }
+            def photo = new Photo(fixture)
+            def photoId = photoDao.create( photo )
 
-        assert photo.id
-        assert photo.version == 0
-        assert photo.dateUpdated
+            assert photoId
+            assert photo.id
+            assert photo.version == 0
+            assert photo.dateUpdated
+
+            return photoId
+        }
 
         withinTransaction {
             def criteria = [version:0, id:idNonZero, dateUpdated:dateIsToday]
@@ -86,22 +73,19 @@ class PhotoDaoTest {
 
     @Test void 'create: with tags'(){
         def fixture = fixtureFor(FIX_A)
-        fixture.tags = [new Tag( name:'something', group:'test' )] as Set<Tag>
+        fixture.tags = [createTag('something')] as Set<Tag>
 
-        def photo = new Photo(fixture)
         def id = withinTransaction {
-            try {
-                photoDao.currentSession().save(fixture.tags[0])
-                return photoDao.create( photo )
-            } catch( ex ){
-                ex.printStackTrace()
-                return null
-            }
-        }
+            def photo = new Photo(fixture)
+            def photoId = photoDao.create( photo )
 
-        assert photo.id
-        assert photo.version == 0
-        assert photo.dateUpdated
+            assert photoId
+            assert photo.id
+            assert photo.version == 0
+            assert photo.dateUpdated
+
+            return photoId
+        }
 
         withinTransaction {
             def criteria = [
@@ -117,42 +101,56 @@ class PhotoDaoTest {
     @Test void 'save & list'(){
         def fixtures = fixtureFor( FIX_A, FIX_B, FIX_C )
 
-        fixtures.each { fix->
-            photoDao.create(new Photo(fix))
+        withinTransaction {
+            fixtures.each { fix->
+                photoDao.create(new Photo(fix))
+            }
         }
 
-        assert 3 == photoDao.count()
+        withinTransaction {
+            assert 3 == photoDao.count()
+        }
 
-        def photoList = photoDao.list()
-        assert 3 == photoList.size()
+        withinTransaction {
+            def photoList = photoDao.list()
+            assert 3 == photoList.size()
 
-        def assertions = [ id:idNonZero, dateUpdated:dateIsToday ]
+            def assertions = [ id:idNonZero, dateUpdated:dateIsToday ]
 
-        assertMatches fixtures[0] + assertions, photoList[2]
-        assertMatches fixtures[1] + assertions, photoList[1]
-        assertMatches fixtures[2] + assertions, photoList[0]
+            assertMatches fixtures[0] + assertions, photoList[2]
+            assertMatches fixtures[1] + assertions, photoList[1]
+            assertMatches fixtures[2] + assertions, photoList[0]
+        }
     }
 
     @Test void 'save & list: with tags'(){
+        def tags = ['alpha','bravo','charlie'].collect { createTag(it) }
+
         def fixtures = fixtureFor( FIX_A, FIX_B, FIX_C )
 
-        fixtures[0].tags = ['alpha'] as Set<String>
-        fixtures[2].tags = ['bravo','charlie'] as Set<String>
+        fixtures[0].tags = [ tags[0] ] as Set<String>
+        fixtures[2].tags = [ tags[1], tags[2] ] as Set<String>
 
-        fixtures.each { fix->
-            photoDao.create(new Photo(fix))
+        withinTransaction {
+            fixtures.each { fix->
+                photoDao.create(new Photo(fix))
+            }
         }
 
-        assert 3 == photoDao.count()
+        withinTransaction {
+            assert 3 == photoDao.count()
+        }
 
-        def photoList = photoDao.list()
-        assert 3 == photoList.size()
+        withinTransaction {
+            def photoList = photoDao.list()
+            assert 3 == photoList.size()
 
-        def assertions = [ id:idNonZero, dateUpdated:dateIsToday ]
+            def assertions = [ id:idNonZero, dateUpdated:dateIsToday ]
 
-        assertMatches fixtures[0] + assertions + [tags:(['alpha'] as Set<String>)], photoList[2]
-        assertMatches fixtures[1] + assertions, photoList[1]
-        assertMatches fixtures[2] + assertions + [tags:(['bravo','charlie'] as Set<String>)], photoList[0]
+            assertMatches fixtures[0] + assertions + [tags:hasTags.curry(['alpha'])], photoList[2]
+            assertMatches fixtures[1] + assertions, photoList[1]
+            assertMatches fixtures[2] + assertions + [tags:hasTags.curry(['bravo','charlie'])], photoList[0]
+        }
     }
 
     @Test void 'list with tag filtering'(){
@@ -316,22 +314,17 @@ class PhotoDaoTest {
 
     def idNonZero = { id-> assert id > 0 }
 
-    def withinTransaction( Closure ops ){
-        new TransactionTemplate(transactionManager).execute(new GroovyTransactionCallback(closure:ops))
+    // this closure should be curried to add the expected tag names as a list
+    def hasTags = { expectedNames, tags ->
+        assert tags.size() == expectedNames.size()
+        assert tags*.name.containsAll(expectedNames)
     }
-}
 
-class GroovyTransactionCallback implements TransactionCallback {
-
-    Closure closure
-
-    @Override
-    Object doInTransaction( final TransactionStatus transactionStatus ){
-        try {
-            return closure()
-        } catch( ex ){
-            ex.printStackTrace()
-            return null
-        }
+    private Tag createTag( final String name ){
+        withinTransaction {
+            def tag = new Tag( name:name )
+            tagDao.create( tag )
+            return tag
+        } as Tag
     }
 }
