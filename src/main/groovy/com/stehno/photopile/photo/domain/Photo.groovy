@@ -16,26 +16,40 @@
 
 package com.stehno.photopile.photo.domain
 
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+
+import javax.persistence.*
 
 /**
  *  Represents buildPhoto data in the database.
  */
-@ToString
-@EqualsAndHashCode
+@Entity @Table(name='photos')
+@ToString(includeNames=true)
 class Photo {
 
-    Long id
-    Long version
+    @Id @GeneratedValue Long id
+
+    @Version Long version
+
     String name
+
     String description
-    String cameraInfo
-    Date dateUploaded
-    Date dateUpdated
-    Date dateTaken
+
+    @Column(name='camera_info') String cameraInfo
+
+    @Column(name='date_uploaded') Date dateUploaded
+
+    @Column(name='date_updated') Date dateUpdated
+
+    @Column(name='date_taken') Date dateTaken
+
     Location location
 
-    Set<String> tags = [] as Set<String>
+    @OneToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+        name= 'photo_tags',
+        joinColumns = @JoinColumn( name= 'photo_id' ),
+        inverseJoinColumns = @JoinColumn( name="tag_id")
+    )
+    Set<Tag> tags
 }
-// select id,version,name,description,camera_info,date_uploaded,date_updated,date_taken,longitude,latitude,tag from photos p left outer join photo_tags t on t.photo_id=p.id order by date_taken asc offset ? limit ?

@@ -16,17 +16,24 @@
 
 package com.stehno.photopile.photo.domain
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
-
-import javax.persistence.Embeddable
+import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.Id
+import javax.persistence.Table
 
 /**
- *  Represents the map location of a buildPhoto.
+ * Created with IntelliJ IDEA.
+ * User: cjstehno
+ * Date: 9/1/13
+ * Time: 1:28 PM
+ * To change this template use File | Settings | File Templates.
  */
-@Embeddable @ToString(includeNames=true) @EqualsAndHashCode
-class Location {
+@Entity @Table(name='tags')
+class Tag {
 
-    double latitude
-    double longitude
+    @Id @GeneratedValue Long id
+
+    String name
+
+    String group
 }

@@ -16,13 +16,15 @@
 
 package com.stehno.photopile.test.config
 
+import com.stehno.photopile.hibernate.HibernateInterceptor
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.jdbc.support.lob.DefaultLobHandler
 import org.springframework.jdbc.support.lob.LobHandler
+import org.springframework.orm.hibernate4.HibernateTransactionManager
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
@@ -32,6 +34,8 @@ import javax.sql.DataSource
 @EnableTransactionManagement
 class TestConfig {
     // FIXME: try to pull in common configs rather than duplicating here
+    private static final String PROPERTY_NAME_HIBERNATE_DIALECT = 'hibernate.dialect'
+    private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = 'hibernate.show_sql'
 
     @Bean
     public DataSource dataSource(){
@@ -43,6 +47,19 @@ class TestConfig {
         )
     }
 
+    @Bean LocalSessionFactoryBean sessionFactory(){
+        def factory = new LocalSessionFactoryBean(
+            dataSource: dataSource(),
+            hibernateProperties: [
+                (PROPERTY_NAME_HIBERNATE_DIALECT): 'org.hibernate.dialect.PostgreSQL82Dialect',
+                (PROPERTY_NAME_HIBERNATE_SHOW_SQL): 'true'
+            ] as Properties
+        )
+        factory.entityInterceptor = new HibernateInterceptor()
+        factory.setPackagesToScan('com.stehno.photopile.photo.domain')
+        return factory
+    }
+
     @Bean
     public JdbcTemplate jdbcTemplate(){
         new JdbcTemplate( dataSource() )
@@ -52,10 +69,7 @@ class TestConfig {
         new DefaultLobHandler( wrapAsLob:true )
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(){
-        new DataSourceTransactionManager(
-            dataSource:dataSource()
-        )
+    @Bean PlatformTransactionManager transactionManager(){
+        new HibernateTransactionManager( sessionFactory().getObject() )
     }
 }

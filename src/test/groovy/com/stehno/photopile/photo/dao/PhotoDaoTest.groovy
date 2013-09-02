@@ -15,13 +15,13 @@
  */
 
 package com.stehno.photopile.photo.dao
-
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.photo.PhotoConfig
 import com.stehno.photopile.photo.PhotoDao
 import com.stehno.photopile.photo.domain.Photo
+import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import com.stehno.photopile.test.Integration
@@ -38,6 +38,10 @@ import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
+import org.springframework.transaction.PlatformTransactionManager
+import org.springframework.transaction.TransactionStatus
+import org.springframework.transaction.support.TransactionCallback
+import org.springframework.transaction.support.TransactionTemplate
 
 import static com.stehno.photopile.Fixtures.*
 import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
@@ -47,53 +51,67 @@ import static com.stehno.photopile.photo.PhotoFixtures.photoName
 import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static com.stehno.photopile.test.Asserts.assertMatches
 import static com.stehno.photopile.test.Asserts.assertToday
-import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
 @Category(Integration)
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes=[TestConfig, PhotoConfig, ImageConfig])
 @TestExecutionListeners([
-    DatabaseTestExecutionListener,
-    DependencyInjectionTestExecutionListener,
-    TransactionalTestExecutionListener
+    DatabaseTestExecutionListener, DependencyInjectionTestExecutionListener, TransactionalTestExecutionListener
 ])
 class PhotoDaoTest {
 
-    static TABLES = ['photos', 'photo_tags']
+    static TABLES = ['photos','photo_tags','tags']
 
     @Autowired private PhotoDao photoDao
     @Autowired private JdbcTemplate jdbcTemplate
+    @Autowired private PlatformTransactionManager transactionManager
 
     @Test void 'create'(){
         def fixture = fixtureFor(FIX_A)
 
         def photo = new Photo(fixture)
-        def id = photoDao.create( photo )
+        def id = withinTransaction {
+            photoDao.create( photo )
+        }
 
         assert photo.id
         assert photo.version == 0
         assert photo.dateUpdated
 
-        assert 1 == countRowsInTable(jdbcTemplate, 'photos')
-
-        def criteria = [version: 0, id: idNonZero, dateUpdated: dateIsToday]
-        assertMatches fixture + criteria, photoDao.fetch(id)
+        withinTransaction {
+            def criteria = [version:0, id:idNonZero, dateUpdated:dateIsToday]
+            assertMatches fixture + criteria, photoDao.fetch(id)
+        }
     }
 
     @Test void 'create: with tags'(){
         def fixture = fixtureFor(FIX_A)
-        fixture.tags = ['something'] as Set<String>
+        fixture.tags = [new Tag( name:'something', group:'test' )] as Set<Tag>
 
         def photo = new Photo(fixture)
-        def id = photoDao.create( photo )
+        def id = withinTransaction {
+            try {
+                photoDao.currentSession().save(fixture.tags[0])
+                return photoDao.create( photo )
+            } catch( ex ){
+                ex.printStackTrace()
+                return null
+            }
+        }
 
         assert photo.id
         assert photo.version == 0
         assert photo.dateUpdated
 
-        assert 1 == countRowsInTable(jdbcTemplate, 'photos')
-
-        assertMatches fixture + [version:0, id:idNonZero, dateUpdated:dateIsToday, tags:(['something'] as Set<String>)], photoDao.fetch(id)
+        withinTransaction {
+            def criteria = [
+                version:0,
+                id:idNonZero,
+                dateUpdated:dateIsToday,
+                tags:{ it.size() == 1 && it[0].name == 'something' }
+            ]
+            assertMatches fixture + criteria, photoDao.fetch(id)
+        }
     }
 
     @Test void 'save & list'(){
@@ -297,4 +315,23 @@ class PhotoDaoTest {
     def dateIsToday = { assertToday(it as Date) }
 
     def idNonZero = { id-> assert id > 0 }
+
+    def withinTransaction( Closure ops ){
+        new TransactionTemplate(transactionManager).execute(new GroovyTransactionCallback(closure:ops))
+    }
+}
+
+class GroovyTransactionCallback implements TransactionCallback {
+
+    Closure closure
+
+    @Override
+    Object doInTransaction( final TransactionStatus transactionStatus ){
+        try {
+            return closure()
+        } catch( ex ){
+            ex.printStackTrace()
+            return null
+        }
+    }
 }

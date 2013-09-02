@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.config
 import com.mchange.v2.c3p0.ComboPooledDataSource
-import org.hibernate.SessionFactory
+import com.stehno.photopile.hibernate.HibernateInterceptor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -24,7 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.support.lob.DefaultLobHandler
 import org.springframework.jdbc.support.lob.LobHandler
 import org.springframework.orm.hibernate4.HibernateTransactionManager
-import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder
+import org.springframework.orm.hibernate4.LocalSessionFactoryBean
 import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
 
@@ -38,6 +38,8 @@ import java.beans.PropertyVetoException
 class DataSourceConfig {
 
     private static final String JDBC_DRIVER = 'org.postgresql.Driver'
+    private static final String PROPERTY_NAME_HIBERNATE_DIALECT = 'hibernate.dialect'
+    private static final String PROPERTY_NAME_HIBERNATE_SHOW_SQL = 'hibernate.show_sql'
 
     @Value('${jdbc.url}') private String jdbcUrl
     @Value('${jdbc.username}') private String jdbcUsername
@@ -62,14 +64,17 @@ class DataSourceConfig {
         )
     }
 
-    @Bean SessionFactory sessionFactory(){
-        new LocalSessionFactoryBuilder( dataSource() ).buildSessionFactory()
-        /*return new LocalSessionFactoryBuilder(dataConfig.dataSource())
-            .scanPackages(DatabasePackage)
-            .addPackage(DatabasePackage)
-            .addProperties(dataConfig.hibernateProperties())
-            .addResource("hibernate.local.cfg.xml")
-            .buildSessionFactory();*/
+    @Bean LocalSessionFactoryBean sessionFactory(){
+        def factory = new LocalSessionFactoryBean(
+            dataSource: dataSource(),
+            hibernateProperties: [
+                (PROPERTY_NAME_HIBERNATE_DIALECT): 'org.hibernate.dialect.PostgreSQL82Dialect',
+                (PROPERTY_NAME_HIBERNATE_SHOW_SQL): 'true'
+            ] as Properties
+        )
+        factory.entityInterceptor = new HibernateInterceptor()
+        factory.setPackagesToScan('com.stehno.photopile.photo.domain')
+        return factory
     }
 
     @Bean JdbcTemplate jdbcTemplate() throws PropertyVetoException {
@@ -80,8 +85,7 @@ class DataSourceConfig {
         new DefaultLobHandler( wrapAsLob:true )
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(){
-        new HibernateTransactionManager( sessionFactory() )
+    @Bean PlatformTransactionManager transactionManager(){
+        new HibernateTransactionManager( sessionFactory().getObject() )
     }
 }

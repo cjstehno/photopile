@@ -44,11 +44,11 @@ class PhotoFixtures {
     ]
 
     static final LOCATION_VALUES = [
-        (FIX_A): new Location( 45.0d, -10.5d ),
-        (FIX_B): new Location( 30.0d, -30.0d ),
-        (FIX_C): new Location( 30.0d,  30.0d ),
-        (FIX_D): new Location(-30.0d, -30.0d ),
-        (FIX_E): new Location(-30.0d,  30.0d )
+        (FIX_A): new Location( latitude:45.0d, longitude:-10.5d ),
+        (FIX_B): new Location( latitude: 30.0d, longitude:-30.0d ),
+        (FIX_C): new Location( latitude: 30.0d, longitude: 30.0d ),
+        (FIX_D): new Location( latitude:-30.0d, longitude:-30.0d ),
+        (FIX_E): new Location( latitude:-30.0d, longitude: 30.0d )
     ]
 
     static String photoName( String fixId ){ "Photo-$fixId" }

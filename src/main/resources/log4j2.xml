@@ -26,6 +26,9 @@
         <logger name="org.springframework.web" level="WARN"/>
         <logger name="org.springframework.jdbc" level="WARN"/>
         <logger name="org.springframework.security" level="WARN" />
+        <logger name="org.springframework.orm" level="DEBUG"/>
+        <logger name="org.springframework.test" level="DEBUG"/>
+        <logger name="org.hibernate" level="DEBUG" />
 
         <logger name="com.stehno.photopile" level="DEBUG"/>
 

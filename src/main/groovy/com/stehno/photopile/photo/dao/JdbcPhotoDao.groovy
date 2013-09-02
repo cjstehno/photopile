@@ -27,7 +27,6 @@ import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.*
-import org.springframework.stereotype.Repository
 
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -40,7 +39,7 @@ import static org.springframework.dao.support.DataAccessUtils.requiredSingleResu
  * JDBC-based implementation of the PhotoDao interface using PostgreSql-specific
  * SQL grammar.
  */
-@Repository @Slf4j
+/*@Repository*/ @Slf4j
 class JdbcPhotoDao implements PhotoDao {
 
     private static final String INSERT_SQL = 'insert into photos (name,description,camera_info,date_uploaded,date_taken,longitude,latitude) values (?,?,?,?,?,?,?) returning id,version,date_updated'

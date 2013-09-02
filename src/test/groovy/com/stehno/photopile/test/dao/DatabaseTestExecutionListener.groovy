@@ -34,9 +34,8 @@ class DatabaseTestExecutionListener extends AbstractTestExecutionListener {
 
     @Override
     void beforeTestClass(final TestContext testContext) throws Exception {
-        rebuildDatabase(
-            testContext.applicationContext.getBean('dataSource', DataSource)
-        )
+        def ds = testContext.applicationContext.getBean( 'dataSource', DataSource )
+        rebuildDatabase( ds )
     }
 
     private rebuildDatabase( DataSource dataSource ){
@@ -56,6 +55,7 @@ class DatabaseTestExecutionListener extends AbstractTestExecutionListener {
             liquibase.update('test')
 
         } catch( Exception ex ){
+            ex.printStackTrace()
             log.error 'Problem initializing test database: {}', ex.message, ex
 
         } finally {

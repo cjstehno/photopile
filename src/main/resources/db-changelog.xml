@@ -73,6 +73,8 @@
 
         <!-- buildPhoto tables -->
 
+        <createSequence sequenceName="hibernate_sequence" incrementBy="1" minValue="1" maxValue="9223372036854775807" />
+
         <createTable tableName="photos">
             <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" nullable="false"/></column>
             <column name="version" type="bigint" defaultValueNumeric="0"><constraints nullable="false"/></column>
@@ -99,10 +101,18 @@
                                  baseTableName="images" baseColumnNames="photo_id"
                                  referencedTableName="photos" referencedColumnNames="id" />
 
+        <createTable tableName="tags">
+            <column name="id" type="bigint" autoIncrement="true"><constraints primaryKey="true" nullable="false"/></column>
+            <column name="name" type="varchar(40)"><constraints nullable="false"/></column>
+            <column name="group" type="varchar(20)"><constraints nullable="false"/></column>
+        </createTable>
+        <addUniqueConstraint tableName="tags" columnNames="group,name" constraintName="unique_tag_namespace"/>
+
         <createTable tableName="photo_tags">
             <column name="photo_id" type="bigint"><constraints nullable="false"/></column>
-            <column name="tag" type="varchar(50)"><constraints nullable="false" /></column>
+            <column name="tag_id" type="bigint"><constraints nullable="false"/></column>
         </createTable>
+        <!-- FIXME: this should have constraints -->
 
     </changeSet>
 
