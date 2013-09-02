@@ -23,7 +23,6 @@ import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import groovy.util.logging.Slf4j
-import org.apache.commons.lang.StringUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.*
@@ -36,6 +35,7 @@ import java.sql.Timestamp
 import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
 import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static org.springframework.dao.support.DataAccessUtils.requiredSingleResult
+import static org.springframework.util.Assert.notNull
 /**
  * JDBC-based implementation of the PhotoDao interface using PostgreSql-specific
  * SQL grammar.
@@ -53,7 +53,7 @@ class JdbcPhotoDao implements PhotoDao {
 
     private static final ORDERINGS = [ name:'name', cameraInfo:'camera_info', dateUploaded:'date_uploaded', dateUpdated:'date_updated', dateTaken:'date_taken' ]
     private static final String CLEAR_TAGS_SQL = 'delete from photo_tags where photo_id=?'
-    private static final String INSERT_TAGS_SQL = 'insert into photo_tags (photo_id,tag) values (?,?)'
+    private static final String INSERT_TAGS_SQL = 'insert into photo_tags (photo_id,tag_id) values (?,?)'
     private static final String LOCATION_BOUNDS_SQL = ' where p.latitude >= ? and p.latitude <= ? and p.longitude >= ? and p.longitude <= ?'
     private static final String TAG_LIST_SQL = 'select distinct(tag) from photo_tags order by tag'
 
@@ -197,13 +197,12 @@ class JdbcPhotoDao implements PhotoDao {
     }
 
     private void saveTags( final Photo photo ){
-        if( photo ){
+        if( photo?.id ){
             jdbcTemplate.update CLEAR_TAGS_SQL, photo.id
 
             photo.tags?.each { tag->
-                if( StringUtils.isNotBlank(tag) ){
-                    jdbcTemplate.update INSERT_TAGS_SQL, photo.id, tag.trim()
-                }
+                notNull tag.id, "Tag (${tag.fullName}) does not exist or has not been persisted."
+                jdbcTemplate.update INSERT_TAGS_SQL, photo.id, tag.id
             }
         }
     }

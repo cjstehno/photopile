@@ -20,20 +20,18 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 /**
- *  Represents buildPhoto data in the database.
+ * Created with IntelliJ IDEA.
+ * User: cjstehno
+ * Date: 9/2/13
+ * Time: 7:49 AM
+ * To change this template use File | Settings | File Templates.
  */
 @ToString(includeNames=true) @EqualsAndHashCode
-class Photo {
+class Tag {
 
     Long id
-    Long version
     String name
-    String description
-    String cameraInfo
-    Date dateUploaded
-    Date dateUpdated
-    Date dateTaken
-    Location location
+    String group
 
-    Set<Tag> tags = [] as Set<Tag>
+    String getFullName(){ "$group:$name" }
 }
