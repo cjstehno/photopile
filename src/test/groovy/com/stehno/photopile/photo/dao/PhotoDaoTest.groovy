@@ -15,13 +15,14 @@
  */
 
 package com.stehno.photopile.photo.dao
-
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.photo.PhotoConfig
 import com.stehno.photopile.photo.PhotoDao
+import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Photo
+import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import com.stehno.photopile.test.Integration
@@ -59,9 +60,10 @@ import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 ])
 class PhotoDaoTest {
 
-    static TABLES = ['photos', 'photo_tags']
+    static TABLES = ['photos', 'photo_tags', 'tags']
 
     @Autowired private PhotoDao photoDao
+    @Autowired private TagDao tagDao
     @Autowired private JdbcTemplate jdbcTemplate
 
     @Test void 'create'(){
@@ -82,7 +84,7 @@ class PhotoDaoTest {
 
     @Test void 'create: with tags'(){
         def fixture = fixtureFor(FIX_A)
-        fixture.tags = ['something'] as Set<String>
+        fixture.tags = tagsFor('something')
 
         def photo = new Photo(fixture)
         def id = photoDao.create( photo )
@@ -93,7 +95,9 @@ class PhotoDaoTest {
 
         assert 1 == countRowsInTable(jdbcTemplate, 'photos')
 
-        assertMatches fixture + [version:0, id:idNonZero, dateUpdated:dateIsToday, tags:(['something'] as Set<String>)], photoDao.fetch(id)
+        def hasTags = containsTags.curry(['something'])
+
+        assertMatches fixture + [version:0, id:idNonZero, dateUpdated:dateIsToday, tags:hasTags], photoDao.fetch(id)
     }
 
     @Test void 'save & list'(){
@@ -118,8 +122,8 @@ class PhotoDaoTest {
     @Test void 'save & list: with tags'(){
         def fixtures = fixtureFor( FIX_A, FIX_B, FIX_C )
 
-        fixtures[0].tags = ['alpha'] as Set<String>
-        fixtures[2].tags = ['bravo','charlie'] as Set<String>
+        fixtures[0].tags = tagsFor('alpha')
+        fixtures[2].tags = tagsFor( 'bravo','charlie' )
 
         fixtures.each { fix->
             photoDao.create(new Photo(fix))
@@ -132,16 +136,18 @@ class PhotoDaoTest {
 
         def assertions = [ id:idNonZero, dateUpdated:dateIsToday ]
 
-        assertMatches fixtures[0] + assertions + [tags:(['alpha'] as Set<String>)], photoList[2]
+        assertMatches fixtures[0] + assertions + [tags:containsTags.curry(['alpha'])], photoList[2]
         assertMatches fixtures[1] + assertions, photoList[1]
-        assertMatches fixtures[2] + assertions + [tags:(['bravo','charlie'] as Set<String>)], photoList[0]
+        assertMatches fixtures[2] + assertions + [tags:containsTags.curry(['bravo','charlie'])], photoList[0]
     }
 
     @Test void 'list with tag filtering'(){
         def fixtures = fixtureFor( FIX_A, FIX_B, FIX_C )
 
-        fixtures[0].tags = ['alpha'] as Set<String>
-        fixtures[2].tags = ['bravo','alpha'] as Set<String>
+        def tags = tagsFor('alpha','bravo')
+
+        fixtures[0].tags = [ tags[0] ] as Set<Tag>
+        fixtures[2].tags = [ tags[1], tags[0] ] as Set<Tag>
 
         fixtures.each { fix->
             photoDao.create(new Photo(fix))
@@ -224,12 +230,13 @@ class PhotoDaoTest {
     }
 
     @Test void 'fetch: existing with tags'(){
-        long photoId = photoDao.create(new Photo(fixtureFor(FIX_A) + [tags:(['alpha','bravo'] as Set<String>)]))
+        def tags = tagsFor('alpha','bravo')
+        long photoId = photoDao.create(new Photo(fixtureFor(FIX_A) + [tags:tags]))
         def photo = photoDao.fetch(photoId)
 
         assert photo != null
         assert photoName(FIX_A) == photo.name
-        assert photo.tags.containsAll(['alpha','bravo'])
+        assert photo.tags*.name.containsAll(['alpha','bravo'])
     }
 
     @Test(expected=EmptyResultDataAccessException) void 'update: non-existing'(){
@@ -297,4 +304,17 @@ class PhotoDaoTest {
     def dateIsToday = { assertToday(it as Date) }
 
     def idNonZero = { id-> assert id > 0 }
+
+    def containsTags = { expected, tags->
+        assert tags.size() == expected.size()
+        assert tags*.name.containsAll(expected)
+    }
+
+    private List<Tag> tagsFor( String... names ){
+        names.collect { name->
+            def tag = new Tag( name:name )
+            tagDao.create(tag)
+            return tag
+        }
+    }
 }

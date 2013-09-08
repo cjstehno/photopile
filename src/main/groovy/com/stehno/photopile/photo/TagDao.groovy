@@ -1,12 +1,18 @@
 package com.stehno.photopile.photo
 
+import com.stehno.photopile.photo.domain.Tag
+
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 9/2/13
- * Time: 8:30 AM
- * To change this template use File | Settings | File Templates.
+ * DAO for working with Tags.
  */
 public interface TagDao {
 
+    /**
+     * Creates (saves) a new tag in the database. The id value for the tag will be returned and also set
+     * on the incoming tag object on return of this method.
+     *
+     * @param tag the tag to be created
+     * @return the id of the newly created tag
+     */
+    long create( Tag tag )
 }

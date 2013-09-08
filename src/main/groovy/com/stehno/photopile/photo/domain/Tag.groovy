@@ -20,18 +20,11 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 /**
- * Created with IntelliJ IDEA.
- * User: cjstehno
- * Date: 9/2/13
- * Time: 7:49 AM
- * To change this template use File | Settings | File Templates.
+ * Represents a photo tag in the database.
  */
 @ToString(includeNames=true) @EqualsAndHashCode
 class Tag {
 
     Long id
     String name
-    String group
-
-    String getFullName(){ "$group:$name" }
 }

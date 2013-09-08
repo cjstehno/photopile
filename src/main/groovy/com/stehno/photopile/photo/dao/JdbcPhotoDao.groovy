@@ -20,6 +20,7 @@ import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.photo.PhotoDao
 import com.stehno.photopile.photo.domain.Location
 import com.stehno.photopile.photo.domain.Photo
+import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import groovy.util.logging.Slf4j
@@ -45,7 +46,7 @@ class JdbcPhotoDao implements PhotoDao {
 
     private static final String INSERT_SQL = 'insert into photos (name,description,camera_info,date_uploaded,date_taken,longitude,latitude) values (?,?,?,?,?,?,?) returning id,version,date_updated'
     private static final String UPDATE_SQL = 'update photos set version=version+1,name=?,description=?,camera_info=?,date_uploaded=?,date_taken=?,date_updated=now(),longitude=?,latitude=? where id=? and version=? returning id,version,date_updated'
-    private static final String SELECT_SQL = 'select id,version,name,description,camera_info,date_uploaded,date_updated,date_taken,longitude,latitude,tag from photos p left outer join photo_tags t on t.photo_id=p.id'
+    private static final String SELECT_SQL = 'select p.id,p.version,p.name,p.description,p.camera_info,p.date_uploaded,p.date_updated,p.date_taken,p.longitude,p.latitude,t.id as tag_id,t.name tag_name from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id'
     private static final String FETCH_SQL =  SELECT_SQL + ' where p.id=?'
     private static final String OFFSET_SUFFIX = ' offset ? limit ?'
     private static final String COUNT_SQL = 'select count(*) from photos'
@@ -63,6 +64,7 @@ class JdbcPhotoDao implements PhotoDao {
     private final RowMapper singleLongMapper = new SingleColumnRowMapper<Long>()
     private final RowMapper singleStringMapper = new SingleColumnRowMapper<String>()
     private final RowMapper mapRowMapper = new ColumnMapRowMapper()
+    private final RowMapper idColumnMapper = new IdColumnRowMapper()
 
     @Override
     long create( final Photo photo ){
@@ -120,41 +122,33 @@ class JdbcPhotoDao implements PhotoDao {
 
     @Override
     List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ){
-        // TODO: this is probably not the best way to do this, but works for now
-        String taggedSql = ''
+        def selectedPhotoIds
         if( taggedAs?.tags ){
-            def taggedPhotoIds = findTaggedPhotos( taggedAs ).join(',')
-            if( taggedPhotoIds ){
-                taggedSql = " where p.id in ($taggedPhotoIds)"
-            } else {
-                // searching for tagged photos and found none, you're done.
-                return []
-            }
-        }
+            def sql = taggedAs.tags.collect { t->
+                def ordering = ORDERINGS[sortOrder?.field ?: 'dateTaken']
+                "(select p.id,p.$ordering from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)"
+            }.join( taggedAs.grouping == ALL ? ' intersect distinct ' : ' union distinct ') + orderingSql(sortOrder) + OFFSET_SUFFIX
 
-        String sql = SELECT_SQL + taggedSql + orderingSql( sortOrder ) + OFFSET_SUFFIX
+            def params = taggedAs.tags
+            params << pageBy.start
+            params << pageBy.limit
 
-        log.debug 'SQL(list): {}', sql
-
-        jdbcTemplate.query(
-            sql,
-            photoResultSetExtractor,
-            pageBy.start,
-            pageBy.limit
-        )
-    }
-
-    // FIXME: protect from sql injection
-    private List<Long> findTaggedPhotos( final TaggedAs taggedAs ){
-        String sql
-        if( taggedAs.grouping == ALL ){
-            sql = taggedAs.tags.collect { "select photo_id from photo_tags where tag='${it.trim()}'" }.join(' intersect distinct ')
+            selectedPhotoIds = jdbcTemplate.query( sql, params as Object[], idColumnMapper)
 
         } else {
-            def inTags = taggedAs.tags.collect { "'${it.trim()}'" }.join(',')
-            sql = "select distinct(photo_id) from photo_tags where tag in ($inTags)"
+            selectedPhotoIds = jdbcTemplate.query(
+                'select id from photos' + orderingSql(sortOrder) + OFFSET_SUFFIX,
+                idColumnMapper,
+                pageBy.start,
+                pageBy.limit
+            )
         }
-        jdbcTemplate.query sql, singleLongMapper
+
+        if( selectedPhotoIds ){
+            jdbcTemplate.query( SELECT_SQL + " where p.id in (${selectedPhotoIds.join(',')})" + orderingSql(sortOrder), photoResultSetExtractor)
+        } else {
+            return [] as List<Photo>
+        }
     }
 
     @Override
@@ -201,10 +195,18 @@ class JdbcPhotoDao implements PhotoDao {
             jdbcTemplate.update CLEAR_TAGS_SQL, photo.id
 
             photo.tags?.each { tag->
-                notNull tag.id, "Tag (${tag.fullName}) does not exist or has not been persisted."
+                notNull tag.id, "Tag (${tag.name}) does not exist or has not been persisted."
                 jdbcTemplate.update INSERT_TAGS_SQL, photo.id, tag.id
             }
         }
+    }
+}
+
+class IdColumnRowMapper implements RowMapper<Long> {
+
+    @Override
+    Long mapRow( final ResultSet resultSet, final int i ) throws SQLException {
+        resultSet.getLong(1)
     }
 }
 
@@ -246,7 +248,7 @@ class PhotoResultSetExtractor implements ResultSetExtractor<List<Photo>>{
             dateUpdated: new Date(rs.getTimestamp('date_updated').time),
             dateTaken: getDate(rs.getTimestamp('date_taken')),
             location: lon && lat ? new Location(lat,lon) : null,
-            tags: addTag([] as Set<String>, rs)
+            tags: addTag([] as Set<Tag>, rs)
         )
     }
 
@@ -254,10 +256,10 @@ class PhotoResultSetExtractor implements ResultSetExtractor<List<Photo>>{
         timestamp ? new Date(timestamp.time) : null
     }
 
-    private Set<String> addTag( final tags, final ResultSet rs ){
-        def tag = rs.getString('tag')
-        if( tag ){
-            tags << tag
+    private Set<Tag> addTag( final tags, final ResultSet rs ){
+        def tagId = rs.getLong('tag_id')
+        if( tagId ){
+            tags << new Tag( id:tagId, name:rs.getString('tag_name') )
         }
         return tags
     }
