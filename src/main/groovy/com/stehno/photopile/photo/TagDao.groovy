@@ -15,4 +15,8 @@ public interface TagDao {
      * @return the id of the newly created tag
      */
     long create( Tag tag )
+
+    Tag findByName( String name )
+
+    List<Tag> list()
 }

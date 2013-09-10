@@ -21,8 +21,10 @@ import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.meta.PhotoMetadata
 import com.stehno.photopile.meta.PhotoMetadataExtractor
 import com.stehno.photopile.photo.PhotoService
+import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Location
 import com.stehno.photopile.photo.domain.Photo
+import com.stehno.photopile.photo.domain.Tag
 import groovy.util.logging.Slf4j
 import groovyx.gpars.actor.StaticDispatchActor
 import groovyx.gpars.group.DefaultPGroup
@@ -41,6 +43,7 @@ class ImportWorker extends StaticDispatchActor<ImportFile>{
 
     @Autowired private PhotoMetadataExtractor photoMetadataExtractor
     @Autowired private PhotoService photoService
+    @Autowired private TagDao tagDao
 
     ImportWorker(){
         // TODO: this should probably be configurable (and have min value)
@@ -103,6 +106,16 @@ class ImportWorker extends StaticDispatchActor<ImportFile>{
     }
 
     private void savePhoto( final String name, final PhotoMetadata metadata, final byte[] content, final Set<String> tags ){
+        // FIXME: this should prob be in a service, could cache them too
+        def tagInstances = tags.collect { tagName->
+            Tag tag = tagDao.findByName(tagName)
+            if( !tag ){
+                tag = new Tag( name:tagName )
+                tagDao.create(tag)
+            }
+            return tag
+        }
+
         photoService.addPhoto(
             new Photo(
                 name: name,
@@ -111,7 +124,7 @@ class ImportWorker extends StaticDispatchActor<ImportFile>{
                 dateTaken: metadata.dateTaken,
                 cameraInfo: metadata.cameraInfo,
                 location: metadata.hasLocation() ? new Location(metadata.latitude, metadata.longitude) : null,
-                tags:tags
+                tags:tagInstances
             ),
             new Image(
                 contentType: metadata.contentType,

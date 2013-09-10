@@ -18,6 +18,7 @@ package com.stehno.photopile.photo.controller
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.photo.PhotoService
+import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
@@ -50,11 +51,15 @@ class PhotoControllerTest {
     private MockMvc mvc
 
     @Mock private PhotoService photoService
+    @Mock private TagDao tagDao
 
     @Before void before(){
         MockitoAnnotations.initMocks(this)
 
-        mvc = MockMvcBuilders.standaloneSetup(new PhotoController( photoService:photoService ))
+        mvc = MockMvcBuilders.standaloneSetup(new PhotoController(
+            photoService:photoService,
+            tagDao: tagDao
+        ))
             .defaultRequest( get('/').contentType(APPLICATION_JSON) )
             .alwaysExpect( content().contentType(APPLICATION_JSON) )
             .build();

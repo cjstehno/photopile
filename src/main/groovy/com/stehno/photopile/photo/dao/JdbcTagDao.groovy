@@ -23,6 +23,9 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.SingleColumnRowMapper
 import org.springframework.stereotype.Repository
 
+import java.sql.ResultSet
+import java.sql.SQLException
+
 /**
  * JDBC implementation of the TagDao.
  */
@@ -30,10 +33,14 @@ import org.springframework.stereotype.Repository
 class JdbcTagDao implements TagDao {
 
     private static final String INSERT_SQL = 'insert into tags (name) values (?) returning id'
+    private static final String SELECT_TAG = 'select id,name from tags'
+    private static final String BY_NAME_SUFFIX = ' where name=?'
+    private static final String ORDER_SUFFIX = ' order by name'
 
     @Autowired private JdbcTemplate jdbcTemplate
 
     private final RowMapper<Long> singleColumnMapper = new SingleColumnRowMapper<>()
+    private final RowMapper<Tag> tagRowMapper = new TagRowMapper()
 
     @Override
     long create( final Tag tag ){
@@ -42,5 +49,27 @@ class JdbcTagDao implements TagDao {
         tag.id = id
 
         return tag.id
+    }
+
+    @Override
+    Tag findByName( final String name ){
+        def list = jdbcTemplate.query( SELECT_TAG + BY_NAME_SUFFIX, tagRowMapper, name )
+        list ? list.first() : null
+    }
+
+    @Override
+    List<Tag> list( ){
+        jdbcTemplate.query SELECT_TAG + ORDER_SUFFIX, tagRowMapper
+    }
+}
+
+class TagRowMapper implements RowMapper<Tag>{
+
+    @Override
+    Tag mapRow( final ResultSet rs, final int i ) throws SQLException{
+        new Tag(
+            id: rs.getLong('id'),
+            name: rs.getString('name')
+        )
     }
 }

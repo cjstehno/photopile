@@ -194,6 +194,8 @@ class InMemoryActiveImportDao implements ActiveImportDao {
     private void sendUserMessage( final ActiveImport activeImport, final List<String> errors ){
         def errorString = errors.join(', ')
 
+        log.info 'Import complete ({}), sending notification: Error-count: {}', activeImport.id, errors.size()
+
         userMessageQueue.enqueue(
             new UserMessageBuilder( activeImport.username, TITLE_KEY, TEXT_KEY)
                 .type(MessageType.INFO)

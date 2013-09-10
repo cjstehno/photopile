@@ -31,6 +31,8 @@ define([ 'text!templates/gallery/gallery-photo.html' ], function( template ){
         render:function(){
             this.$el.html( this.template({ photo:this.model }) );
 
+            this.$('img').css('height', (window.innerHeight - 75) + 'px');
+
             return this;
         },
 

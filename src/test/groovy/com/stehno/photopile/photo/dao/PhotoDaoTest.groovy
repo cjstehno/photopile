@@ -25,20 +25,12 @@ import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
-import com.stehno.photopile.test.Integration
+import com.stehno.photopile.test.IntegrationTestContext
 import com.stehno.photopile.test.config.TestConfig
-import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import org.junit.Test
-import org.junit.experimental.categories.Category
-import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener
 
 import static com.stehno.photopile.Fixtures.*
 import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
@@ -50,14 +42,7 @@ import static com.stehno.photopile.test.Asserts.assertMatches
 import static com.stehno.photopile.test.Asserts.assertToday
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
-@Category(Integration)
-@RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(classes=[TestConfig, PhotoConfig, ImageConfig])
-@TestExecutionListeners([
-    DatabaseTestExecutionListener,
-    DependencyInjectionTestExecutionListener,
-    TransactionalTestExecutionListener
-])
+@IntegrationTestContext(classes=[TestConfig, PhotoConfig, ImageConfig])
 class PhotoDaoTest {
 
     static TABLES = ['photos', 'photo_tags', 'tags']

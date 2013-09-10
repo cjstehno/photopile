@@ -85,6 +85,4 @@ interface PhotoService {
      * @param photoId the photo id to delete
      */
     void deletePhoto( long photoId )
-
-    List<String> listTags()
 }

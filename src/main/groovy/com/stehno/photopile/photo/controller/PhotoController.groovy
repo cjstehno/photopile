@@ -19,6 +19,7 @@ import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.common.WrappedCollection
 import com.stehno.photopile.photo.PhotoService
+import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
@@ -39,6 +40,7 @@ class PhotoController {
     private static final String META_TOTAL = 'total'
 
     @Autowired private PhotoService photoService
+    @Autowired private TagDao tagDao    // FIXME: should prob be in a service
 
     @RequestMapping(value='/all', method=RequestMethod.GET)
     ResponseEntity<WrappedCollection<Photo>> list( final TaggedAs taggedAs, final PageBy pageBy ){
@@ -66,7 +68,8 @@ class PhotoController {
     // TODO: not sure if this belongs here or not
     @RequestMapping(value='/tags', method=RequestMethod.GET)
     ResponseEntity<List<String>> listTags(){
-        return new ResponseEntity<>( photoService.listTags(), HttpStatus.OK )
+        // FIXME: refactor to return tag objects
+        return new ResponseEntity<>( tagDao.list()*.name, HttpStatus.OK )
     }
 
     private WrappedCollection<Photo> wrap( final Collection<Photo> photos ){

@@ -18,6 +18,7 @@ package com.stehno.photopile.importer.component
 import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.meta.CommonsImagingMetadataExtractor
 import com.stehno.photopile.photo.PhotoService
+import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Photo
 import org.junit.After
 import org.junit.Before
@@ -40,13 +41,15 @@ class ImportWorkerTest {
     private ImportWorker worker
 
     @Mock private PhotoService photoService
+    @Mock private TagDao tagDao
     @Captor private ArgumentCaptor<Photo> photoCaptor
     @Captor private ArgumentCaptor<Image> imageCaptor
 
     @Before void before(){
         worker = new ImportWorker(
             photoMetadataExtractor: new CommonsImagingMetadataExtractor(),
-            photoService: photoService
+            photoService: photoService,
+            tagDao: tagDao
         )
         worker.start()
     }

@@ -99,9 +99,4 @@ class DefaultPhotoService implements PhotoService {
             log.debug('Deleted photo ({}).', photoId )
         }
     }
-
-    @Override
-    List<String> listTags(){
-        return photoDao.listTags()
-    }
 }
