@@ -1,5 +1,5 @@
 <div class="pull-right">
-    <ul class="pager" style="margin: 0px;padding-bottom: 4px;">
+    <ul class="pager btn-mini" style="margin: 0px;padding-bottom: 4px;">
         <li <% if(current.page == 1){ %>class="disabled"<% } %>><a href="#1">First</a></li>
         <li <% if(current.page == 1){ %>class="disabled"<% } %>><a href="#<%= Math.max( current.page - 1, 1) %>">Prev</a></li>
         <li><%= current.page %> of <%= pages %></li>

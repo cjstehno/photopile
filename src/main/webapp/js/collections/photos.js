@@ -52,7 +52,7 @@ define([ 'models/photo' ], function( Photo ){
                 data:{
                     start:page.offset,
                     limit:page.pageSize,
-                    order:filter.order
+                    direction:filter.order
                 }
             });
         }

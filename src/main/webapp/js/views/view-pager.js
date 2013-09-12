@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-define([ 'text!templates/gallery/pager.html' ], function( template ){
+define([ 'text!templates/view-pager.html' ], function( template ){
 
     return Backbone.View.extend({
         template: _.template(template),

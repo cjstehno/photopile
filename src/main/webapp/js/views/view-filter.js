@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-define([ 'text!templates/gallery/gallery-breadcrumbs.html' ], function( template ){
+define([ 'text!templates/view-filter.html' ], function( template ){
     var ORDERS = [
-        { id:'desc', label:'Most Recent'},
-        { id:'asc', label:'Oldest'}
+        { id:'DESCENDING', label:'Most Recent'},
+        { id:'ASCENDING', label:'Oldest'}
     ];
 
     var SORTS = [
@@ -45,7 +45,7 @@ define([ 'text!templates/gallery/gallery-breadcrumbs.html' ], function( template
             filter:'all',
             subfilter:null,
             sort:'dateTaken',
-            order:'desc'
+            order:'DESCENDING'
         },
 
         render:function(){

@@ -17,10 +17,12 @@
 define([
     'text!templates/app-window.html',
     'views/app-menu',
+    'views/view-filter',
+    'views/view-pager',
     'views/gallery/gallery-panel',
     'views/map/map-panel',
     'views/tag-selector-dialog'
-], function( appTemplate, AppMenu, GalleryPanel, MapPanel, TagSelectorDialog ){
+], function( appTemplate, AppMenu, ViewFilter, ViewPager, GalleryPanel, MapPanel, TagSelectorDialog ){
 
     return Backbone.View.extend({
         template: _.template(appTemplate),
@@ -32,7 +34,11 @@ define([
             appMenu.on('menu-item-selected', _.bind(this.menuItemSelected, this));
             appMenu.render();
 
-            new GalleryPanel({ el:'.panel-container' }).render();
+            this.viewFilter = new ViewFilter({ el:'.breadcrumbs' }).render();
+            this.viewPager = new ViewPager({ el:'.view-pager' }).render();
+
+            // default to the gallery view
+            this.showGallery();
 
             return this;
         },
@@ -43,7 +49,7 @@ define([
             this.$('.panel-container').empty();
 
             if( evt.id === 'view-grid-all' ){
-                new GalleryPanel({ el:'.panel-container' }).render();
+                this.showGallery();
 
             } else if( evt.id === 'view-map' ){
                 new MapPanel({ el:'.panel-container' }).render();
@@ -58,6 +64,14 @@ define([
             } else {
                 console.log('unsupported option: ' + evt);
             }
+        },
+
+        showGallery:function(){
+            new GalleryPanel({
+                el:'.panel-container',
+                viewFilter: this.viewFilter,
+                viewPager: this.viewPager
+            }).render();
         }
     });
 });

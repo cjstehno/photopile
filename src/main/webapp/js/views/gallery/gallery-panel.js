@@ -16,12 +16,10 @@
 
 define([
     'collections/photos',
-    'views/gallery/pager',
-    'views/gallery/gallery-breadcrumbs',
     'views/gallery/gallery-photo',
     'text!templates/gallery/gallery-panel.html',
     'text!templates/gallery/gallery-row.html'
-], function( Photos, Pager, Breadcrumbs, GalleryPhoto, panel, photoTemplate ){
+], function( Photos, GalleryPhoto, panel, photoTemplate ){
 
     return Backbone.View.extend({
         template: _.template(panel),
@@ -31,7 +29,12 @@ define([
         },
 
         initialize:function( options ){
-            this.filter = options.filter;
+            this.viewFilter = options.viewFilter;
+            this.viewFilter.on('filter-change', _.bind(this.onFilterChange, this));
+
+            this.viewPager = options.viewPager;
+            this.viewPager.on('page-change', _.bind(this.onPageChange, this));
+
             this.collection = new Photos();
             this.collection.on('reset', _.bind(this.renderPhotos, this));
         },
@@ -39,14 +42,8 @@ define([
         render:function(){
             this.$el.append( this.template() );
 
-            this.breadcrumbs = new Breadcrumbs({ el:this.$('.breadcrumbs') });
-            this.breadcrumbs.on('filter-change', _.bind(this.onFilterChange, this));
-
-            this.pager = new Pager({ el:this.$('.gallery-pages') });
-            this.pager.on('page-change', _.bind(this.onPageChange, this));
-
-//            this.collection.fetchPage( this.pager.getCurrent(), this.breadcrumbs.getCurrent() );
-            this.onPageChange( this.pager.getCurrent() );
+            this.collection.fetchPage( this.viewPager.getCurrent(), this.viewFilter.getCurrent() );
+            this.onPageChange( this.viewPager.getCurrent() );
 
             this.$('.carousel').carousel('pause');
 
@@ -54,22 +51,21 @@ define([
         },
 
         onFilterChange:function( filter ){
-            this.filter = filter;
-            this.collection.fetchPage( this.pager.getCurrent(), filter );
+            this.collection.fetchPage( this.viewPager.getCurrent(), filter );
         },
 
         onPageChange:function( page ){
-            this.collection.fetchPage( page, _.extend({}, this.breadcrumbs.getCurrent(), this.filter || {}) );
+            this.collection.fetchPage( page, this.viewFilter.getCurrent() );
         },
 
         renderPhotos:function(){
-            this.breadcrumbs.render();
-            this.pager.render( this.collection.total );
+            console.log('rendering photos');
+            this.viewPager.renderPages( this.collection.total );
 
             var photoRoot = this.$('.gallery-content');
             photoRoot.empty();
 
-            var limit = this.pager.itemsPerPage / 3;
+            var limit = this.viewPager.itemsPerPage / 3;
 
             for( var i=0; i<3; i++ ){
                 var start = i * limit;

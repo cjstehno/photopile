@@ -4,29 +4,29 @@
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= context.current.filter.label %></a> <span class="divider">/</span>
             <ul class="dropdown-menu" role="menu">
                 <% _.each(context.filters, function(v){ %>
-                    <li><a href="#<%- v.id %>" class="view-filter"><%- v.label %></a></li>
+                <li><a href="#<%- v.id %>" class="view-filter"><%- v.label %></a></li>
                 <% }); %>
             </ul>
         </div>
     </li>
     <% if( context.subfilters ){ %>
-        <li>
-            <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= context.current.subfilter.label %></a> <span class="divider">/</span>
-                <ul class="dropdown-menu" role="menu">
-                    <% _.each(context.subfilters, function(f){ %>
-                        <li><a href="#<%- f.id %>" class="view-subfilter"><%- f.label %></a></li>
-                    <% }); %>
-                </ul>
-            </div>
-        </li>
+    <li>
+        <div class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= context.current.subfilter.label %></a> <span class="divider">/</span>
+            <ul class="dropdown-menu" role="menu">
+                <% _.each(context.subfilters, function(f){ %>
+                <li><a href="#<%- f.id %>" class="view-subfilter"><%- f.label %></a></li>
+                <% }); %>
+            </ul>
+        </div>
+    </li>
     <% } %>
     <li>
         <div class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= context.current.sort.label %></a> <span class="divider">/</span>
             <ul class="dropdown-menu" role="menu">
                 <% _.each(context.sorts, function(s){ %>
-                    <li><a href="#<%- s.id %>" class="view-sort"><%- s.label %></a></li>
+                <li><a href="#<%- s.id %>" class="view-sort"><%- s.label %></a></li>
                 <% }); %>
             </ul>
         </div>
@@ -36,7 +36,7 @@
             <a class="dropdown-toggle" data-toggle="dropdown" href="#"><%= context.current.order.label %></a>
             <ul class="dropdown-menu" role="menu">
                 <% _.each(context.orders, function(o){ %>
-                    <li><a href="#<%- o.id %>" class="view-sort-order"><%- o.label %></a></li>
+                <li><a href="#<%- o.id %>" class="view-sort-order"><%- o.label %></a></li>
                 <% }); %>
             </ul>
         </div>
