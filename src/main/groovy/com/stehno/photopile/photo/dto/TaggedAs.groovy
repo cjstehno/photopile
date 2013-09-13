@@ -38,7 +38,7 @@ class TaggedAs {
         /**
          * Denotes that all tags must be present for a match.
          */
-        ALL // FIXME: currently not supported
+        ALL
 
         static Grouping fromString( final String grouping ){
             values().find { it.name().equalsIgnoreCase(grouping) } as Grouping
@@ -48,7 +48,7 @@ class TaggedAs {
     /**
      * The tags to be matched.
      */
-    def tags = [] as List<String>
+    String[] tags = [] as String[]
 
     /**
      * The desired grouping.

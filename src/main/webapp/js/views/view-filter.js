@@ -14,95 +14,121 @@
  * limitations under the License.
  */
 
-define([ 'text!templates/view-filter.html' ], function( template ){
-    var ORDERS = [
-        { id:'DESCENDING', label:'Most Recent'},
-        { id:'ASCENDING', label:'Oldest'}
-    ];
+define([
+    'views/tag-selector-dialog',
+    'text!templates/view-filter.html'
+], function( TagSelectorDialog, template ){
 
-    var SORTS = [
-        { id:'dateTaken', label:'Date Taken' },
-        { id:'dateUploaded', label:'Date Uploaded' }
-    ];
-
-    var FILTERS = [
-        { id:'all', label:'All' },
-        { id:'album', label:'Album' },
-        { id:'tag', label:'Tag' }
-    ];
+    // FIXME: move to common area
+    function _applyIcon( name ){
+        if( name.indexOf('camera:') != -1 ){
+            return '<i class="icon icon-camera"></i> ' + name.substring(7);
+        } else if( name.indexOf('month:') != -1 ){
+            return '<i class="icon icon-calendar"></i> ' + name.substring(6);
+        } else if( name.indexOf('year:') != -1 ){
+            return '<i class="icon icon-calendar"></i> ' + name.substring(5);
+        } else {
+            return '<i class="icon icon-tag"></i> ' + name;
+        }
+    };
 
     return Backbone.View.extend({
         template: _.template(template),
 
         events:{
-            'click a.view-filter':'onFilterClick',
-            'click a.view-subfilter':'onSubfilterClick',
-            'click a.view-sort':'onSortClick',
-            'click a.view-sort-order':'onSortOrderClick'
-        },
-
-        current:{
-            filter:'all',
-            subfilter:null,
-            sort:'dateTaken',
-            order:'DESCENDING'
+            'click div.album-filter a.filter-item': 'onAlbumSelect',
+            'click div.tags-filter a.filter-item': 'onTagsSelect',
+            'click div.sort-field-filter a.filter-item': 'onSortFieldSelect',
+            'click div.sort-direction-filter a.filter-item': 'onSortDirSelect'
         },
 
         render:function(){
-            this.$el.html( this.template({ context:this.buildContext() }) );
+            this.$el.html( this.template() );
+
+            this.$elements = {
+                album: this.$('.album-filter a:first'),
+                tags: this.$('.tags-filter a:first'),
+                sortField: this.$('.sort-field-filter a:first'),
+                sortDirection: this.$('.sort-direction-filter a:first')
+            };
 
             return this;
         },
 
-        buildContext:function(){
-            // FIXME: should build a view context based on current view and selected filters
-
-            var enhancedCurrent = {
-                filter: _.find(FILTERS, function(it){ return it.id == this.current.filter }, this),
-                subfilter:null,
-                sort: _.find(SORTS, function(it){ return it.id == this.current.sort }, this),
-                order: _.find(ORDERS, function(it){ return it.id == this.current.order }, this)
-            };
-
-            return {
-                current:enhancedCurrent,
-                filters:FILTERS,
-                sorts:SORTS,
-                orders:ORDERS
-            };
-        },
-
         getCurrent:function(){
-            return this.current;
+            var current = {
+                album: this.$elements.album.attr('data-selected'),
+                sortField: this.$elements.sortField.attr('data-selected'),
+                sortDirection: this.$elements.sortDirection.attr('data-selected')
+            };
+
+            var selectedTags = this.$elements.tags.attr('data-selected');
+            if( selectedTags !== 'any' ){
+                var parts = selectedTags.split('|');
+                current.tags = parts[1];
+                current.grouping = parts[0];
+            }
+
+            return current;
         },
 
-        onFilterClick:function(evt){
-            this.updateViewWith('filter', evt);
+        onAlbumSelect:function( evt ){
+            var selection = this.extractSelection(evt);
+
+            if( selection.id === 'more' ){
+                console.log('open album selection dialog');
+            }
+
+            this.fireEvent(evt);
         },
 
-        onSubfilterClick:function(evt){
-            this.updateViewWith('subfilter', evt);
+        onTagsSelect:function( evt ){
+            var selection = this.extractSelection(evt);
+            if( selection.id === 'more' ){
+                new TagSelectorDialog().render().on('tags-selected', function( selectedTags ){
+                    selection.id = selectedTags.grouping.toUpperCase() + '|' + selectedTags.tags.join(',');
+
+                    selection.label = _.map(selectedTags.tags, function(tag){
+                        return _applyIcon(tag);
+                    }).join( selectedTags.grouping === 'ANY' ? ' or ' : ' and ' );
+
+                    // FIXME: label for tags should apply icons for groups
+                    this.updateSelected('tags', selection);
+                    this.fireEvent(evt);
+                }, this);
+
+            } else {
+                this.updateSelected('tags', selection);
+                this.fireEvent(evt);
+            }
         },
 
-        onSortClick:function(evt){
-            this.updateViewWith('sort', evt);
+        onSortFieldSelect:function(evt){
+            this.updateSelected('sortField', this.extractSelection(evt));
+            this.fireEvent( evt);
         },
 
-        onSortOrderClick:function(evt){
-            this.updateViewWith('order', evt);
+        onSortDirSelect:function(evt){
+            this.updateSelected('sortDirection', this.extractSelection(evt));
+            this.fireEvent( evt );
         },
 
-        updateViewWith:function( filterVar, evt ){
+        fireEvent:function( evt ){
             evt.preventDefault();
 
-            var changes = {};
-            changes[filterVar] = this.extractId(evt.target);
-
-            this.trigger('filter-change', _.extend( this.current, changes ));
+            this.trigger('filter-change');
         },
 
-        extractId:function( target ){
-            return $(target).attr('href').substring(1);
+        extractSelection:function( evt ){
+            return {
+                id: $(evt.currentTarget).attr('data-id'),
+                label: $(evt.currentTarget).text()
+            };
+        },
+
+        updateSelected:function( filterField, selection ){
+            this.$elements[filterField].attr('data-selected', selection.id);
+            this.$elements[filterField].html(selection.label);
         }
 
     });

@@ -129,7 +129,7 @@ class JdbcPhotoDao implements PhotoDao {
                 "(select p.id,p.$ordering from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)"
             }.join( taggedAs.grouping == ALL ? ' intersect distinct ' : ' union distinct ') + orderingSql(sortOrder) + OFFSET_SUFFIX
 
-            def params = taggedAs.tags
+            def params = taggedAs.tags as List<String>
             params << pageBy.start
             params << pageBy.limit
 

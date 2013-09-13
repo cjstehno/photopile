@@ -25,10 +25,13 @@ import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.WebDataBinder
+import org.springframework.web.bind.annotation.InitBinder
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -42,16 +45,21 @@ class PhotoController {
     @Autowired private PhotoService photoService
     @Autowired private TagDao tagDao    // FIXME: should prob be in a service
 
-    @RequestMapping(value='/all', method=RequestMethod.GET)
-    ResponseEntity<WrappedCollection<Photo>> list( final TaggedAs taggedAs, final PageBy pageBy ){
-        list taggedAs, pageBy, new SortBy(field:'dateTaken')
+    @InitBinder
+    void initBinder( final WebDataBinder binder ){
+        binder.registerCustomEditor(
+            String[],
+            new StringArrayPropertyEditor(StringArrayPropertyEditor.DEFAULT_SEPARATOR, true, true)
+        )
     }
 
-    @RequestMapping(value='/all/{field}', method=RequestMethod.GET)
-    ResponseEntity<WrappedCollection<Photo>> list( final TaggedAs taggedAs, final PageBy pageBy, final SortBy sortBy ){
+    @RequestMapping(value='/album/{album}', method=RequestMethod.GET)
+    ResponseEntity<WrappedCollection<Photo>> list( @PathVariable('album') final String album, final TaggedAs taggedAs, final PageBy pageBy, final SortBy sortBy ){
+        // FIXME: album does nothing yet
+
         Collection<Photo> photos = photoService.listPhotos( pageBy, sortBy, taggedAs )
 
-        log.debug 'Found {} photos @ {}, sorting by {} and tagged with {}', photos.size(), pageBy, sortBy, taggedAs
+        log.debug 'Found {} photos in album ({}) @ {}, sorting by {} and tagged with {}', photos.size(), album, pageBy, sortBy, taggedAs
 
         return new ResponseEntity<>( wrap(photos), HttpStatus.OK )
     }

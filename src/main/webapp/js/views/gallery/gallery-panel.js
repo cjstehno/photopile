@@ -50,8 +50,8 @@ define([
             return this;
         },
 
-        onFilterChange:function( filter ){
-            this.collection.fetchPage( this.viewPager.getCurrent(), filter );
+        onFilterChange:function(){
+            this.collection.fetchPage( this.viewPager.getCurrent(), this.viewFilter.getCurrent() );
         },
 
         onPageChange:function( page ){
@@ -59,7 +59,6 @@ define([
         },
 
         renderPhotos:function(){
-            console.log('rendering photos');
             this.viewPager.renderPages( this.collection.total );
 
             var photoRoot = this.$('.gallery-content');

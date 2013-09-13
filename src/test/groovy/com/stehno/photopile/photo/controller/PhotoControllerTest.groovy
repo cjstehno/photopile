@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import static com.stehno.photopile.Fixtures.FIX_A
 import static com.stehno.photopile.Fixtures.FIX_B
 import static com.stehno.photopile.photo.PhotoFixtures.fixtureFor
+import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ANY
 import static com.stehno.photopile.test.JsonMatcher.jsonMatcher
 import static org.mockito.Mockito.when
 import static org.springframework.http.MediaType.APPLICATION_JSON
@@ -70,10 +71,11 @@ class PhotoControllerTest {
         when( photoService.countPhotos() ).thenReturn( 0L )
 
         def results = mvc.perform(
-            get('/photos/all/dateTaken')
+            get('/photos/album/all')
                 .contentType(APPLICATION_JSON)
                 .param("start", "0")
                 .param("limit", "5")
+                .param('field', 'dateTaken')
         )
 
         results.andExpect(status().isOk())
@@ -95,10 +97,11 @@ class PhotoControllerTest {
         when( photoService.countPhotos() ).thenReturn( 10L )
 
         mvc.perform(
-            get('/photos/all/dateTaken')
+            get('/photos/album/all')
                 .contentType(APPLICATION_JSON)
-                .param("start", "0")
-                .param("limit", "5")
+                .param( 'start', '0' )
+                .param( 'limit', '5' )
+                .param('field', 'dateTaken')
         )
             .andExpect(status().isOk())
             .andExpect(content().contentType(APPLICATION_JSON))
@@ -109,20 +112,26 @@ class PhotoControllerTest {
         }))
     }
 
-    @Test void 'list: not empty, no sort or order'(){
+    @Test void 'list: with tags'(){
         def fixtures = fixtureFor(FIX_A, FIX_B)
 
-        when( photoService.listPhotos( new PageBy(start:0, limit:5), new SortBy(field:'dateTaken'), new TaggedAs() )).thenReturn([
+        when( photoService.listPhotos(
+            new PageBy( start:0, limit:5 ),
+            new SortBy( field:'dateTaken' ),
+            new TaggedAs( tags:['camera:TestCam','year:2013'], grouping:ANY )
+        )).thenReturn([
             new Photo(fixtures[0]),
             new Photo(fixtures[1])
         ])
         when( photoService.countPhotos() ).thenReturn( 10L )
 
         mvc.perform(
-            get('/photos/all')
-                .contentType(APPLICATION_JSON)
-                .param("start", "0")
-                .param("limit", "5")
+            get('/photos/album/all').contentType(APPLICATION_JSON)
+                .param( 'start',    '0' )
+                .param( 'limit',    '5' )
+                .param( 'field',    'dateTaken')
+                .param( 'tags',     'camera:TestCam,year:2013')
+                .param( 'grouping', 'ANY')
         )
         .andExpect(status().isOk())
         .andExpect(content().contentType(APPLICATION_JSON))

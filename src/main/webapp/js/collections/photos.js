@@ -39,21 +39,23 @@ define([ 'models/photo' ], function( Photo ){
         },
 
         fetchPage:function( page, filter ){
-            var urlSuffix = '/' + filter.filter + (filter.subfilter ? '/' + filter.subfilter : '') + '/' + filter.sort;
+            var params = {
+                start: page.offset,
+                limit: page.pageSize,
+                field: filter.sortField,
+                direction: filter.sortDirection
+            };
 
             if( filter.tags ){
-                urlSuffix = urlSuffix + '?tags=' + filter.tags.join(',') + '&grouping=' + filter.grouping;
+                params.tags = filter.tags;
+                params.grouping = filter.grouping;
             }
 
             this.fetch({
-                url:this.url + urlSuffix,
+                url:this.url + '/album/' + filter.album,
                 reset:true,
                 contentType:'application/json',
-                data:{
-                    start:page.offset,
-                    limit:page.pageSize,
-                    direction:filter.order
-                }
+                data:params
             });
         }
 
