@@ -86,13 +86,16 @@ define([
             var selection = this.extractSelection(evt);
             if( selection.id === 'more' ){
                 new TagSelectorDialog().render().on('tags-selected', function( selectedTags ){
-                    selection.id = selectedTags.grouping.toUpperCase() + '|' + selectedTags.tags.join(',');
+                    if( selectedTags.tags.length > 0 ){
+                        selection.id = selectedTags.grouping.toUpperCase() + '|' + selectedTags.tags.join(',');
 
-                    selection.label = _.map(selectedTags.tags, function(tag){
-                        return _applyIcon(tag);
-                    }).join( selectedTags.grouping === 'ANY' ? ' or ' : ' and ' );
+                        selection.label = _.map(selectedTags.tags, function(tag){
+                            return _applyIcon(tag);
+                        }).join( selectedTags.grouping === 'ANY' ? ' or ' : ' and ' );
+                    } else {
+                        selection = { id:'any', label:'Any Tags' }
+                    }
 
-                    // FIXME: label for tags should apply icons for groups
                     this.updateSelected('tags', selection);
                     this.fireEvent(evt);
                 }, this);

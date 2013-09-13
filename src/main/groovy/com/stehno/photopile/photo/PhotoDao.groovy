@@ -49,6 +49,7 @@ interface PhotoDao {
      * @return count of all photos.
      */
     long count()
+    long count( TaggedAs taggedAs )
 
     /**
      * Retrieves a list of all photos in the database. It is generally preferable to use the paged version of this

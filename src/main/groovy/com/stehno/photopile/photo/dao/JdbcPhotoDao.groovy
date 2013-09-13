@@ -57,6 +57,8 @@ class JdbcPhotoDao implements PhotoDao {
     private static final String INSERT_TAGS_SQL = 'insert into photo_tags (photo_id,tag_id) values (?,?)'
     private static final String LOCATION_BOUNDS_SQL = ' where p.latitude >= ? and p.latitude <= ? and p.longitude >= ? and p.longitude <= ?'
     private static final String TAG_LIST_SQL = 'select distinct(tag) from photo_tags order by tag'
+    private static final String INTERSECT_SQL = ' intersect distinct '
+    private static final String UNION_SQL = ' union distinct '
 
     @Autowired private JdbcTemplate jdbcTemplate
 
@@ -116,6 +118,20 @@ class JdbcPhotoDao implements PhotoDao {
     }
 
     @Override
+    long count( final TaggedAs taggedAs ){
+        if( taggedAs?.tags ){
+            def sql = taggedAs.tags.collect { t->
+                '(select p.id from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)'
+            }.join( taggedAs.grouping == ALL ? INTERSECT_SQL : UNION_SQL )
+
+            return jdbcTemplate.query( sql, taggedAs.tags as Object[], idColumnMapper).size()
+
+        } else {
+            return count()
+        }
+    }
+
+    @Override
     List<Photo> list( final SortBy sortOrder=null ){
         jdbcTemplate.query SELECT_SQL + orderingSql(sortOrder), photoResultSetExtractor
     }
@@ -127,7 +143,7 @@ class JdbcPhotoDao implements PhotoDao {
             def sql = taggedAs.tags.collect { t->
                 def ordering = ORDERINGS[sortOrder?.field ?: 'dateTaken']
                 "(select p.id,p.$ordering from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)"
-            }.join( taggedAs.grouping == ALL ? ' intersect distinct ' : ' union distinct ') + orderingSql(sortOrder) + OFFSET_SUFFIX
+            }.join( taggedAs.grouping == ALL ? INTERSECT_SQL : UNION_SQL ) + orderingSql(sortOrder) + OFFSET_SUFFIX
 
             def params = taggedAs.tags as List<String>
             params << pageBy.start

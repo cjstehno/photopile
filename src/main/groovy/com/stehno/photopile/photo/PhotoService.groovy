@@ -51,6 +51,7 @@ interface PhotoService {
      * @return a count of the photos in the database.
      */
     long countPhotos()
+    long countPhotos( TaggedAs taggedAs )
 
     /**
      * Retrieves a list of all photos in the database. In general the limited version of this

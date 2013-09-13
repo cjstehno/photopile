@@ -61,7 +61,10 @@ class PhotoController {
 
         log.debug 'Found {} photos in album ({}) @ {}, sorting by {} and tagged with {}', photos.size(), album, pageBy, sortBy, taggedAs
 
-        return new ResponseEntity<>( wrap(photos), HttpStatus.OK )
+        final WrappedCollection<Photo> wrapped = new WrappedCollection<>( photos )
+        wrapped.getMeta().put( META_TOTAL, photoService.countPhotos(taggedAs) )
+
+        return new ResponseEntity<>( wrapped, HttpStatus.OK )
     }
 
     @RequestMapping(value='/within/{bounds}', method=RequestMethod.GET)
@@ -78,13 +81,5 @@ class PhotoController {
     ResponseEntity<List<String>> listTags(){
         // FIXME: refactor to return tag objects
         return new ResponseEntity<>( tagDao.list()*.name, HttpStatus.OK )
-    }
-
-    private WrappedCollection<Photo> wrap( final Collection<Photo> photos ){
-        final WrappedCollection<Photo> wrapped = new WrappedCollection<>( photos )
-
-        wrapped.getMeta().put( META_TOTAL, photoService.countPhotos() )
-
-        return wrapped
     }
 }

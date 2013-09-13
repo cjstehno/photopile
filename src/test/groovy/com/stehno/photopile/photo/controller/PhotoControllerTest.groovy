@@ -94,7 +94,7 @@ class PhotoControllerTest {
             new Photo(fixtures[0]),
             new Photo(fixtures[1])
         ])
-        when( photoService.countPhotos() ).thenReturn( 10L )
+        when( photoService.countPhotos(new TaggedAs()) ).thenReturn( 10L )
 
         mvc.perform(
             get('/photos/album/all')
@@ -115,15 +115,16 @@ class PhotoControllerTest {
     @Test void 'list: with tags'(){
         def fixtures = fixtureFor(FIX_A, FIX_B)
 
+        def taggedAs = new TaggedAs( tags: [ 'camera:TestCam', 'year:2013' ], grouping: ANY )
         when( photoService.listPhotos(
             new PageBy( start:0, limit:5 ),
             new SortBy( field:'dateTaken' ),
-            new TaggedAs( tags:['camera:TestCam','year:2013'], grouping:ANY )
+            taggedAs
         )).thenReturn([
             new Photo(fixtures[0]),
             new Photo(fixtures[1])
         ])
-        when( photoService.countPhotos() ).thenReturn( 10L )
+        when( photoService.countPhotos(taggedAs) ).thenReturn( 10L )
 
         mvc.perform(
             get('/photos/album/all').contentType(APPLICATION_JSON)

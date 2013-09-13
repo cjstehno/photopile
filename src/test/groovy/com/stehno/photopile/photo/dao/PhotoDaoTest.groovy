@@ -286,6 +286,28 @@ class PhotoDaoTest {
         }
     }
 
+    @Test void 'count: with tags'(){
+        def fixtures = fixtureFor( FIX_A, FIX_B, FIX_C )
+
+        def tags = tagsFor('alpha','bravo')
+
+        fixtures[0].tags = [ tags[0] ] as Set<Tag>
+        fixtures[2].tags = [ tags[1], tags[0] ] as Set<Tag>
+
+        fixtures.each { fix->
+            photoDao.create(new Photo(fix))
+        }
+
+        assert 3 == photoDao.count()
+        assert 2 == photoDao.count( new TaggedAs(tags:['alpha']) )
+        assert 1 == photoDao.count( new TaggedAs(tags:['bravo']) )
+        assert 0 == photoDao.count( new TaggedAs(tags:['charlie']) )
+        assert 2 == photoDao.count( new TaggedAs(tags:['charlie','alpha']) )
+        assert 0 == photoDao.count( new TaggedAs(tags:['charlie','alpha'], grouping:ALL) )
+        assert 1 == photoDao.count( new TaggedAs(tags:['bravo','alpha'], grouping:ALL) )
+        assert 3 == photoDao.count( new TaggedAs() )
+    }
+
     def dateIsToday = { assertToday(it as Date) }
 
     def idNonZero = { id-> assert id > 0 }

@@ -77,6 +77,11 @@ class DefaultPhotoService implements PhotoService {
     }
 
     @Override @Transactional(readOnly=true)
+    long countPhotos( final TaggedAs taggedAs ){
+        photoDao.count(taggedAs)
+    }
+
+    @Override @Transactional(readOnly=true)
     List<Photo> listPhotos( final SortBy sortBy ){
         photoDao.list(sortBy)
     }
