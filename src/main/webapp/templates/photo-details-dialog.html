@@ -1,0 +1,46 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h3>Photo Details</h3>
+</div>
+<div class="modal-body">
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>Name:</td>
+                <td><%- photo.name %></td>
+            </tr>
+            <tr>
+                <td>Description:</td>
+                <td><%- photo.description %></td>
+            </tr>
+            <tr>
+                <td>Camera:</td>
+                <td><%- photo.cameraInfo %></td>
+            </tr>
+            <tr>
+                <td>Uploaded:</td>
+                <td><%- new Date(photo.dateUploaded) %></td>
+            </tr>
+            <tr>
+                <td>Updated:</td>
+                <td><%- new Date(photo.dateUpdated) %></td>
+            </tr>
+            <tr>
+                <td>Taken:</td>
+                <td><%- new Date(photo.dateTaken) %></td>
+            </tr>
+            <tr>
+                <td>Location:</td>
+                <td><%- photo.location %></td>
+            </tr>
+            <tr>
+                <td>Tags:</td>
+                <td><%- _.map(photo.tags, function(it){ return it.name }).join(', ') %></td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+<div class="modal-footer">
+</div>

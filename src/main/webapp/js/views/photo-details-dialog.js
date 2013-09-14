@@ -15,39 +15,25 @@
  */
 
 define([
-    'views/photo-details-dialog',
-    'text!templates/gallery/gallery-photo.html'
-], function( PhotoDetailsDialog, template ){
+    'text!templates/photo-details-dialog.html'
+], function( template ){
 
     return Backbone.View.extend({
         template: _.template(template),
 
-        events:{
-            'click .back-button':'onCloseClick',
-            'click .details-button':'onDetailsClick'
+        attributes:{
+            class:'modal hide fade'
         },
 
-        initialize:function(options){
+        initialize:function( options ){
             this.model = options.model;
         },
 
         render:function(){
-            this.$el.html( this.template({ photo:this.model }) );
-
-            this.$('img').css('height', (window.innerHeight - 75) + 'px');
+            this.$el.html( this.template({ photo:this.model.toJSON() }) );
+            this.$el.modal();
 
             return this;
-        },
-
-        onCloseClick:function(evt){
-            this.trigger('photo-close');
-
-            return false;
-        },
-
-        onDetailsClick:function(){
-            new PhotoDetailsDialog({ model:this.model }).render();
-            return false;
         }
     });
 });

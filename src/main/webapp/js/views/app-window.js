@@ -62,11 +62,18 @@ define([
         },
 
         showGallery:function(){
-            new GalleryPanel({
+            var galleryPanel = new GalleryPanel({
                 el:'.panel-container',
                 viewFilter: this.viewFilter,
                 viewPager: this.viewPager
-            }).render();
+            });
+            galleryPanel.on('show-photo', function(){
+                this.$('div.filter-panel').fadeOut();
+            }, this);
+            galleryPanel.on('hide-photo', function(){
+                this.$('div.filter-panel').fadeIn();
+            }, this);
+            galleryPanel.render();
         }
     });
 });

@@ -14,11 +14,6 @@ define([
             'click .btn.btn-primary':'onApplyClick'
         },
 
-        /* FIXME: next...
-            -   save tag selection state and forward to the gallery grid request (callback)
-            -   support for changing the selected tags in the gallery grid view itself (crumb)
-         */
-
         attributes:{
             class:'modal hide fade'
         },

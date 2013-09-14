@@ -87,8 +87,11 @@ define([
             galleryPhoto.on('photo-close',function(){
                 // TODO: should dispose of the photo objects on close
                 this.$('.carousel').carousel('prev');
+                this.trigger('hide-photo');
             }, this);
             galleryPhoto.render();
+
+            this.trigger('show-photo');
 
             this.$('.carousel').carousel('next');
 
