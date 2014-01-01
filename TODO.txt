@@ -1,5 +1,31 @@
 
+!	liquibase support in build (regression)
+!	integration test exclusion (now db required for build testing)
 
+
+
+/gallery/all[/page-index] 				- jump to the gallery page (at page index or 0)
+/gallery/[album-name][/page-index]		- jump to the album on the gallery page (at page index or 0)
+	?sort=field:modifier				- sorts the collection
+	?tags=[and/or]:a,b,c 				- filters collection by tags (defaults to and?)
+
+
+/import 	- jump to the import page
+
+/map		- jump to the map page
+
+
+
+gradle
+liquibase
+spring
+bootstrap/backbone
+
+photo image dao scaling stored on filesystem rather than db?
+
+
+
+----------older
 
 
 View

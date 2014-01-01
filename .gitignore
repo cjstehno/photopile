@@ -12,5 +12,7 @@
 *.ipr
 
 /target
+/build
+/.gradle
 
 *.war
