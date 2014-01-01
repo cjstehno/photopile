@@ -81,7 +81,7 @@ dependencies {
 	compile "javax.transaction:jta:1.1"
 	compile "c3p0:c3p0:0.9.1.2"
 
-	compile "org.liquibase:liquibase-core:2.0.5"
+	compile 'org.liquibase:liquibase-core:3.0.8'
 
 	compile( "org.crsh:crsh.shell.embed.spring:${crshVersion}" ){
 		exclude group:'org.springframework'

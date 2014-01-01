@@ -1,10 +1,4 @@
 
-!	liquibase support in build (regression)
-!	integration test exclusion (now db required for build testing)
-!	run versions plugin
-!	spring upgrade
-!	bootstrap/backbone upgrade
-
 
 /gallery/all[/page-index] 				- jump to the gallery page (at page index or 0)
 /gallery/[album-name][/page-index]		- jump to the album on the gallery page (at page index or 0)
