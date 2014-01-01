@@ -74,7 +74,7 @@ dependencies {
 
 	compile "jstl:jstl:1.2"
 
-	compile "postgresql:postgresql:9.1-901-1.jdbc4"
+	compile 'org.postgresql:postgresql:9.3-1100-jdbc41'
 	compile "javax.transaction:jta:1.1"
 	compile "c3p0:c3p0:0.9.1.2"
 
