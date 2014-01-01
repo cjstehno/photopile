@@ -12,6 +12,8 @@ buildscript {
     dependencies {
         classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
 		classpath 'com.github.ben-manes:gradle-versions-plugin:0.4'
+		classpath 'com.augusttechgroup:gradle-liquibase-plugin:0.7'
+		classpath "org.postgresql:postgresql:${postgresVersion}"
     }
 }
 
@@ -21,6 +23,7 @@ repositories {
 
 apply plugin:'groovy'
 apply plugin:'tomcat'
+apply plugin:'liquibase'
 apply plugin:'versions'
 
 dependencies {
@@ -98,21 +101,23 @@ tomcatRun {
     enableSSL = true
 }
 
-/*
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>2.0.5</version>
-                <configuration>
-                    <propertyFileWillOverride>true</propertyFileWillOverride>
-                    <promptOnNonLocalDatabase>true</promptOnNonLocalDatabase>
-                    <changeLogFile>src/main/resources/db-changelog.xml</changeLogFile>
+liquibase {
+	changelogs { 
+		main {
+			// FIXME: this can be a groovy config now I think
+			file = file('src/main/resources/db-changelog.xml')
+		}
+	}
 
-                    <driver>org.postgresql.Driver</driver>
-                    <url>jdbc:postgresql://localhost:5432/photopile_dev</url>
-                    <username>photopile</username>
-                    <password>photopile</password>
-                </configuration>
-            </plugin>
-*/
+	databases { 
+		dev {
+			url = 'jdbc:postgresql://localhost:5432/photopile_dev'
+			username = 'photopile'
+			password = 'photopile'
+		}
+	}
+
+	defaultDatabase = databases.dev
+}
+
 
