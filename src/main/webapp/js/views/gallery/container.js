@@ -34,6 +34,10 @@ define([
                 this.collection.fetchPage( pager.getCurrent(), filter.getCriteria() );
             }, this);
 
+            filter.on('filter-change', function(){
+                this.collection.fetchPage( pager.getCurrent(), filter.getCriteria() );
+            }, this);
+
             return this;
         }
     });
