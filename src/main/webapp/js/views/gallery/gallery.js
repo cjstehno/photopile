@@ -26,6 +26,8 @@ define([
                 }));
             }
 
+            this.$('.thumbnail').colorbox({ photo:true, rel:'thumbnails' });
+
             return this;
         }
     });

@@ -3,7 +3,7 @@
         var photo = photos.at(p); %>
         <div class="col-xs-2">
             <% if( photo ){ %>
-            <a href="#" class="thumbnail">
+            <a href="/photopile/image/LARGE/<%= photo.get('id') %>" class="thumbnail" title="<%- photo.get('name') %>">
                 <img class="img-responsive" src="/photopile/image/MINI/<%= photo.get('id') %>" data-id="<%= photo.get('id') %>" />
             </a>
             <% } %>
