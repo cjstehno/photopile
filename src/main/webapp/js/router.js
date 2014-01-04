@@ -15,12 +15,13 @@
  */
 
 define([], function(){
+    // FIXME: add in routes to the main pages
 
     return Backbone.Router.extend({
         routes: {
-            'photos': 'listPhotos',
-
-            '*actions': 'listPhotos'
+//            'photos': 'listPhotos',
+//
+//            '*actions': 'listPhotos'
         }
     });
 });

@@ -1,0 +1,14 @@
+<div class="row">
+    <% for( var p=start; p<end; p++ ){
+        var photo = photos.at(p); %>
+        <div class="col-xs-2">
+            <% if( photo ){ %>
+            <a href="#" class="thumbnail">
+                <img class="img-responsive" src="/photopile/image/MINI/<%= photo.get('id') %>" data-id="<%= photo.get('id') %>" />
+            </a>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+
+

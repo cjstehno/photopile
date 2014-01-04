@@ -1,0 +1,19 @@
+<div class="btn-toolbar" role="toolbar">
+    <div class="btn-group btn-group-xs">
+        <button type="button" class="btn btn-default <% if(current.page == 1){ %>disabled<% } %>" title="First" value="1">
+            <span class="glyphicon glyphicon-fast-backward"></span>
+        </button>
+        <button type="button" class="btn btn-default <% if(current.page == 1){ %>disabled<% } %>" title="Previous" value="<%= Math.max( current.page - 1, 1) %>">
+            <span class="glyphicon glyphicon-backward"></span>
+        </button>
+    </div>
+    <div class="btn-group btn-group-xs"> <%= current.page %> of <%= pages %> </div>
+    <div class="btn-group btn-group-xs">
+        <button type="button" class="btn btn-default <% if(current.page == pages){ %>disabled<% } %>" title="Next" value="<%= Math.min( current.page + 1, pages) %>">
+            <span class="glyphicon glyphicon-forward"></span>
+        </button>
+        <button type="button" class="btn btn-default <% if(current.page == pages){ %>disabled<% } %>" title="Last" value="<%= pages %>">
+            <span class="glyphicon glyphicon-fast-forward"></span>
+        </button>
+    </div>
+</div>

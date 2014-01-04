@@ -1,5 +1,5 @@
 <%--
-  ~ Copyright (c) 2013 Christopher J. Stehno
+  ~ Copyright (c) 2014 Christopher J. Stehno
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,28 +15,25 @@
   --%>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <title>PhotoPile: Your photos, your way.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="css/leaflet.css" />
-    <link rel="stylesheet" type="text/css" href="css/photopile.css" media="screen">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
 
-    <!-- libraries -->
-
-    <script src="js/libs/jquery-1.9.1.min.js" type="text/javascript"></script>
-    <script src="js/libs/bootstrap.min.js" type="text/javascript"></script>
-    <script src="js/libs/underscore.min.js" type="text/javascript"></script>
-    <script src="js/libs/backbone.min.js" type="text/javascript"></script>
-    <script src="js/libs/leaflet.min.js" type="text/javascript"></script>
-
-    <script data-main="js/main" src="js/libs/require.min.js" type="text/javascript"></script>
+    <style type="text/css">
+        body { padding-top: 70px; }
+    </style>
 </head>
 <body>
 
-<div id="app-root" class="container-fluid"></div>
+<script src="js/libs/jquery-1.10.2.min.js"></script>
+<script src="js/libs/bootstrap.min.js"></script>
+<script src="js/libs/underscore.min.js" type="text/javascript"></script>
+<script src="js/libs/backbone.min.js" type="text/javascript"></script>
+<script data-main="js/main" src="js/libs/require.min.js" type="text/javascript"></script>
 
 </body>
 </html>
-

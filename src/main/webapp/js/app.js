@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-define([ 'router', 'views/app-window' ], function( Router, AppView ){
+define([ 'router', 'views/application' ], function( Router, ApplicationView ){
 
     var ctor = function(){};
 
     ctor.prototype = {
         initialize:function(){
-            new AppView({ el:'#app-root' }).render();
+            new ApplicationView({ el:'body' }).render();
             new Router();
 
             Backbone.history.start();
