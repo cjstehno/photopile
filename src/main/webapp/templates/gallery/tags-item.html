@@ -1,0 +1,25 @@
+<% if( name.indexOf('camera:') != -1 ){ %>
+    <li class="list-group-item tag-item" data-tag="<%- name %>">
+        <span class="glyphicon glyphicon-camera"></span>
+        <%- name.substring(7) %>
+        <span class="glyphicon pull-right selection" style="color:lawngreen;"></span>
+    </li>
+<% } else if( name.indexOf('month:') != -1 ){ %>
+    <li class="list-group-item tag-item" data-tag="<%- name %>">
+        <span class="glyphicon glyphicon-calendar"></span>
+        <%- name.substring(6) %>
+        <span class="glyphicon pull-right selection" style="color:lawngreen;"></span>
+    </li>
+<% } else if( name.indexOf('year:') != -1 ){ %>
+    <li class="list-group-item tag-item" data-tag="<%- name %>">
+        <span class="glyphicon glyphicon-calendar"></span>
+        <%- name.substring(5) %>
+        <span class="glyphicon pull-right selection" style="color:lawngreen;"></span>
+    </li>
+<% } else { %>
+    <li class="list-group-item tag-item" data-tag="<%- name %>">
+        <span class="glyphicon glyphicon-tag"></span>
+        <%- name %>
+        <span class="glyphicon pull-right selection" style="color:lawngreen;"></span>
+    </li>
+<% } %>

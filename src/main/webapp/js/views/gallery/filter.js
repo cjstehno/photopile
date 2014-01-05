@@ -1,6 +1,7 @@
 define([
+    'views/gallery/tags',
     'text!templates/gallery/filter.html'
-], function( template ){
+], function( TagsDialog, template ){
 
     return Backbone.View.extend({
         template: _.template(template),
@@ -62,7 +63,27 @@ define([
 
         onTagChange:function(evt){
             evt.preventDefault();
-            // FIXME: tag selector dialog
+            var target = $(evt.currentTarget);
+
+            var filter = target.attr('href').substring(1);
+            if( filter == 'more' ){
+                new TagsDialog().render().on( 'tags-selected', _.bind(this._tagsSelected, this) );
+
+            } else {
+                this._updateFilter(
+                    this.$elements.tags,
+                    target.text(),
+                    target.attr('href').substring(1)
+                );
+            }
+        },
+
+        _tagsSelected:function( evt ){
+            this._updateFilter(
+                this.$elements.tags,
+                'Selected Tags...',
+                evt.grouping.toUpperCase() + '|' + evt.tags.join(',')
+            );
         },
 
         onSortChange:function(evt){

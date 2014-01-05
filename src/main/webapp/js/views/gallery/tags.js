@@ -1,21 +1,21 @@
 define([
     'collections/tags',
-    'text!templates/tag-selector-dialog.html',
-    'text!templates/tag-selector-dialog-item.html'
-], function( Tags, template, rowTemplate ){
+    'text!templates/gallery/tags.html',
+    'text!templates/gallery/tags-item.html'
+], function( Tags, template, itemTemplate ){
 
     return Backbone.View.extend({
         template: _.template(template),
-        rowTemplate: _.template(rowTemplate),
+        itemTemplate: _.template(itemTemplate),
+
+        attributes:{
+            class:'modal fade'
+        },
 
         events:{
             'click .tag-item':'onTagItemClick',
             'keypress form input[name="filter"]':'onFilterChange',
             'click .btn.btn-primary':'onApplyClick'
-        },
-
-        attributes:{
-            class:'modal hide fade'
         },
 
         initialize:function(){
@@ -27,7 +27,7 @@ define([
             this.$el.modal();
 
             this.$elements = {
-                items: this.$('table tbody')
+                items: this.$('.tag-list')
             };
 
             this.collection.fetch({
@@ -36,6 +36,46 @@ define([
             });
 
             return this;
+        },
+
+        onTagItemClick:function(evt){
+            evt.preventDefault();
+
+            $('span.selection', evt.currentTarget).toggleClass('glyphicon-ok');
+
+            var selectedTag = $(evt.currentTarget).attr('data-tag');
+
+            var tag = this.collection.find(function(it){
+                return it.get('name') == selectedTag;
+            }, this);
+
+            tag.selected = true;
+        },
+
+        onApplyClick:function(evt){
+            evt.preventDefault();
+
+            var tags = [];
+
+            $('.tag-item', this.$elements.items).each(function(idx,elt){
+                if( $('span.selection', elt).hasClass('glyphicon-ok') ){
+                    tags.push( $(elt).attr('data-tag') );
+                }
+            });
+
+            this.trigger('tags-selected',{
+                tags:tags,
+                grouping: this.$('form input[name="grouping"]:checked').val()
+            });
+        },
+
+        onFilterChange:function(evt){
+            evt.stopPropagation();
+
+            if( evt.keyCode === 13 ){
+                this.renderListItems( this.$('input[name="filter"]').val() );
+                evt.preventDefault();
+            }
         },
 
         renderListItems:function( filter ){
@@ -47,56 +87,14 @@ define([
                 var name = it.get('name');
 
                 if( filterText.trim().length == 0 || name.toLowerCase().indexOf(filterText) > 0 ){
-                    this.$elements.items.append(this.rowTemplate({
+                    this.$elements.items.append(this.itemTemplate({
                         name: name,
                         selected: it.selected || false
                     }));
                 }
 
             }, this);
-        },
-
-        onTagItemClick:function(evt){
-            $('td.selected-column > i.icon', evt.currentTarget).toggleClass('icon-ok');
-
-            var selectedTag = $(evt.currentTarget).attr('data-tag');
-
-            var tag = this.collection.find(function(it){
-                return it.get('name') == selectedTag;
-            }, this);
-
-            tag.selected = true;
-
-            return false;
-        },
-
-        onApplyClick:function(){
-            var tags = [];
-
-            $('.tag-item', this.$elements.items).each(function(idx,elt){
-                if( $('td.selected-column > i', elt).hasClass('icon-ok') ){
-                    tags.push( $(elt).attr('data-tag') );
-                }
-            });
-
-            this.trigger('tags-selected',{
-                tags:tags,
-                grouping: this.$('form input[name="grouping"]:checked').val()
-            });
-
-            return false;
-        },
-
-        onFilterChange:function(evt){
-            evt.stopPropagation();
-
-            if( evt.keyCode === 13 ){
-                var filter = this.$('form input[name="filter"]').val();
-                this.renderListItems(filter);
-
-                evt.preventDefault();
-            }
         }
-
     });
 });
+

@@ -1,4 +1,8 @@
 
+! photo details
+! photo import
+! photo map
+
 
 /gallery/all[/page-index] 				- jump to the gallery page (at page index or 0)
 /gallery/[album-name][/page-index]		- jump to the album on the gallery page (at page index or 0)
