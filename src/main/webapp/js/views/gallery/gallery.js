@@ -29,8 +29,8 @@ define([
             this.$('.thumbnail').colorbox({
                 photo: true,
                 rel: 'thumbnails',
-                width: '80%',
-                height: '80%'
+                maxWidth: '80%',
+                maxHeight: '80%'
             });
 
             return this;
