@@ -153,6 +153,133 @@ class PhotoDaoTest {
         assert 1 == photoList.size()
     }
 
+    @Test void 'list: explicit default sort and filter'(){
+        fixtureFor( FIX_A, FIX_B, FIX_C, FIX_D, FIX_E ).each {
+            photoDao.create(new Photo(it))
+        }
+
+        def list = photoDao.list(
+            new PageBy( start:0, limit:2 ),
+            new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING ),
+            new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+        )
+
+        assert 2 == list.size()
+        assert photoName(FIX_E) == list[0].name
+        assert photoName(FIX_D) == list[1].name
+
+        list = photoDao.list(
+            new PageBy( start:2, limit:2 ),
+            new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING ),
+            new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+        )
+
+        assert 2 == list.size()
+        assert photoName(FIX_C) == list[0].name
+        assert photoName(FIX_B) == list[1].name
+
+        list = photoDao.list(
+            new PageBy( start:4, limit:2 ),
+            new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING ),
+            new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+        )
+
+        assert 1 == list.size()
+        assert photoName(FIX_A) == list[0].name
+    }
+
+    @Test void 'list: explicit default sort and filter, back and forth'(){
+        fixtureFor( FIX_A, FIX_B, FIX_C, FIX_D, FIX_E ).each {
+            photoDao.create(new Photo(it))
+        }
+
+        def list = photoDao.list(
+            new PageBy( start:0, limit:2 ),
+            new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING ),
+            new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+        )
+
+        assert 2 == list.size()
+        assert photoName(FIX_E) == list[0].name
+        assert photoName(FIX_D) == list[1].name
+
+        list = photoDao.list(
+            new PageBy( start:2, limit:2 ),
+            new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING ),
+            new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+        )
+
+        assert 2 == list.size()
+        assert photoName(FIX_C) == list[0].name
+        assert photoName(FIX_B) == list[1].name
+
+        list = photoDao.list(
+            new PageBy( start:0, limit:2 ),
+            new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING ),
+            new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+        )
+
+        assert 2 == list.size()
+        assert photoName(FIX_E) == list[0].name
+        assert photoName(FIX_D) == list[1].name
+    }
+
+    @Test void 'list: explicit default sort and filter with sorted field of null'(){
+        fixtureFor(FIX_A, FIX_B, FIX_C, FIX_D, FIX_E, FIX_F, FIX_G).collect { f->
+            f.dateTaken = null
+            return f
+        }.each {
+            photoDao.create(new Photo(it))
+        }
+
+        def sortedBy = new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING )
+        def taggedBy = new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+
+        def list = photoDao.list( new PageBy( start:0, limit:4 ), sortedBy, taggedBy )
+
+        assert 4 == list.size()
+        assert photoName(FIX_G) == list[0].name
+        assert photoName(FIX_F) == list[1].name
+        assert photoName(FIX_E) == list[2].name
+        assert photoName(FIX_D) == list[3].name
+
+        list = photoDao.list( new PageBy( start:4, limit:4 ), sortedBy, taggedBy )
+
+        assert 3 == list.size()
+        assert photoName(FIX_C) == list[0].name
+        assert photoName(FIX_B) == list[1].name
+        assert photoName(FIX_A) == list[2].name
+    }
+
+    @Test void 'list: explicit default sort and filter with sorted field of null except one'(){
+        fixtureFor(FIX_A, FIX_B, FIX_C, FIX_D, FIX_E, FIX_F, FIX_G).collect { f->
+            if( f.name != photoName(FIX_F) ){
+                f.dateTaken = null
+            }
+            return f
+        }.each {
+            photoDao.create(new Photo(it))
+        }
+
+        def sortedBy = new SortBy( field: 'dateTaken', direction:SortBy.Direction.DESCENDING )
+        def taggedBy = new TaggedAs( tags:[], grouping:TaggedAs.Grouping.ANY )
+
+        def list = photoDao.list( new PageBy( start:0, limit:4 ), sortedBy, taggedBy )
+
+        assert 4 == list.size()
+        assert photoName(FIX_G) == list[0].name
+        assert photoName(FIX_E) == list[1].name
+        assert photoName(FIX_D) == list[2].name
+        assert photoName(FIX_C) == list[3].name
+
+        list = photoDao.list( new PageBy( start:4, limit:4 ), sortedBy, taggedBy )
+
+        assert 3 == list.size()
+        assert photoName(FIX_B) == list[0].name
+        assert photoName(FIX_A) == list[1].name
+        assert photoName(FIX_F) == list[2].name
+    }
+
     @Test void 'list: limited'(){
         fixtureFor( FIX_A, FIX_B, FIX_C, FIX_D, FIX_E ).each {
             photoDao.create(new Photo(it))

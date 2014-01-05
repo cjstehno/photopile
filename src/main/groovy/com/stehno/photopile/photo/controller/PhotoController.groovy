@@ -61,6 +61,12 @@ class PhotoController {
 
         log.debug 'Found {} photos in album ({}) @ {}, sorting by {} and tagged with {}', photos.size(), album, pageBy, sortBy, taggedAs
 
+        if(log.traceEnabled){
+            photos.each { p->
+                log.trace ' - {}', p
+            }
+        }
+
         final WrappedCollection<Photo> wrapped = new WrappedCollection<>( photos )
         wrapped.getMeta().put( META_TOTAL, photoService.countPhotos(taggedAs) )
 

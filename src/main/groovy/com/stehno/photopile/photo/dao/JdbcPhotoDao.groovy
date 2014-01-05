@@ -197,7 +197,7 @@ class JdbcPhotoDao implements PhotoDao {
     private String orderingSql( final SortBy sortOrder ){
         def ordering = ORDERINGS[sortOrder?.field ?: 'dateTaken']
 
-        " order by $ordering ${(sortOrder?.direction ?: DESCENDING).direction}"
+        " order by $ordering ${(sortOrder?.direction ?: DESCENDING).direction}, id ${(sortOrder?.direction ?: DESCENDING).direction}"
     }
 
     private void applyReturns( map, Photo photo ){

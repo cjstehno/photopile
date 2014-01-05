@@ -26,4 +26,6 @@ class Fixtures {
     static final String FIX_C = 'C'
     static final String FIX_D = 'D'
     static final String FIX_E = 'E'
+    static final String FIX_F = 'F'
+    static final String FIX_G = 'G'
 }

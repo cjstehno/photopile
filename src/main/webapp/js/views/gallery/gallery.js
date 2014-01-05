@@ -26,7 +26,12 @@ define([
                 }));
             }
 
-            this.$('.thumbnail').colorbox({ photo:true, rel:'thumbnails' });
+            this.$('.thumbnail').colorbox({
+                photo: true,
+                rel: 'thumbnails',
+                width: '80%',
+                height: '80%'
+            });
 
             return this;
         }

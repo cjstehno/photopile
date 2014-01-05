@@ -32,7 +32,9 @@ class PhotoFixtures {
         (FIX_B): Date.parse(DATE_TAKEN_FORMAT,'10/22/2010 08:45'),
         (FIX_C): Date.parse(DATE_TAKEN_FORMAT,'10/23/2010 07:45'),
         (FIX_D): Date.parse(DATE_TAKEN_FORMAT,'10/24/2010 10:45'),
-        (FIX_E): Date.parse(DATE_TAKEN_FORMAT,'10/25/2010 11:45')
+        (FIX_E): Date.parse(DATE_TAKEN_FORMAT,'10/25/2010 11:45'),
+        (FIX_F): Date.parse(DATE_TAKEN_FORMAT,'10/26/2010 12:45'),
+        (FIX_G): Date.parse(DATE_TAKEN_FORMAT,'10/27/2010 06:45')
     ]
 
     static final DATE_UPLOADED_VALUES = [
@@ -40,7 +42,9 @@ class PhotoFixtures {
         (FIX_B): Date.parse(DATE_TAKEN_FORMAT,'10/23/2010 08:45'),
         (FIX_C): Date.parse(DATE_TAKEN_FORMAT,'10/24/2010 07:45'),
         (FIX_D): Date.parse(DATE_TAKEN_FORMAT,'10/25/2010 10:45'),
-        (FIX_E): Date.parse(DATE_TAKEN_FORMAT,'10/26/2010 11:45')
+        (FIX_E): Date.parse(DATE_TAKEN_FORMAT,'10/26/2010 11:45'),
+        (FIX_F): Date.parse(DATE_TAKEN_FORMAT,'10/27/2010 11:45'),
+        (FIX_G): Date.parse(DATE_TAKEN_FORMAT,'10/28/2010 11:45')
     ]
 
     static final LOCATION_VALUES = [
@@ -48,7 +52,9 @@ class PhotoFixtures {
         (FIX_B): new Location( 30.0d, -30.0d ),
         (FIX_C): new Location( 30.0d,  30.0d ),
         (FIX_D): new Location(-30.0d, -30.0d ),
-        (FIX_E): new Location(-30.0d,  30.0d )
+        (FIX_E): new Location(-30.0d,  30.0d ),
+        (FIX_F): new Location(-32.0d,  32.0d ),
+        (FIX_G): new Location(-34.0d,  34.0d )
     ]
 
     static String photoName( String fixId ){ "Photo-$fixId" }
