@@ -41,10 +41,10 @@ define([
                 photo: true,
                 rel: 'thumbnails',
                 maxWidth: '80%',
-                maxHeight: '80%',
+                maxHeight: '80%'/*,
                 onComplete:function(){
-                    $('#cboxContent').append('<div style="display:none;"></div>')
-                }
+                    $('#cboxContent').append('<button type="button" id="foo" style="">??</button>')
+                }*/
             });
 
             thumbnails.append( toolsTemplate );
