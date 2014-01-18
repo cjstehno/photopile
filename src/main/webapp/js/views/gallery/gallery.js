@@ -1,11 +1,20 @@
 define([
+    'views/gallery/thumbnail-details',
     'text!templates/gallery/gallery.html'
-], function( template ){
+], function( ThumbnailDetailsDialog, template ){
 
     var itemsPerPage = 24; // TODO: externalize at some point
 
+    var toolsTemplate = '<div class="tools" style="opacity:0.4">' +
+        '<span class="glyphicon glyphicon-info-sign" title="Details"></span> ' +
+        '</div>';
+
     return Backbone.View.extend({
         template: _.template(template),
+
+        events:{
+            'contextmenu .thumbnail':'openThumbnailMenu'
+        },
 
         initialize:function(){
             this.collection.on('reset', _.bind(this.render, this));
@@ -26,14 +35,33 @@ define([
                 }));
             }
 
-            this.$('.thumbnail').colorbox({
+            var thumbnails = this.$('.thumbnail');
+
+            thumbnails.colorbox({
                 photo: true,
                 rel: 'thumbnails',
                 maxWidth: '80%',
-                maxHeight: '80%'
+                maxHeight: '80%',
+                onComplete:function(){
+                    $('#cboxContent').append('<div style="display:none;"></div>')
+                }
             });
 
+            thumbnails.append( toolsTemplate );
+
+            this.$('.thumbnail .tools').on('click', _.bind(this.onDetailsClick, this));
+
             return this;
+        },
+
+        onDetailsClick:function(evt){
+            evt.preventDefault();
+            evt.stopPropagation();
+
+            var photoId = $(evt.currentTarget).prev().attr('data-id');
+
+            var thumbnailDetails = new ThumbnailDetailsDialog({ photoId:photoId }).render();
         }
+
     });
 });

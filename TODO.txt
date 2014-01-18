@@ -1,5 +1,10 @@
 
 ! photo details - add tools to gallery and single image for details viewing & other tools
+    - location, size, dimensions, camera, name, description, tags
+    - download
+    - select
+    - star
+    - add to album
 ! photo import
 ! photo map
 
