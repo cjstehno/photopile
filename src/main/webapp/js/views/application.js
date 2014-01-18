@@ -21,15 +21,10 @@ define([
             this.$el.prepend( this.template() );
 
             var menu = new ApplicationMenu({ el:this.$('.navbar') }).render();
-            menu.on('app-menu-click', _.bind(this.handleContainerChange, this));
 
             this.showContainer('home');
 
             return this;
-        },
-
-        handleContainerChange:function( menuEvt ){
-            this.showContainer(menuEvt['item-id']);
         },
 
         showContainer:function( cid ){

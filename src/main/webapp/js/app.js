@@ -20,8 +20,8 @@ define([ 'router', 'views/application' ], function( Router, ApplicationView ){
 
     ctor.prototype = {
         initialize:function(){
-            new ApplicationView({ el:'body' }).render();
-            new Router();
+            var application = new ApplicationView({ el:'body' }).render();
+            new Router({ application:application });
 
             Backbone.history.start();
         }

@@ -16,17 +16,9 @@ define([
         },
 
         onMenuItemClick:function(evt){
-            evt.preventDefault();
-
-            var $target = $(evt.currentTarget);
-
-            this.trigger('app-menu-click', {
-                'item-id': $target.attr('href').substring(1)
-            });
-
             this.$('li > a.app-menu').parent('li').removeClass('active');
 
-            $target.parent('li').addClass('active');
+            $(evt.currentTarget).parent('li').addClass('active');
         }
     });
 });
