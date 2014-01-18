@@ -18,7 +18,8 @@ define([], function(){
     return Backbone.Router.extend({
         routes: {
             'home':'toHome',
-            'gallery':'toGallery'
+            'gallery':'toGallery',
+            'map':'toMap'
         },
 
         initialize:function( options ){
@@ -31,6 +32,10 @@ define([], function(){
 
         toGallery:function(){
             this.application.showContainer('gallery');
+        },
+
+        toMap:function(){
+            this.application.showContainer('map');
         }
     });
 });

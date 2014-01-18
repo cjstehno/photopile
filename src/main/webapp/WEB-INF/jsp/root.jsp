@@ -23,6 +23,9 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="css/colorbox.css">
+    <link rel="stylesheet" href="css/leaflet.css">
+
+    <link rel="stylesheet" href="css/map-container.css">
 
     <style type="text/css">
         body { padding-top: 70px; }
@@ -35,6 +38,7 @@
 <script src="js/libs/underscore.min.js" type="text/javascript"></script>
 <script src="js/libs/backbone.min.js" type="text/javascript"></script>
 <script src="js/libs/jquery.colorbox.min.js" type="text/javascript"></script>
+<script src="js/libs/leaflet.min.js" type="text/javascript"></script>
 <script data-main="js/main" src="js/libs/require.min.js" type="text/javascript"></script>
 
 </body>
