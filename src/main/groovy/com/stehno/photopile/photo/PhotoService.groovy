@@ -73,6 +73,15 @@ interface PhotoService {
     List<Photo> listPhotos( PageBy pageBy, SortBy sortBy, TaggedAs taggedAs )
 
     /**
+     * Find a single photo with the specified id.
+     *
+     * @param photoId the id of the photo
+     * @return the photo
+     * @throws IllegalArgumentException if no photo exists with the given id
+     */
+    Photo fetch( long photoId )
+
+    /**
      * Find all photos with a location contained within the given bounds.
      *
      * @param bounds

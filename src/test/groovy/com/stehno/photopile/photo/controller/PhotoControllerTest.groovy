@@ -162,4 +162,19 @@ class PhotoControllerTest {
             json.data.size() == 2
         }))
     }
+
+    @Test void 'single'(){
+        def fixtures = fixtureFor(FIX_A, FIX_B)
+
+        when( photoService.fetch(100) ).thenReturn( new Photo(fixtures[0]) )
+
+        mvc.perform(
+            get('/photos/100')
+                .contentType(APPLICATION_JSON)
+        )
+        .andExpect(status().isOk())
+        .andExpect(content().contentType(APPLICATION_JSON))
+        .andExpect(jsonPath('$.name').value('Photo-A'))
+        .andExpect(jsonPath('$.description').value('Description-A'))
+    }
 }

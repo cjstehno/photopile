@@ -60,7 +60,7 @@ define([
 
             var photoId = $(evt.currentTarget).prev().attr('data-id');
 
-            var thumbnailDetails = new ThumbnailDetailsDialog({ photoId:photoId }).render();
+            new ThumbnailDetailsDialog({ photoId:photoId });
         }
 
     });

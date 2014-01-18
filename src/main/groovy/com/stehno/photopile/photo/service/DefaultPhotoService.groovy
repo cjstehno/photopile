@@ -92,6 +92,11 @@ class DefaultPhotoService implements PhotoService {
     }
 
     @Override @Transactional(readOnly=true)
+    Photo fetch( final long photoId ){
+        photoDao.fetch( photoId )
+    }
+
+    @Override @Transactional(readOnly=true)
     List<Photo> findPhotosWithin(final LocationBounds bounds) {
         photoDao.findWithin(bounds)
     }

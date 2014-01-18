@@ -73,6 +73,18 @@ class PhotoController {
         return new ResponseEntity<>( wrapped, HttpStatus.OK )
     }
 
+    @RequestMapping(value='/{photoId}', method=RequestMethod.GET)
+    ResponseEntity<WrappedCollection<Photo>> single( @PathVariable('photoId') final Long photoId ){
+        // FIXME: error handling
+
+        Photo photo = photoService.fetch( photoId )
+
+        log.debug 'Found photo ({} v{})', photo.id, photo.version
+        log.trace ' - {}', photo
+
+        return new ResponseEntity<>( photo, HttpStatus.OK )
+    }
+
     @RequestMapping(value='/within/{bounds}', method=RequestMethod.GET)
     ResponseEntity<List<Photo>> listWithin( @PathVariable('bounds') final String bounds ){
         final List<Photo> photos = photoService.findPhotosWithin(LocationBounds.fromString(bounds))

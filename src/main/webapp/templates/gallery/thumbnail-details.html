@@ -1,41 +1,48 @@
 <div class="modal-dialog">
     <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="padding:10px;">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title">Photo Details</h4>
         </div>
         <div class="modal-body">
 
             <div>
-                <img src="https://localhost:8443/photopile/image/LARGE/1186" style="height:200px;" />
+                <img src="https://localhost:8443/photopile/image/LARGE/<%= id %>" style="height:200px;max-width:100%;" />
             </div>
 
             <form class="form-horizontal" role="form">
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Name:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">Some cool photo</p>
+                        <p class="form-control-static"><%- name %></p>
                         <!--<input type="text" class="form-control" id="name" placeholder="Name..."/>-->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Camera:</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-static"><%- cameraInfo ? cameraInfo : '-' %></p>
+                        <!--<input type="text" class="form-control" id="cameraInfo" placeholder="Camera..."/>-->
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Taken:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">Monday, Jan 27, 2014</p>
+                        <p class="form-control-static"><%- dateTaken ? new Date(dateTaken).toLocaleString() : '-' %></p>
                         <!--<input type="text" class="form-control" id="dateTaken" placeholder="Date taken..."/>-->
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Uploaded:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">Monday, Jan 27, 2014</p>
+                        <p class="form-control-static"><%- dateUploaded ? new Date(dateUploaded).toLocaleString() : '-' %></p>
                         <!--<input type="text" class="form-control" id="dateUploaded" placeholder="Date uploaded..."/>-->
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Updated:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">Monday, Jan 27, 2014</p>
+                        <p class="form-control-static"><%- dateUpdated ? new Date(dateUpdated).toLocaleString() : '-' %></p>
                         <!--<input type="text" class="form-control" id="dateUpdated" placeholder="Date updated..."/>-->
                     </div>
                 </div>
@@ -43,7 +50,21 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Tags:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">chris, ariana, camera:Nexus5</p>
+                        <p class="form-control-static">
+                            <% _.each(tags, function(it){ %>
+                                <span data-tag="<%- it.name %>" style="margin-right:5px;">
+                                <% if( it.name.indexOf('camera:') != -1 ){ %>
+                                    <span class="glyphicon glyphicon-camera"></span> <%- it.name.substring(7) %>
+                                <% } else if( it.name.indexOf('month:') != -1 ){ %>
+                                    <span class="glyphicon glyphicon-calendar"></span> <%- it.name.substring(6) %>
+                                <% } else if( it.name.indexOf('year:') != -1 ){ %>
+                                    <span class="glyphicon glyphicon-calendar"></span> <%- it.name.substring(5) %>
+                                <% } else { %>
+                                    <span class="glyphicon glyphicon-tag"></span> <%- it.name %>
+                                <% } %>
+                                </span>
+                            <% }); %>
+                        </p>
                         <!--<input type="text" class="form-control" id="tags" placeholder="Tags..."/>-->
                     </div>
                 </div>
@@ -51,7 +72,14 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Location:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">Lon 45.123, Lat: 45.123</p>
+                        <p class="form-control-static">
+                            <%- location ? 'Lat: ' + location.latitude.toFixed(4) + ', Lon: ' + location.longitude.toFixed(4) : '-'%>
+                            <% if( location ){ %>
+                                <a href="#" class="btn btn-default btn-xs active" role="button">
+                                    <span class="glyphicon glyphicon-map-marker"></span>View
+                                </a>
+                            <% } %>
+                        </p>
                         <!--<input type="text" class="form-control" id="location" placeholder="Lon 45.123, Lat: 45.123"/>-->
                     </div>
                 </div>
@@ -59,14 +87,14 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label">Description:</label>
                     <div class="col-sm-10">
-                        <p class="form-control-static">This is a photo we took on our vacation to the beautiful places where we went that day.</p>
+                        <p class="form-control-static"><%- description ? description : '-' %></p>
                         <!--<textarea class="form-control" rows="4" id="description" placeholder="Description..."></textarea>-->
                     </div>
                 </div>
 
             </form>
 
-        <div class="modal-footer">
+        <div class="modal-footer" style="padding:5px;">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
     </div>
