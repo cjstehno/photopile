@@ -72,8 +72,18 @@ define([
         onImportClick:function( evt ){
             evt.preventDefault();
 
-            // submit the data and when returns. go to next page
+            this.model.save(
+                {
+                    scheduled: true
+                },
+                {
+                    contentType:'application/json',
+                    success: _.bind(this.handleImportResults, this)
+                }
+            );
+        },
 
+        handleImportResults:function(){
             this.$elements.carousel.carousel('next');
 
             this.$elements.importButton.attr('disabled', 'disabled');
