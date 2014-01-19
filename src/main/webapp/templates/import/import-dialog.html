@@ -1,0 +1,52 @@
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header" style="padding:10px;">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Import from Server</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="carousel slide import-carousel">
+                <!-- Wrapper for slides -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <!-- Initial page -->
+                        <div class="well well-sm">
+                            <span class="label label-info">Note:</span>
+                            Imports all photos in a specified directory on the server itself (not from your local computer).
+                            Be sure that you are using a directory that you have permission to access and that the files have
+                            been uploaded before moving forward.
+                        </div>
+
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="directory">Server Directory:</label>
+                                <input type="text" class="form-control" id="directory" value="<%- directory %>" placeholder="Server directory..." />
+                            </div>
+                            <div class="form-group">
+                                <label for="tags">Tags (optional, comma-separated):</label>
+                                <input type="text" class="form-control" id="tags" placeholder="Tags to apply..." />
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="item confirm-page">
+                        <!-- Confirmation page -->
+                    </div>
+                    <div class="item">
+                        <!-- Results page -->
+                        <div class="alert alert-success">Success!</div>
+                        <p>Your photos have been added to the import queue and should be available shortly. You can check
+                            on the current status of the import on the main import page, after closing this dialog.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer" style="padding:5px;">
+                <button type="button" class="btn btn-primary scan-button" title="Scan the provided directory.">Scan</button>
+                <button type="button" class="btn btn-primary import-button" title="Import the files." disabled="disabled">Import</button>
+                <button type="button" class="btn btn-danger cancel-button" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -19,7 +19,8 @@ define([], function(){
         routes: {
             'home':'toHome',
             'gallery':'toGallery',
-            'map':'toMap'
+            'map':'toMap',
+            'import':'toImport'
         },
 
         initialize:function( options ){
@@ -36,6 +37,10 @@ define([], function(){
 
         toMap:function(){
             this.application.showContainer('map');
+        },
+
+        toImport:function(){
+            this.application.showContainer('import');
         }
     });
 });

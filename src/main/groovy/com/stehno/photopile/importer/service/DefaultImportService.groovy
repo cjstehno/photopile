@@ -77,7 +77,7 @@ class DefaultImportService implements ImportService {
      * @return the File object for the directory String
      */
     private File asDirectory( final String dir ){
-        final File file = new File( dir )
+        final File file = new File( dir as String )
 
         isTrue( hasRole( Role.ADMIN ) || file.toPath().startsWith( defaultPath() ), format('Specified path (%s) not allowed.', dir) )
 
