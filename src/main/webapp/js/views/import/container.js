@@ -21,6 +21,8 @@ define([
 
             this.$('.import-table tbody').append( emptyRowTemplate );
 
+            // FIXME: need to pull the current import status info and render it
+
             return this;
         },
 
