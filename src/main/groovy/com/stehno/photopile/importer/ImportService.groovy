@@ -48,4 +48,11 @@ interface ImportService {
      * @return
      */
     Path defaultPath() throws IOException
+
+    /**
+     * Lists the active imports.
+     *
+     * @return
+     */
+    List<ActiveImport> listImports()
 }

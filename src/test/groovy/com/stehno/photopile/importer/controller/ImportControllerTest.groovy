@@ -32,6 +32,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
 import java.nio.file.Path
 
+import static com.stehno.photopile.importer.domain.ImportStatus.LOADED
+import static com.stehno.photopile.importer.domain.ImportStatus.QUEUED
 import static com.stehno.photopile.test.JsonMatcher.jsonMatcher
 import static org.mockito.Matchers.any
 import static org.mockito.Matchers.eq
@@ -59,6 +61,33 @@ class ImportControllerTest {
         when path.toString() thenReturn SOME_PATH
 
         mvc = MockMvcBuilders.standaloneSetup(new ImportController( importService:importService )).build()
+    }
+
+    @Test void 'listImports:none'(){
+        when importService.listImports() thenReturn([])
+
+        mvc.perform( get('/import/status').contentType(APPLICATION_JSON) )
+            .andExpect(status().isOk())
+            .andExpect(content().string(jsonMatcher { json->
+                json.size() == 0
+        }))
+    }
+
+    @Test void 'listImports:some'(){
+        when importService.listImports() thenReturn([
+            new ActiveImport(id:1, username:'tester', startDate:new Date(), status:LOADED, initialFileCount:123, tags:[] ),
+            new ActiveImport(id:2, username:'tester', startDate:new Date(), status:QUEUED, initialFileCount:246, tags:[] )
+        ])
+
+        mvc.perform( get('/import/status').contentType(APPLICATION_JSON) )
+            .andExpect(status().isOk())
+            .andExpect(content().string(jsonMatcher { json->
+            [
+                json.size() == 2,
+                json[0].id == 1,
+                json[1].id == 2
+            ].every()
+        }))
     }
 
     @Test void importPath(){

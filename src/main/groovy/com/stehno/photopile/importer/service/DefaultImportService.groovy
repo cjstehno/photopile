@@ -42,6 +42,11 @@ class DefaultImportService implements ImportService {
     @Autowired private ActiveImportDao activeImportDao
 
     @Override
+    List<ActiveImport> listImports(){
+        activeImportDao.listImports()
+    }
+
+    @Override
     ActiveImport scan( final String directory, final Set<String> tags ) throws IOException {
         long importId = activeImportDao.createImport(currentUsername(), tags)
 

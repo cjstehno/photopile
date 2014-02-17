@@ -1,9 +1,10 @@
 define([
+    'collections/active-imports',
     'views/import/import-dialog',
     'views/import/upload-dialog',
     'text!templates/import/container.html',
     'text!templates/import/import-table-row.html'
-], function( ImportDialog, UploadDialog, template, rowTemplate ){
+], function( ActiveImports, ImportDialog, UploadDialog, template, rowTemplate ){
 
     var emptyRowTemplate = '<tr><td colspan="7">No import data available.</td></tr>';
 
@@ -13,17 +14,33 @@ define([
 
         events:{
             'click button.upload-button':'onUploadClick',
-            'click button.import-button':'onImportClick'
+            'click button.import-button':'onImportClick',
+            'click button.cancel-button':'onCancelClick'
+        },
+
+        initialize:function(){
+            this.collection = new ActiveImports();
+            this.collection.on('reset', _.bind(this.renderImports, this));
         },
 
         render:function(){
             this.$el.append( this.template() );
 
-            this.$('.import-table tbody').append( emptyRowTemplate );
-
-            // FIXME: need to pull the current import status info and render it
+            this.collection.fetch({ reset:true, contentType:'application/json' });
 
             return this;
+        },
+
+        renderImports:function(){
+            var tableBody = this.$('.import-table tbody');
+            if( this.collection.size() == 0 ){
+                tableBody.append( emptyRowTemplate );
+
+            } else {
+                this.collection.each(function(imp){
+                    tableBody.append( this.rowTemplate(imp.toJSON()) );
+                }, this);
+            }
         },
 
         onImportClick:function(evt){
@@ -36,6 +53,16 @@ define([
             evt.preventDefault();
 
             new UploadDialog().render();
+        },
+
+        onCancelClick:function(evt){
+            var importId = $(evt.currentTarget).attr('data-id');
+            var importModel = this.collection.get(importId);
+
+            // FIXME: a bit of a hack
+            importModel.url = importModel.url + '/status/' + importModel.id
+
+            importModel.destroy(); // fires remove event
         }
 
     });

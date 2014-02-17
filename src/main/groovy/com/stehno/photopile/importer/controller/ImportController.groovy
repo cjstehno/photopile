@@ -23,11 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST
+import static org.springframework.http.HttpStatus.OK
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import static org.springframework.web.bind.annotation.RequestMethod.DELETE
+import static org.springframework.web.bind.annotation.RequestMethod.GET
 
 /**
  * Controller for handling bulk photo imports.
@@ -38,25 +43,45 @@ class ImportController {
 
     @Autowired private ImportService importService
 
+    @RequestMapping(value='/status', method=GET)
+    ResponseEntity<?> listImports(){
+        try {
+            new ResponseEntity<>( importService.listImports(), OK )
+
+        } catch( IOException ioe ){
+            new ResponseEntity<>( ioe.getMessage(), BAD_REQUEST )
+        }
+    }
+
+    @RequestMapping(value='/status/{id}', method=DELETE)
+    ResponseEntity<?> deleteImport( @PathVariable('id') Long id ){
+        try {
+            importService.stopImport( id )
+
+            new ResponseEntity<>(OK)
+
+        } catch( IOException ioe ){
+            new ResponseEntity<>( ioe.getMessage(), BAD_REQUEST )
+        }
+    }
+
     /**
      * Used to retrieve the top-level path allowed for import by the current user.
      *
      * @return an entity containing the path
      */
-    @RequestMapping(method=RequestMethod.GET)
+    @RequestMapping(method=GET)
     ResponseEntity<?> importPath(){
-        log.info 'Requested import-path'
-
         try {
             new ResponseEntity<>(
                 new ServerImport(
                     directory: importService.defaultPath() as String
                 ),
-                HttpStatus.OK
+                OK
             )
 
         } catch( IOException ioe ){
-            new ResponseEntity<>( ioe.getMessage(), HttpStatus.BAD_REQUEST )
+            new ResponseEntity<>( ioe.getMessage(), BAD_REQUEST )
         }
     }
 
@@ -97,7 +122,7 @@ class ImportController {
             )
 
         } catch( IOException e ){
-            new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_REQUEST )
+            new ResponseEntity<>( e.getMessage(), BAD_REQUEST )
         }
     }
 
@@ -120,7 +145,7 @@ class ImportController {
 
 
         } catch( IOException e ){
-            new ResponseEntity<>( e.getMessage(), HttpStatus.BAD_REQUEST )
+            new ResponseEntity<>( e.getMessage(), BAD_REQUEST )
         }
     }
 }

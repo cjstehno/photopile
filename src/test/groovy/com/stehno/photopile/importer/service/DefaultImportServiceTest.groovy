@@ -32,6 +32,7 @@ import org.mockito.runners.MockitoJUnitRunner
 import org.springframework.core.io.Resource
 
 import static com.stehno.photopile.importer.domain.ImportStatus.LOADED
+import static com.stehno.photopile.importer.domain.ImportStatus.QUEUED
 import static com.stehno.photopile.test.security.SecurityHelper.*
 import static org.mockito.Mockito.verify
 import static org.mockito.Mockito.when
@@ -52,8 +53,6 @@ class DefaultImportServiceTest {
     private DefaultImportService service
     private File userFolder
 
-    // FIXME: update test
-
     @Before void before(){
         when importRoot.getFile() thenReturn(temporaryFolder.getRoot())
 
@@ -68,6 +67,25 @@ class DefaultImportServiceTest {
             rootImportPath:importRoot,
             activeImportDao: activeImportDao
         )
+    }
+
+    @Test void 'listImports'(){
+        def activeImport = service.scan( service.defaultPath() as String, NO_TAGS )
+
+        assert 2 == activeImport.initialFileCount
+        assert LOADED == activeImport.status
+
+        def imports = service.listImports()
+        assert imports.size() == 1
+        assert imports[0].status == LOADED
+
+        service.schedule( activeImport.id )
+
+        imports = service.listImports()
+        assert imports.size() == 1
+        assert imports[0].status == QUEUED
+
+        verify importQueue enqueue activeImport.id
     }
 
     @Test void 'scan: non-admin user directory'(){

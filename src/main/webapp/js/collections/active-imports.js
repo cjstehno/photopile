@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-define([], function(){
-    return Backbone.Model.extend({ });
+define([ 'models/active-import' ], function( ActiveImport ){
+
+    return Backbone.Collection.extend({
+        model: ActiveImport,
+        url:'/photopile/import/status'
+    });
 });

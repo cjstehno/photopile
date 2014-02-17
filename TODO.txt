@@ -1,3 +1,39 @@
+kill import
+status labels
+resolve import source type
+
+
+upload from web
+    -   read files from input and store in staging dir (STAGING/IMPORTID)
+    -   add each file path into the import manifest table
+    -   signal ready (state change in import manager)
+
+server import
+    -   take input path and scan files recursively, add path to the import manifest table
+    -   signal ready (state change in import manager)
+
+- read (pop) manifest data into the import queue to extract data and store photo
+- scaling
+
+
+
+move scan into workflow (SCANNING)
+
+    SCANNING    cancel
+    CREATED     cancel
+    LOADED      cancel
+    QUEUED      cancel
+    COMPLETE    cancel - generally never see this one
+
+<td><span class="glyphicon glyphicon-upload"></span> Import</td>
+
+probably need an error status with message
+
+upload-
+  <td><span class="glyphicon glyphicon-cloud-upload"></span> Upload</td>
+
+
+
 
 ! photo details - add tools to gallery and single image for details viewing & other tools
     - location, size, dimensions, camera, name, description, tags
