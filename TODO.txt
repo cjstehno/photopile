@@ -1,129 +1,16 @@
-kill import
-status labels
-resolve import source type
 
+-   new add/import functionality
+-   new user message functionality
+    -   setup email handler
 
-upload from web
-    -   read files from input and store in staging dir (STAGING/IMPORTID)
-    -   add each file path into the import manifest table
-    -   signal ready (state change in import manager)
+-   scaling rethink - may not need so many options
 
-server import
-    -   take input path and scan files recursively, add path to the import manifest table
-    -   signal ready (state change in import manager)
+-   refactor photo domain to extract location and camera info
 
-- read (pop) manifest data into the import queue to extract data and store photo
-- scaling
+-   implement photo details view
+-   implement photo albums
 
+-   document setup, build and der-run procedures
 
-
-move scan into workflow (SCANNING)
-
-    SCANNING    cancel
-    CREATED     cancel
-    LOADED      cancel
-    QUEUED      cancel
-    COMPLETE    cancel - generally never see this one
-
-<td><span class="glyphicon glyphicon-upload"></span> Import</td>
-
-probably need an error status with message
-
-upload-
-  <td><span class="glyphicon glyphicon-cloud-upload"></span> Upload</td>
-
-
-
-
-! photo details - add tools to gallery and single image for details viewing & other tools
-    - location, size, dimensions, camera, name, description, tags
-    - download
-    - select
-    - star
-    - add to album
-! photo import
-! photo map
-
-
-/gallery/all[/page-index] 				- jump to the gallery page (at page index or 0)
-/gallery/[album-name][/page-index]		- jump to the album on the gallery page (at page index or 0)
-	?sort=field:modifier				- sorts the collection
-	?tags=[and/or]:a,b,c 				- filters collection by tags (defaults to and?)
-
-
-/import 	- jump to the import page
-
-/map		- jump to the map page
-
-
-
-photo image dao scaling stored on filesystem rather than db?
-
-
-
-----------older
-
-
-View
-	Grid
-		All
-		Album
-		Tag
-		Camera
-		Search
-	Single
-	Map
-
-FILTER > [SUB-FILTER] > SORT > ORDER
-All >
-	Date Taken (Recent / Oldest)
-	Date Uploaded (Recent / Oldest)
-
-Album >
-	[Album Name]
-		Date Taken (Recent / Oldest)
-		Date Uploaded (Recent / Oldest)
-
-Tag >
-	[Tag]
-		Date Taken (Recent / Oldest)
-		Date Uploaded (Recent / Oldest)
-
-Camera >
-	[Camera]
-		Date Taken (Recent / Oldest)
-		Date Uploaded (Recent / Oldest)
-
-
-
-!   break up the db changelogs
-
-
-
-
-Tomcat Stuff
-------------
-
--   get manager/deployer running
--   get mbean server running
--   setup mail session config
-
-Notes
------
-
--   remember me is setup but not deeply used
-
-
-
-------------------------------------
-domain
-------------------------------------
-
-album
-    id
-    name
-    description
-
-album_photos
-    photo_id
-    album_id
+-   investigate shell commands
+-   investigate actuator use

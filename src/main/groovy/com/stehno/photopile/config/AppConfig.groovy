@@ -35,7 +35,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableAutoConfiguration
 @Import([ DataSourceConfig, SecurityConfig, PhotoConfig, ImageConfig ])
 @ComponentScan([ 'com.stehno.photopile.controller' ])
-//@PropertySource('classpath:/config.properties')
 class AppConfig extends WebMvcConfigurerAdapter {
 
     @Override
@@ -51,20 +50,6 @@ class AppConfig extends WebMvcConfigurerAdapter {
     @Bean static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer(){
         new PropertySourcesPlaceholderConfigurer()
     }
-
-/*    @Bean ViewResolver viewResolver(){
-        new ContentNegotiatingViewResolver(
-            useNotAcceptableStatusCode: true,
-            viewResolvers:[
-                new InternalResourceViewResolver( viewClass:JstlView, prefix:'/WEB-INF/jsp/', suffix:'.jsp' )
-            ],
-            defaultViews:[ new MappingJackson2JsonView() ]
-        )
-    }
-
-    @Bean MessageSource messageSource(){
-        new ReloadableResourceBundleMessageSource( basename:'/WEB-INF/msg/messages')
-    }*/
 
     static void main( final String[] args ){
         new SpringApplicationBuilder(AppConfig).run(args)

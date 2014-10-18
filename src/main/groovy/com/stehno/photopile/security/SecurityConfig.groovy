@@ -64,6 +64,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure( final HttpSecurity http ) throws Exception {
         http
             // turn off CSRF token - add this at some point; requires additional request param per request
+            // security.enable-csrf=false in application.properties should do this but seems to be ignored
             .csrf().disable()
 
             .authorizeRequests()
@@ -73,10 +74,16 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
             // everything else needs an authenticated user
             .anyRequest().authenticated()
             .and()
+
             // allow guest access to login page
             .formLogin().loginPage('/login').permitAll()
             .and()
+
             // allow guest access to logout page
             .logout().permitAll()
+            .and()
+
+            // require https
+            .requiresChannel().anyRequest().requiresSecure()
     }
 }
