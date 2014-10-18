@@ -16,31 +16,33 @@
 
 package com.stehno.photopile.config
 import com.stehno.photopile.image.ImageConfig
-import com.stehno.photopile.importer.ImporterConfig
 import com.stehno.photopile.photo.PhotoConfig
 import com.stehno.photopile.security.SecurityConfig
-import com.stehno.photopile.usermsg.UserMsgConfig
-import org.springframework.context.MessageSource
-import org.springframework.context.annotation.*
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.builder.SpringApplicationBuilder
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Import
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.springframework.context.support.ReloadableResourceBundleMessageSource
-import org.springframework.web.servlet.ViewResolver
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
-import org.springframework.web.servlet.view.ContentNegotiatingViewResolver
-import org.springframework.web.servlet.view.InternalResourceViewResolver
-import org.springframework.web.servlet.view.JstlView
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView
 /**
  * Spring-based web application context configuration.
  */
 @Configuration
-@EnableWebMvc
-@Import([ SecurityConfig, PhotoConfig, ImageConfig, ImporterConfig, UserMsgConfig ])
+@EnableAutoConfiguration
+@Import([ DataSourceConfig, SecurityConfig, PhotoConfig, ImageConfig ])
 @ComponentScan([ 'com.stehno.photopile.controller' ])
-@PropertySource('classpath:/config.properties')
+//@PropertySource('classpath:/config.properties')
 class AppConfig extends WebMvcConfigurerAdapter {
+
+    @Override
+    void addViewControllers( final ViewControllerRegistry registry ){
+        // allows customization of the login page
+        registry.addViewController('/login').setViewName('login')
+    }
 
     @Override void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable()
@@ -50,7 +52,7 @@ class AppConfig extends WebMvcConfigurerAdapter {
         new PropertySourcesPlaceholderConfigurer()
     }
 
-    @Bean ViewResolver viewResolver(){
+/*    @Bean ViewResolver viewResolver(){
         new ContentNegotiatingViewResolver(
             useNotAcceptableStatusCode: true,
             viewResolvers:[
@@ -62,5 +64,9 @@ class AppConfig extends WebMvcConfigurerAdapter {
 
     @Bean MessageSource messageSource(){
         new ReloadableResourceBundleMessageSource( basename:'/WEB-INF/msg/messages')
+    }*/
+
+    static void main( final String[] args ){
+        new SpringApplicationBuilder(AppConfig).run(args)
     }
 }

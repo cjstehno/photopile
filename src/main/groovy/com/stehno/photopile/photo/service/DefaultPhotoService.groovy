@@ -86,7 +86,7 @@ class DefaultPhotoService implements PhotoService {
         photoDao.list(sortBy)
     }
 
-    @Override @Transactional(readOnly=true)
+    /*@Override */@Transactional(readOnly=true)
     List<Photo> listPhotos( final PageBy pageBy, final SortBy sortBy=null, final TaggedAs taggedAs=null ){
         photoDao.list( pageBy, sortBy, taggedAs )
     }

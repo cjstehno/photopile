@@ -116,7 +116,7 @@ class DefaultPhotoServiceTest {
     @Test void 'listPhotos: all'(){
         service.listPhotos( new SortBy(field:'dateTaken', direction:ASCENDING) )
 
-        verify photoDao list(any(SortBy))
+        verify photoDao list(new SortBy(field:'dateTaken', direction:ASCENDING))
     }
 
     @Test void 'listPhotos: limited'(){

@@ -39,9 +39,11 @@ class SecurityUtils {
      * @param role the role being tested
      * @return true, if the user has the role
      */
-    public static boolean hasRole( final Role role ){
-        SecurityContextHolder.context.authentication.authorities.find { auth->
-            auth.authority == role.fullName()
-        }
+    public static boolean hasRole( final role ){
+        // FIXME: reimplement with spring security defaults
+        return false
+//        SecurityContextHolder.context.authentication.authorities.find { auth->
+//            auth.authority == role.fullName()
+//        }
     }
 }

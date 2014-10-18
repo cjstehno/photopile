@@ -16,16 +16,12 @@
 
 package com.stehno.photopile.test.dao
 import groovy.util.logging.Slf4j
-import liquibase.Liquibase
-import liquibase.database.jvm.JdbcConnection
-import liquibase.resource.ClassLoaderResourceAccessor
+import org.flywaydb.core.Flyway
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.TestContext
 import org.springframework.test.context.support.AbstractTestExecutionListener
 
 import javax.sql.DataSource
-import java.sql.Connection
-
 /**
  * Spring TestExecutionListener used to build/tear-down the test database for each test case.
  */
@@ -42,25 +38,11 @@ class DatabaseTestExecutionListener extends AbstractTestExecutionListener {
     private rebuildDatabase( DataSource dataSource ){
         log.debug 'Rebuilding database...'
 
-        Connection conn
-        try {
-            conn = dataSource.getConnection()
+        def flyway = new Flyway()
+        flyway.dataSource = dataSource
 
-            final Liquibase liquibase = new Liquibase(
-                'db-changelog.xml',
-                new ClassLoaderResourceAccessor(),
-                new JdbcConnection( conn )
-            )
-
-            liquibase.dropAll()
-            liquibase.update('test')
-
-        } catch( Exception ex ){
-            log.error 'Problem initializing test database: {}', ex.message, ex
-
-        } finally {
-            conn?.close()
-        }
+        flyway.clean()
+        flyway.migrate()
     }
 
     @Override

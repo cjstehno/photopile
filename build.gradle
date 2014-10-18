@@ -1,123 +1,85 @@
 group = projectGroup
 version = projectVersion
 
-// FIXME: says this is deprecated but could not find replacement
-sourceCompatibility = '1.7'
-
 buildscript {
     repositories {
-        jcenter()
-    }
-
+		jcenter()
+	}
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-tomcat-plugin:1.0'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.4'
-        classpath 'com.augusttechgroup:gradle-liquibase-plugin:0.7'
-        classpath "org.postgresql:postgresql:${postgresVersion}"
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE'
     }
+}
+
+apply plugin:'war'
+apply plugin:'groovy'
+apply plugin:'spring-boot'
+
+compileJava {
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
+
+mainClassName = 'com.stehno.photopile.config.AppConfig'
+
+compileGroovy {
+    groovyOptions.optimizationOptions.indy = false
 }
 
 repositories {
-    mavenCentral()
+	jcenter()
 }
 
-apply plugin:'groovy'
-apply plugin:'tomcat'
-apply plugin:'liquibase'
-apply plugin:'versions'
+configurations {
+    providedRuntime
+}
 
 dependencies {
-    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    compile groovySpec
 
-    // for tomcat and tomcat plugin
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${tomcatVersion}",
-        "org.apache.tomcat.embed:tomcat-embed-logging-juli:${tomcatVersion}"
-    tomcat("org.apache.tomcat.embed:tomcat-embed-jasper:${tomcatVersion}") {
-        exclude group: 'org.eclipse.jdt.core.compiler', module: 'ecj'
+	// spring-managed dependencies
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile( 'org.springframework.boot:spring-boot-starter-remote-shell' ){
+        exclude group:'org.codehaus.groovy'
     }
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'org.flywaydb:flyway-core'
+    compile 'com.codahale.metrics:metrics-core'
 
-    providedCompile 'javax.servlet:javax.servlet-api:3.0.1'
+    // versioned dependencies
 
-    compile 'com.google.guava:guava:14.0.1'
+    compile 'org.postgresql:postgresql:9.3-1102-jdbc41'
 
-    compile "com.yammer.metrics:metrics-core:${metricsVersion}"
-    compile "com.yammer.metrics:metrics-healthchecks:${metricsVersion}"
-    compile "com.yammer.metrics:metrics-servlet:${metricsVersion}"
-
-    compile "org.springframework:spring-webmvc:${springVersion}"
-    compile "org.springframework:spring-context-support:${springVersion}"
-    compile "org.springframework:spring-aop:${springVersion}"
-    compile "org.springframework:spring-tx:${springVersion}"
-    compile "org.springframework:spring-orm:${springVersion}"
-
-    compile "org.springframework.security:spring-security-config:${springSecurityVersion}"
-    compile "org.springframework.security:spring-security-web:${springSecurityVersion}"
-    compile "org.springframework.security.oauth:spring-security-oauth2:1.0.4.RELEASE"
+	// verify these are needed (start)
+	compile 'com.google.guava:guava:14.0.1'
 
     compile "org.imgscalr:imgscalr-lib:4.2"
     compile "org.apache.sanselan:sanselan:0.97-incubator"
-
-    compile "org.hibernate:hibernate-validator:5.0.1.Final"
-
-    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
-    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
 
     compile "commons-codec:commons-codec:1.8"
     compile "commons-io:commons-io:2.4"
     compile "commons-lang:commons-lang:2.6"
 
-    runtime "org.slf4j:jcl-over-slf4j:${slf4jVersion}"
-    compile 'org.slf4j:slf4j-api:${slf4jVersion}'
-
-    runtime "org.apache.logging.log4j:log4j-api:${log4jVersion}"
-    runtime "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    runtime "org.apache.logging.log4j.adapters:log4j-slf4j-impl:${log4jVersion}"
-
     compile 'org.codehaus.gpars:gpars:1.0.0'
+	// verify these are needed (end)
+	
+    // test dependencies
 
-    compile "jstl:jstl:1.2"
-
-    compile 'org.postgresql:postgresql:9.3-1100-jdbc41'
-    compile "javax.transaction:jta:1.1"
-    compile "c3p0:c3p0:0.9.1.2"
-
-    compile 'org.liquibase:liquibase-core:3.0.8'
-
-    compile( "org.crsh:crsh.shell.embed.spring:${crshVersion}" ){
-        exclude group:'org.springframework'
-        exclude group:'org.codehaus.groovy'
-    }
-    compile "org.crsh:crsh.shell.ssh:${crshVersion}"
-
-    // testing
-
-    testCompile "org.springframework:spring-test:${springVersion}"
-    testCompile "junit:junit:4.11"
-    testCompile "org.mockito:mockito-all:1.9.5"
-    testCompile "com.jayway.jsonpath:json-path:0.8.1"
+    testCompile 'junit:junit'
+    testCompile 'com.jayway.jsonpath:json-path'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
 
-tomcatRun {
-    enableSSL = true
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
 }
 
-liquibase {
-    changelogs {
-        main {
-            // FIXME: this can be a groovy config now I think
-            file = file('src/main/resources/db-changelog.xml')
-        }
-    }
-
-    databases {
-        dev {
-            url = 'jdbc:postgresql://localhost:5432/photopile_dev'
-            username = 'photopile'
-            password = 'photopile'
-        }
-    }
-
-    defaultDatabase = databases.dev
+war {
+    baseName = 'photopile'
 }
-
-

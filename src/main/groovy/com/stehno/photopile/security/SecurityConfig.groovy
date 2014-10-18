@@ -16,19 +16,67 @@
 
 package com.stehno.photopile.security
 
+import com.stehno.photopile.security.repository.JdbcPhotopileUserDetailsRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.ImportResource
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder
 
 /**
  * Configuration of security related beans.
  */
 @Configuration
-@ImportResource('classpath:/com/stehno/photopile/security/security-context.xml')
+@EnableWebSecurity // disables the auto config from spring-boot
 @ComponentScan([
     'com.stehno.photopile.security.component',
     'com.stehno.photopile.security.controller'
 ])
-class SecurityConfig {
-    // TODO: I would like to pull the xml config into annotations
+class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired private UserDetailsService userDetailsService
+    @Autowired private PasswordEncoder passwordEncoder
+
+    @Bean PhotopileUserDetailsRepository userDetailsService( final JdbcTemplate jdbcTemplate ){
+        new JdbcPhotopileUserDetailsRepository( jdbcTemplate:jdbcTemplate )
+    }
+
+    @Bean PasswordEncoder passwordEncoder(){
+        new BCryptPasswordEncoder()
+    }
+
+    @Autowired
+    public void configureGlobal( final AuthenticationManagerBuilder auth ) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder)
+    }
+
+    // FIXME: need to force https (and configure)
+    // http://docs.spring.io/spring-boot/docs/1.1.8.BUILD-SNAPSHOT/reference/htmlsingle/#howto-enable-multiple-connectors-in-tomcat
+
+    @Override
+    protected void configure( final HttpSecurity http ) throws Exception {
+        http
+            // turn off CSRF token - add this at some point; requires additional request param per request
+            .csrf().disable()
+
+            .authorizeRequests()
+            // allow guest access to simple static files
+            .antMatchers('/**/*.js', '/**/*.css', '/**/*.less', '/**/*.jpg', '/**/*.png').permitAll()
+
+            // everything else needs an authenticated user
+            .anyRequest().authenticated()
+            .and()
+            // allow guest access to login page
+            .formLogin().loginPage('/login').permitAll()
+            .and()
+            // allow guest access to logout page
+            .logout().permitAll()
+    }
 }

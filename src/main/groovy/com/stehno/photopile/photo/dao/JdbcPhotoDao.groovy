@@ -136,7 +136,7 @@ class JdbcPhotoDao implements PhotoDao {
         jdbcTemplate.query SELECT_SQL + orderingSql(sortOrder), photoResultSetExtractor
     }
 
-    @Override
+//    @Override
     List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ){
         def selectedPhotoIds
         if( taggedAs?.tags ){

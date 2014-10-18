@@ -57,6 +57,7 @@ interface PhotoDao {
      *
      * @return a List containing all photos in the database.
      */
+    List<Photo> list()
     List<Photo> list( SortBy sortOrder )
 
     /**
@@ -67,6 +68,7 @@ interface PhotoDao {
      * @param limit the number of photos to retrieve
      * @return a sub-list of all photos in the database
      */
+    List<Photo> list( PageBy pageBy )
     List<Photo> list( PageBy pageBy, SortBy sortOrder, TaggedAs taggedAs )
 
     List<Photo> findWithin( LocationBounds bounds )

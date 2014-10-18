@@ -15,9 +15,8 @@
  */
 
 package com.stehno.photopile.controller
-import com.stehno.photopile.usermsg.UserMessageService
-import com.yammer.metrics.Meter
-import com.yammer.metrics.MetricRegistry
+import com.codahale.metrics.Meter
+import com.codahale.metrics.MetricRegistry
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,15 +24,14 @@ import org.springframework.web.servlet.ModelAndView
 
 import javax.annotation.PostConstruct
 
-import static com.stehno.photopile.security.SecurityUtils.currentUsername
-import static com.yammer.metrics.MetricRegistry.name
+import static com.codahale.metrics.MetricRegistry.name
 /**
  * Root web application controller.
  */
 @Controller
 class RootController {
 
-    @Autowired private UserMessageService userMessageService
+//    @Autowired private UserMessageService userMessageService
     @Autowired private MetricRegistry metricRegistry
 
     // TODO: this is just a sample
@@ -45,7 +43,7 @@ class RootController {
         // TODO: just going to write this in for now, will look at sockets/push later
 
         return new ModelAndView('root', [
-            unreadCount:userMessageService.count(currentUsername(), false)
+            unreadCount:0 //userMessageService.count(currentUsername(), false)
         ]);
     }
 
