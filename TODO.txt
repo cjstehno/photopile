@@ -6,6 +6,7 @@
 -   scaling rethink - may not need so many options
 
 -   refactor photo domain to extract location and camera info
+-   refactor tags to have category/type prefix (?)
 
 -   implement photo details view
 -   implement photo albums

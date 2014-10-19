@@ -1,9 +1,8 @@
-PhotoPile
----------
+# PhotoPile
 
 > This software is not ready for general use yet...
 
-Simple yet functional photo management and sharing you can install on your own server.
+Simple, yet functional, photo management and sharing software you can install on your own server.
 
 * **Site:** http://cjstehno.github.io/photopile
 * **Project:** https://github.com/cjstehno/photopile
