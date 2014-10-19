@@ -20,8 +20,8 @@ import com.stehno.photopile.image.ImageDao
 import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.image.domain.ImageScale
 import com.stehno.photopile.photo.PhotoConfig
-import com.stehno.photopile.photo.PhotoDao
 import com.stehno.photopile.photo.PhotoFixtures
+import com.stehno.photopile.photo.PhotoRepository
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.test.Integration
 import com.stehno.photopile.test.config.TestConfig
@@ -58,7 +58,7 @@ class ImageDaoTest {
     static TABLES = ['images']
 
     @Autowired private ImageDao imageDao
-    @Autowired private PhotoDao photoDao
+    @Autowired private PhotoRepository photoDao
     @Autowired private JdbcTemplate jdbcTemplate
 
     @Test(expected=DataIntegrityViolationException) @Transactional

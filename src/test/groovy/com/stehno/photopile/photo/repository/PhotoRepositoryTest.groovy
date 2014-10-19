@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.photo.dao
+package com.stehno.photopile.photo.repository
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.photo.PhotoConfig
-import com.stehno.photopile.photo.PhotoDao
+import com.stehno.photopile.photo.PhotoRepository
 import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.domain.Tag
@@ -43,11 +43,11 @@ import static com.stehno.photopile.test.Asserts.assertToday
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
 @IntegrationTestContext(classes=[TestConfig, PhotoConfig, ImageConfig])
-class PhotoDaoTest {
+class PhotoRepositoryTest {
 
     static TABLES = ['photos', 'photo_tags', 'tags']
 
-    @Autowired private PhotoDao photoDao
+    @Autowired private PhotoRepository photoDao
     @Autowired private TagDao tagDao
     @Autowired private JdbcTemplate jdbcTemplate
 

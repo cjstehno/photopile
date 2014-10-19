@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.photo.dao
+package com.stehno.photopile.photo.repository
 import com.stehno.photopile.photo.TagDao
 import com.stehno.photopile.photo.domain.Tag
 import org.springframework.beans.factory.annotation.Autowired

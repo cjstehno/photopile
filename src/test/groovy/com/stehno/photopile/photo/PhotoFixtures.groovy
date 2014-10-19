@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.photo
 
-import com.stehno.photopile.photo.domain.Location
+import com.stehno.photopile.photo.domain.GeoLocation
 
 import static com.stehno.photopile.Fixtures.*
 
@@ -48,13 +48,13 @@ class PhotoFixtures {
     ]
 
     static final LOCATION_VALUES = [
-        (FIX_A): new Location( 45.0d, -10.5d ),
-        (FIX_B): new Location( 30.0d, -30.0d ),
-        (FIX_C): new Location( 30.0d,  30.0d ),
-        (FIX_D): new Location(-30.0d, -30.0d ),
-        (FIX_E): new Location(-30.0d,  30.0d ),
-        (FIX_F): new Location(-32.0d,  32.0d ),
-        (FIX_G): new Location(-34.0d,  34.0d )
+        (FIX_A): new GeoLocation( 45.0d, -10.5d ),
+        (FIX_B): new GeoLocation( 30.0d, -30.0d ),
+        (FIX_C): new GeoLocation( 30.0d,  30.0d ),
+        (FIX_D): new GeoLocation(-30.0d, -30.0d ),
+        (FIX_E): new GeoLocation(-30.0d,  30.0d ),
+        (FIX_F): new GeoLocation(-32.0d,  32.0d ),
+        (FIX_G): new GeoLocation(-34.0d,  34.0d )
     ]
 
     static String photoName( String fixId ){ "Photo-$fixId" }

@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  */
 @Configuration
 @EnableTransactionManagement
-@ComponentScan('com.stehno.photopile.dao')
+@ComponentScan('com.stehno.photopile.repository')
 class DataSourceConfig {
 
     @Bean LobHandler lobHandler(){

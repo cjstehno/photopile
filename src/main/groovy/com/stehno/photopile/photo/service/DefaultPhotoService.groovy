@@ -20,7 +20,7 @@ import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageService
 import com.stehno.photopile.image.domain.Image
-import com.stehno.photopile.photo.PhotoDao
+import com.stehno.photopile.photo.PhotoRepository
 import com.stehno.photopile.photo.PhotoService
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
@@ -41,7 +41,7 @@ class DefaultPhotoService implements PhotoService {
 
     private static final Logger log = LoggerFactory.getLogger( DefaultPhotoService )
 
-    @Autowired private PhotoDao photoDao
+    @Autowired private PhotoRepository photoDao
     @Autowired private ImageService imageService
 
     @Override long addPhoto( final Photo photo, final Image image ){

@@ -21,8 +21,8 @@ import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageFixtures
 import com.stehno.photopile.image.ImageService
 import com.stehno.photopile.image.domain.Image
-import com.stehno.photopile.photo.PhotoDao
 import com.stehno.photopile.photo.PhotoFixtures
+import com.stehno.photopile.photo.PhotoRepository
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import org.junit.Before
@@ -44,7 +44,7 @@ class DefaultPhotoServiceTest {
 
     private DefaultPhotoService service
 
-    @Mock private PhotoDao photoDao
+    @Mock private PhotoRepository photoDao
     @Mock private ImageService imageService
     @Captor private ArgumentCaptor<Photo> photoCaptor
     @Captor private ArgumentCaptor<Image> imageCaptor

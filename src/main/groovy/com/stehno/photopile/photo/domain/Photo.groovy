@@ -20,7 +20,7 @@ import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 /**
- *  Represents buildPhoto data in the database.
+ *  Represents Photo data in the database.
  */
 @ToString(includeNames=true) @EqualsAndHashCode
 class Photo {
@@ -29,11 +29,12 @@ class Photo {
     Long version
     String name
     String description
-    String cameraInfo
     Date dateUploaded
     Date dateUpdated
     Date dateTaken
-    Location location
+
+    CameraInfo cameraInfo
+    GeoLocation location
 
     Set<Tag> tags = [] as Set<Tag>
 }

@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.photo.dto
 
-import com.stehno.photopile.photo.domain.Location
+import com.stehno.photopile.photo.domain.GeoLocation
 import groovy.transform.Immutable
 
 /**
@@ -25,8 +25,8 @@ import groovy.transform.Immutable
 @Immutable
 class LocationBounds {
 
-    Location southwest
-    Location northeast
+    GeoLocation southwest
+    GeoLocation northeast
 
     /**
      * southwest_lng,southwest_lat,northeast_lng,northeast_lat
@@ -38,8 +38,8 @@ class LocationBounds {
         def coords = bounds.split(',')
 
         new LocationBounds(
-            new Location(coords[1] as double, coords[0]  as double),
-            new Location(coords[3] as double, coords[2]  as double)
+            new GeoLocation(coords[1] as double, coords[0]  as double),
+            new GeoLocation(coords[3] as double, coords[2]  as double)
         )
     }
 }

@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration
  */
 @Configuration
 @ComponentScan([
-    'com.stehno.photopile.photo.dao',
+    'com.stehno.photopile.photo.repository',
     'com.stehno.photopile.photo.service',
     'com.stehno.photopile.photo.controller'
 ])

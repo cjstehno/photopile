@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Christopher J. Stehno
+ * Copyright (c) 2014 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.photo.dao
+package com.stehno.photopile.photo.repository
+
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
-import com.stehno.photopile.photo.PhotoDao
-import com.stehno.photopile.photo.domain.Location
+import com.stehno.photopile.photo.PhotoRepository
+import com.stehno.photopile.photo.domain.GeoLocation
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
@@ -37,12 +38,13 @@ import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
 import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static org.springframework.dao.support.DataAccessUtils.requiredSingleResult
 import static org.springframework.util.Assert.notNull
+
 /**
- * JDBC-based implementation of the PhotoDao interface using PostgreSql-specific
+ * JDBC-based implementation of the PhotoRepository interface using PostgreSql-specific
  * SQL grammar.
  */
 @Repository @Slf4j
-class JdbcPhotoDao implements PhotoDao {
+class JdbcPhotoRepository implements PhotoRepository {
 
     private static final String INSERT_SQL = 'insert into photos (name,description,camera_info,date_uploaded,date_taken,longitude,latitude) values (?,?,?,?,?,?,?) returning id,version,date_updated'
     private static final String UPDATE_SQL = 'update photos set version=version+1,name=?,description=?,camera_info=?,date_uploaded=?,date_taken=?,date_updated=now(),longitude=?,latitude=? where id=? and version=? returning id,version,date_updated'
@@ -263,7 +265,7 @@ class PhotoResultSetExtractor implements ResultSetExtractor<List<Photo>>{
             dateUploaded: new Date(rs.getTimestamp('date_uploaded').time),
             dateUpdated: new Date(rs.getTimestamp('date_updated').time),
             dateTaken: getDate(rs.getTimestamp('date_taken')),
-            location: lon && lat ? new Location(lat,lon) : null,
+            location: lon && lat ? new GeoLocation(lat,lon) : null,
             tags: addTag([] as Set<Tag>, rs)
         )
     }

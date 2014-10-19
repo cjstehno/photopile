@@ -22,7 +22,7 @@ import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 
-interface PhotoDao {
+interface PhotoRepository {
 
     /**
      * Saves a new Photo to the database. If an ID or VERSION is specified for the Photo object, they will be ignored
