@@ -39,6 +39,8 @@ class DefaultImageService implements ImageService {
     @Autowired private ImageArchiveDao imageArchiveDao
     @Autowired @Qualifier('imageScalingQueue') private MessageQueue imageScalingQueue
 
+    // FIXME: use actor pool for scaling, maybe pull validation out into importer framework? or at least call validate method from importer actor
+
     @Override
     void storeImage( final Image image ){
         verifyImage image

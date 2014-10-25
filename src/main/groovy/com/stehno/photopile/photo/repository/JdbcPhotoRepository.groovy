@@ -46,6 +46,7 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     private static final ORDERINGS = [ name:'name', cameraInfo:'camera_info', dateUploaded:'date_uploaded', dateUpdated:'date_updated', dateTaken:'date_taken' ]
 
+    // FIXME: make this a composition, not a groovy delegate
     @Delegate private final SqlMappings sqlMappings = SqlMappings.compile( '/sql/photorepository.gql' )
 
     @Autowired private JdbcTemplate jdbcTemplate
