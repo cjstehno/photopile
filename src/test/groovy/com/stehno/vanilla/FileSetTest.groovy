@@ -16,10 +16,10 @@
 
 package com.stehno.vanilla
 
+import static com.stehno.vanilla.FileSet.fileSet
+
 import org.junit.Rule
 import org.junit.Test
-
-import static com.stehno.vanilla.FileSet.fileSet
 
 class FileSetTest {
 

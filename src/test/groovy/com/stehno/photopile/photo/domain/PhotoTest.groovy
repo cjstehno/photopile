@@ -15,13 +15,14 @@
  */
 
 package com.stehno.photopile.photo.domain
-import org.junit.Before
-import org.junit.Test
 
 import static com.stehno.photopile.Fixtures.FIX_A
 import static com.stehno.photopile.Fixtures.FIX_C
 import static com.stehno.photopile.photo.PhotoFixtures.*
 import static com.stehno.photopile.test.EqualsAndHashTester.assertValidEqualsAndHash
+
+import org.junit.Before
+import org.junit.Test
 
 class PhotoTest {
 

@@ -16,6 +16,10 @@
 
 package com.stehno.photopile.photo.repository
 
+import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
+import static org.springframework.dao.support.DataAccessUtils.requiredSingleResult
+import static org.springframework.util.Assert.notNull
+
 import com.stehno.gsm.SqlMappings
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
@@ -27,10 +31,6 @@ import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.*
 import org.springframework.stereotype.Repository
-
-import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
-import static org.springframework.dao.support.DataAccessUtils.requiredSingleResult
-import static org.springframework.util.Assert.notNull
 
 /**
  * JDBC-based implementation of the PhotoRepository interface using PostgreSql-specific
@@ -113,10 +113,8 @@ class JdbcPhotoRepository implements PhotoRepository {
     long count( final TaggedAs taggedAs ){
         if( taggedAs?.tags ){
             return jdbcTemplate.query(sqlMappings.sql(Sql.TAGGED_AS, taggedAs), taggedAs.tags as Object[], idColumnMapper).size()
-
-        } else {
-            return count()
         }
+        return count()
     }
 
     @Override
@@ -150,7 +148,7 @@ class JdbcPhotoRepository implements PhotoRepository {
         if( selectedPhotoIds ){
             jdbcTemplate.query( sqlMappings.sql(Sql.SELECT_IDS, selectedPhotoIds.join(','), sortBy(sortOrder)), photoResultSetExtractor)
         } else {
-            return [] as List<Photo>
+            return []
         }
     }
 

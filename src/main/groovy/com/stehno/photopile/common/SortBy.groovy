@@ -16,10 +16,10 @@
 
 package com.stehno.photopile.common
 
+import static org.springframework.util.Assert.notNull
+
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
-import static org.springframework.util.Assert.notNull
 
 /**
  * Defines sorting parameters.

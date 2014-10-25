@@ -86,5 +86,3 @@ class JdbcImageRepository implements ImageDao {
         )
     }
 }
-
-

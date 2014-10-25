@@ -15,11 +15,12 @@
  */
 
 package com.stehno.photopile.test.dao
-import java.sql.ResultSet
-import java.sql.Timestamp
 
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
+
+import java.sql.ResultSet
+import java.sql.Timestamp
 
 /**
  * Provides a Groovy builder for creating mock result set data.

@@ -16,6 +16,12 @@
 
 package com.stehno.photopile.image.service
 
+import static com.stehno.photopile.Fixtures.FIX_A
+import static com.stehno.photopile.image.ImageFixtures.*
+import static com.stehno.photopile.image.domain.ImageScale.*
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+
 import com.stehno.photopile.common.MessageQueue
 import com.stehno.photopile.image.ImageArchiveDao
 import com.stehno.photopile.image.ImageDao
@@ -26,12 +32,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
-
-import static com.stehno.photopile.Fixtures.FIX_A
-import static com.stehno.photopile.image.ImageFixtures.*
-import static com.stehno.photopile.image.domain.ImageScale.*
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
 
 @RunWith(MockitoJUnitRunner)
 class DefaultImageServiceTest {

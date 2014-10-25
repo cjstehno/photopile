@@ -15,6 +15,9 @@
  */
 
 package com.stehno.photopile.controller
+
+import static com.codahale.metrics.MetricRegistry.name
+
 import com.codahale.metrics.Meter
 import com.codahale.metrics.MetricRegistry
 import org.springframework.beans.factory.annotation.Autowired
@@ -24,7 +27,6 @@ import org.springframework.web.servlet.ModelAndView
 
 import javax.annotation.PostConstruct
 
-import static com.codahale.metrics.MetricRegistry.name
 /**
  * Root web application controller.
  */

@@ -15,6 +15,13 @@
  */
 
 package com.stehno.photopile.image.repository
+
+import static com.stehno.photopile.Fixtures.*
+import static com.stehno.photopile.image.ImageFixtures.fixtureFor
+import static com.stehno.photopile.image.ImageFixtures.fixturesFor
+import static com.stehno.photopile.test.Asserts.assertMatches
+import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
+
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.image.ImageDao
 import com.stehno.photopile.image.domain.Image
@@ -38,12 +45,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
 import org.springframework.transaction.annotation.Transactional
-
-import static com.stehno.photopile.Fixtures.*
-import static com.stehno.photopile.image.ImageFixtures.fixtureFor
-import static com.stehno.photopile.image.ImageFixtures.fixturesFor
-import static com.stehno.photopile.test.Asserts.assertMatches
-import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
 @org.junit.experimental.categories.Category(Integration)
 @RunWith(SpringJUnit4ClassRunner)

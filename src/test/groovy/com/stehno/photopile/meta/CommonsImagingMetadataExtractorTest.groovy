@@ -15,6 +15,9 @@
  */
 
 package com.stehno.photopile.meta
+
+import static org.junit.Assert.assertEquals
+
 import groovy.io.FileType
 import groovyx.gpars.GParsPool
 import org.junit.Before
@@ -23,8 +26,6 @@ import org.junit.Test
 import org.springframework.util.StopWatch
 
 import java.util.concurrent.atomic.AtomicInteger
-
-import static org.junit.Assert.assertEquals
 
 class CommonsImagingMetadataExtractorTest {
 

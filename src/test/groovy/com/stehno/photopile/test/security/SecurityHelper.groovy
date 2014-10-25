@@ -15,13 +15,14 @@
  */
 
 package com.stehno.photopile.test.security
+
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.when
+
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetails
-
-import static org.mockito.Mockito.mock
-import static org.mockito.Mockito.when
 
 /**
  * Provides helpers for testing with security contexts. These methods form a simple semi-fluent means of configuring

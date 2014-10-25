@@ -107,8 +107,22 @@ run {
     jvmArgs '-Xverify:none'
 }
 
+codenarcMain {
+    ignoreFailures = false
+
+    // TODO: these numbers need to come down
+    maxPriority1Violations 0
+    maxPriority2Violations 45
+    maxPriority3Violations 65
+}
+
 codenarcTest {
-    ignoreFailures = true
+    ignoreFailures true
+
+    // TODO: work on these so they can be enabled - not as worried about tests
+    maxPriority1Violations 0
+    maxPriority2Violations 5
+    maxPriority3Violations 10
 }
 
 jacocoTestReport {

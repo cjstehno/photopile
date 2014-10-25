@@ -16,6 +16,14 @@
 
 package com.stehno.photopile.image.scaling
 
+import static com.stehno.photopile.Fixtures.FIX_A
+import static com.stehno.photopile.image.ImageFixtures.dummyBytes
+import static com.stehno.photopile.image.ImageFixtures.fixtureFor
+import static com.stehno.photopile.test.Asserts.assertMatches
+import static org.mockito.Matchers.eq
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+
 import com.stehno.photopile.image.ImageService
 import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.image.domain.ImageScale
@@ -26,14 +34,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
-
-import static com.stehno.photopile.Fixtures.FIX_A
-import static com.stehno.photopile.image.ImageFixtures.dummyBytes
-import static com.stehno.photopile.image.ImageFixtures.fixtureFor
-import static com.stehno.photopile.test.Asserts.assertMatches
-import static org.mockito.Matchers.eq
-import static org.mockito.Mockito.verify
-import static org.mockito.Mockito.when
 
 @RunWith(MockitoJUnitRunner)
 class ImageScalingMessageListenerTest {

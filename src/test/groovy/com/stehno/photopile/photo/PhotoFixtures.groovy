@@ -16,10 +16,10 @@
 
 package com.stehno.photopile.photo
 
+import static com.stehno.photopile.Fixtures.*
+
 import com.stehno.photopile.photo.domain.CameraInfo
 import com.stehno.photopile.photo.domain.GeoLocation
-
-import static com.stehno.photopile.Fixtures.*
 
 /**
  * Common Photo test data set.

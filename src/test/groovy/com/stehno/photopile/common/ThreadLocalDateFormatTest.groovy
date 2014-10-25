@@ -16,9 +16,9 @@
 
 package com.stehno.photopile.common
 
-import org.junit.Test
-
 import static org.junit.Assert.assertEquals
+
+import org.junit.Test
 
 class ThreadLocalDateFormatTest {
 

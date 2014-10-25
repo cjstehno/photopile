@@ -15,15 +15,16 @@
  */
 
 package com.stehno.photopile.image.repository
+
+import static com.stehno.photopile.Fixtures.FIX_A
+import static com.stehno.photopile.image.ImageFixtures.CONTENT_TYPE
+import static com.stehno.photopile.image.ImageFixtures.IMAGE_CONTENT
+
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.springframework.core.io.FileSystemResource
-
-import static com.stehno.photopile.Fixtures.FIX_A
-import static com.stehno.photopile.image.ImageFixtures.CONTENT_TYPE
-import static com.stehno.photopile.image.ImageFixtures.IMAGE_CONTENT
 
 class FileImageArchiveRepositoryTest {
 

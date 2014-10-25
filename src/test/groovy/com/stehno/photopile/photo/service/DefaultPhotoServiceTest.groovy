@@ -16,6 +16,12 @@
 
 package com.stehno.photopile.photo.service
 
+import static com.stehno.photopile.Fixtures.FIX_A
+import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
+import static com.stehno.photopile.test.Asserts.assertMatches
+import static org.mockito.Matchers.any
+import static org.mockito.Mockito.*
+
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageFixtures
@@ -32,12 +38,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mock
 import org.mockito.runners.MockitoJUnitRunner
-
-import static com.stehno.photopile.Fixtures.FIX_A
-import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
-import static com.stehno.photopile.test.Asserts.assertMatches
-import static org.mockito.Matchers.any
-import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner)
 class DefaultPhotoServiceTest {

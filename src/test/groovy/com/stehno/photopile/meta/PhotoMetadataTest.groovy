@@ -16,10 +16,10 @@
 
 package com.stehno.photopile.meta
 
-import org.junit.Test
-
 import static com.stehno.photopile.test.EqualsAndHashTester.assertValidEqualsAndHash
 import static org.junit.Assert.assertEquals
+
+import org.junit.Test
 
 class PhotoMetadataTest {
 

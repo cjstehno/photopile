@@ -15,6 +15,17 @@
  */
 
 package com.stehno.photopile.photo.repository
+
+import static com.stehno.photopile.Fixtures.*
+import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
+import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
+import static com.stehno.photopile.photo.PhotoFixtures.fixtureFor
+import static com.stehno.photopile.photo.PhotoFixtures.photoName
+import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
+import static com.stehno.photopile.test.Asserts.assertMatches
+import static com.stehno.photopile.test.Asserts.assertToday
+import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
+
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.image.ImageConfig
@@ -31,16 +42,6 @@ import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
-
-import static com.stehno.photopile.Fixtures.*
-import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
-import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
-import static com.stehno.photopile.photo.PhotoFixtures.fixtureFor
-import static com.stehno.photopile.photo.PhotoFixtures.photoName
-import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
-import static com.stehno.photopile.test.Asserts.assertMatches
-import static com.stehno.photopile.test.Asserts.assertToday
-import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
 @IntegrationTestContext(classes=[TestConfig, PhotoConfig, ImageConfig])
 class PhotoRepositoryTest {

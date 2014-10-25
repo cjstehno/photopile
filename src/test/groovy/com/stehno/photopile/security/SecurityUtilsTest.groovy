@@ -16,11 +16,11 @@
 
 package com.stehno.photopile.security
 
+import static com.stehno.photopile.test.security.SecurityHelper.USERNAME
+
 import com.stehno.photopile.test.security.SecurityEnvironment
 import org.junit.Rule
 import org.junit.Test
-
-import static com.stehno.photopile.test.security.SecurityHelper.USERNAME
 
 class SecurityUtilsTest {
 

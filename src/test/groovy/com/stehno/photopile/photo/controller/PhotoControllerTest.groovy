@@ -15,6 +15,17 @@
  */
 
 package com.stehno.photopile.photo.controller
+
+import static com.stehno.photopile.Fixtures.FIX_A
+import static com.stehno.photopile.Fixtures.FIX_B
+import static com.stehno.photopile.photo.PhotoFixtures.fixtureFor
+import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ANY
+import static com.stehno.photopile.test.JsonMatcher.jsonMatcher
+import static org.mockito.Mockito.when
+import static org.springframework.http.MediaType.APPLICATION_JSON
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
+
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.photo.PhotoService
@@ -33,16 +44,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.web.WebAppConfiguration
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-
-import static com.stehno.photopile.Fixtures.FIX_A
-import static com.stehno.photopile.Fixtures.FIX_B
-import static com.stehno.photopile.photo.PhotoFixtures.fixtureFor
-import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ANY
-import static com.stehno.photopile.test.JsonMatcher.jsonMatcher
-import static org.mockito.Mockito.when
-import static org.springframework.http.MediaType.APPLICATION_JSON
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 
 @RunWith(SpringJUnit4ClassRunner)
 @WebAppConfiguration

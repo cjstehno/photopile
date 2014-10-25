@@ -1,6 +1,5 @@
 package com.stehno.photopile.security
 
-import com.stehno.photopile.security.domain.PhotopileUserDetails
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException

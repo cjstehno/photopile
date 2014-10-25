@@ -15,9 +15,10 @@
  */
 
 package com.stehno.photopile.test.security
-import org.junit.rules.ExternalResource
 
 import static com.stehno.photopile.test.security.SecurityHelper.*
+
+import org.junit.rules.ExternalResource
 
 /**
  *  Provides a mock implementation of the spring-security context for unit testing.
