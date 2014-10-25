@@ -17,13 +17,14 @@
 package com.stehno.vanilla
 
 import groovy.io.FileType
+import groovy.transform.CompileStatic
 import groovy.transform.Immutable
 
 /**
  * Unique collection of File object representing a set of files. FileSets are immutable
  * and should be created with the DSL or builder directly.
  */
-@Immutable
+@Immutable @CompileStatic
 final class FileSet {
 
     Set<File> files

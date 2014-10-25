@@ -32,7 +32,7 @@ import org.springframework.core.io.Resource
  */
 @Configuration
 @ComponentScan([
-    'com.stehno.photopile.image.dao',
+    'com.stehno.photopile.image.repository',
     'com.stehno.photopile.image.service',
     'com.stehno.photopile.image.scaling',
     'com.stehno.photopile.image.controller'

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.image.dao
+package com.stehno.photopile.image.repository
 import com.stehno.photopile.image.ImageConfig
 import com.stehno.photopile.image.ImageDao
 import com.stehno.photopile.image.domain.Image

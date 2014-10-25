@@ -1,5 +1,6 @@
 package com.stehno.photopile.security.repository
 
+import com.stehno.gsm.SqlMappings
 import com.stehno.photopile.security.PhotopileUserDetailsRepository
 import com.stehno.photopile.security.domain.PhotopileUserDetails
 import org.springframework.jdbc.core.JdbcTemplate
@@ -17,11 +18,11 @@ import java.sql.SQLException
  */
 class JdbcPhotopileUserDetailsRepository implements PhotopileUserDetailsRepository {
 
+    static enum Sql { USER_BY_NAME, USER_BY_ID, LOAD_AUTHORITIES }
+
     JdbcTemplate jdbcTemplate
 
-    private static final String USER_BY_NAME_SQL = 'select userid,username,password,enabled,account_expired,credentials_expired,account_locked from users where username=? limit 1'
-    private static final String USER_BY_ID_SQL = 'select userid,username,password,enabled,account_expired,credentials_expired,account_locked from users where userid=? limit 1'
-    private static final String LOAD_AUTHORITIES_SQL = 'select authority from authorities where userid=?'
+    private final SqlMappings sql = SqlMappings.compile('/sql/securityrepository.gql')
 
     private static final RowMapper<GrantedAuthority> AUTHORITIES_MAPPER = new RowMapper<GrantedAuthority>(){
         @Override
@@ -47,7 +48,7 @@ class JdbcPhotopileUserDetailsRepository implements PhotopileUserDetailsReposito
 
     @Override
     UserDetails loadUserByUsername( final String username ) throws UsernameNotFoundException {
-        def users = jdbcTemplate.query( USER_BY_NAME_SQL, USER_DETAILS_MAPPER, username )
+        def users = jdbcTemplate.query(sql.sql(Sql.USER_BY_NAME), USER_DETAILS_MAPPER, username )
         if( users ){
             applyAuthorities( users[0] )
             return users[0]
@@ -58,7 +59,7 @@ class JdbcPhotopileUserDetailsRepository implements PhotopileUserDetailsReposito
 
     @Override
     PhotopileUserDetails loadUserById( final long userid ) throws UsernameNotFoundException {
-        def users = jdbcTemplate.query( USER_BY_ID_SQL, USER_DETAILS_MAPPER, userid )
+        def users = jdbcTemplate.query( sql.sql(Sql.USER_BY_ID), USER_DETAILS_MAPPER, userid )
         if( users ){
             applyAuthorities( users[0] )
             return users[0]
@@ -68,7 +69,7 @@ class JdbcPhotopileUserDetailsRepository implements PhotopileUserDetailsReposito
     }
 
     private void applyAuthorities( final PhotopileUserDetails userDetails ){
-        def authorities = jdbcTemplate.query( LOAD_AUTHORITIES_SQL, AUTHORITIES_MAPPER, userDetails.userId )
+        def authorities = jdbcTemplate.query( sql.sql(Sql.LOAD_AUTHORITIES), AUTHORITIES_MAPPER, userDetails.userId )
         if( authorities ){
             userDetails.authorities.addAll( authorities )
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.image.dao
+package com.stehno.photopile.image.repository
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -25,13 +25,13 @@ import static com.stehno.photopile.Fixtures.FIX_A
 import static com.stehno.photopile.image.ImageFixtures.CONTENT_TYPE
 import static com.stehno.photopile.image.ImageFixtures.IMAGE_CONTENT
 
-class FileImageArchiveDaoTest {
+class FileImageArchiveRepositoryTest {
 
     @Rule public TemporaryFolder folder = new TemporaryFolder()
-    private FileImageArchiveDao archiveDao
+    private FileImageArchiveRepository archiveDao
 
     @Before void before(){
-        archiveDao = new FileImageArchiveDao(
+        archiveDao = new FileImageArchiveRepository(
             archiveDirectory: new FileSystemResource(folder.getRoot())
         )
     }

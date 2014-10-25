@@ -99,6 +99,18 @@ task copyTestResourcesToTest(type: Copy) {
 }
 processTestResources.dependsOn copyTestResourcesToTest
 
+test {
+    jvmArgs '-Xverify:none'
+}
+
+run {
+    jvmArgs '-Xverify:none'
+}
+
+codenarcTest {
+    ignoreFailures = true
+}
+
 jacocoTestReport {
     reports {
         xml.enabled false

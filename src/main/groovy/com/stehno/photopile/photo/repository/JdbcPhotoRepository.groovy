@@ -46,8 +46,7 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     private static final ORDERINGS = [ name:'name', cameraInfo:'camera_info', dateUploaded:'date_uploaded', dateUpdated:'date_updated', dateTaken:'date_taken' ]
 
-    // FIXME: make this a composition, not a groovy delegate
-    @Delegate private final SqlMappings sqlMappings = SqlMappings.compile( '/sql/photorepository.gql' )
+    private final SqlMappings sqlMappings = SqlMappings.compile( '/sql/photorepository.gql' )
 
     @Autowired private JdbcTemplate jdbcTemplate
 
@@ -60,7 +59,7 @@ class JdbcPhotoRepository implements PhotoRepository {
     @Override
     long create( final Photo photo ){
         def returns = jdbcTemplate.queryForObject(
-            sql(Sql.INSERT),
+            sqlMappings.sql(Sql.INSERT),
             mapRowMapper,
             photo.name,
             photo.description,
@@ -84,7 +83,7 @@ class JdbcPhotoRepository implements PhotoRepository {
     @Override
     void update(final Photo photo) {
         def returns = jdbcTemplate.queryForObject(
-            sql(Sql.UPDATE),
+            sqlMappings.sql(Sql.UPDATE),
             mapRowMapper,
             photo.name,
             photo.description,
@@ -107,13 +106,13 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     long count() {
-        jdbcTemplate.queryForObject(sql(Sql.COUNT), singleLongMapper)
+        jdbcTemplate.queryForObject(sqlMappings.sql(Sql.COUNT), singleLongMapper)
     }
 
     @Override
     long count( final TaggedAs taggedAs ){
         if( taggedAs?.tags ){
-            return jdbcTemplate.query(sql(Sql.TAGGED_AS, taggedAs), taggedAs.tags as Object[], idColumnMapper).size()
+            return jdbcTemplate.query(sqlMappings.sql(Sql.TAGGED_AS, taggedAs), taggedAs.tags as Object[], idColumnMapper).size()
 
         } else {
             return count()
@@ -122,7 +121,7 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     List<Photo> list( final SortBy sortOrder=null ){
-        jdbcTemplate.query sql(Sql.SELECT_SORTED, sortBy(sortOrder)), photoResultSetExtractor
+        jdbcTemplate.query sqlMappings.sql(Sql.SELECT_SORTED, sortBy(sortOrder)), photoResultSetExtractor
     }
 
 //    @Override
@@ -134,14 +133,14 @@ class JdbcPhotoRepository implements PhotoRepository {
             params << pageBy.limit
 
             selectedPhotoIds = jdbcTemplate.query(
-                sql(Sql.TAGGED_AS_ORDERED, taggedAs, sortBy(sortOrder)),
+                sqlMappings.sql(Sql.TAGGED_AS_ORDERED, taggedAs, sortBy(sortOrder)),
                 params as Object[],
                 idColumnMapper
             )
 
         } else {
             selectedPhotoIds = jdbcTemplate.query(
-                sql(Sql.SELECT_ID_SORTED_LIMITED, sortBy(sortOrder)),
+                sqlMappings.sql(Sql.SELECT_ID_SORTED_LIMITED, sortBy(sortOrder)),
                 idColumnMapper,
                 pageBy.start,
                 pageBy.limit
@@ -149,7 +148,7 @@ class JdbcPhotoRepository implements PhotoRepository {
         }
 
         if( selectedPhotoIds ){
-            jdbcTemplate.query( sql(Sql.SELECT_IDS, selectedPhotoIds.join(','), sortBy(sortOrder)), photoResultSetExtractor)
+            jdbcTemplate.query( sqlMappings.sql(Sql.SELECT_IDS, selectedPhotoIds.join(','), sortBy(sortOrder)), photoResultSetExtractor)
         } else {
             return [] as List<Photo>
         }
@@ -157,18 +156,18 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     boolean delete(final long photoId) {
-        jdbcTemplate.update(sql(Sql.DELETE), photoId)
+        jdbcTemplate.update(sqlMappings.sql(Sql.DELETE), photoId)
     }
 
     @Override
     Photo fetch(final long photoId) {
-        requiredSingleResult jdbcTemplate.query(sql(Sql.FETCH), photoResultSetExtractor, photoId)
+        requiredSingleResult jdbcTemplate.query(sqlMappings.sql(Sql.FETCH), photoResultSetExtractor, photoId)
     }
 
     @Override
     List<Photo> findWithin( final LocationBounds bounds ){
         jdbcTemplate.query(
-            sql(Sql.SELECT_WITHIN),
+            sqlMappings.sql(Sql.SELECT_WITHIN),
             photoResultSetExtractor,
             bounds.southwest.latitude,
             bounds.northeast.latitude,
@@ -179,7 +178,7 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     List<String> listTags( ){
-        jdbcTemplate.query( sql(Sql.TAG_LIST), singleStringMapper )
+        jdbcTemplate.query( sqlMappings.sql(Sql.TAG_LIST), singleStringMapper )
     }
 
     private SortBy sortBy( final SortBy sortOrder ){
@@ -194,11 +193,11 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     private void saveTags( final Photo photo ){
         if( photo?.id ){
-            jdbcTemplate.update sql(Sql.CLEAR_TAGS), photo.id
+            jdbcTemplate.update sqlMappings.sql(Sql.CLEAR_TAGS), photo.id
 
             photo.tags?.each { tag->
                 notNull tag.id, "Tag (${tag.name}) does not exist or has not been persisted."
-                jdbcTemplate.update sql(Sql.INSERT_TAGS), photo.id, tag.id
+                jdbcTemplate.update sqlMappings.sql(Sql.INSERT_TAGS), photo.id, tag.id
             }
         }
     }

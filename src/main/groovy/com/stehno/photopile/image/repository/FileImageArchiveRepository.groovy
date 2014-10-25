@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.image.dao
+package com.stehno.photopile.image.repository
 
 import com.stehno.photopile.image.ImageArchiveDao
 import org.slf4j.Logger
@@ -35,9 +35,9 @@ import java.nio.file.Path
  * ARCHIVE_DIR/PHOTO_ID_BUCKET/archive-ID-TIME_IN_MILLIS.EXTENSION
  */
 @Repository
-class FileImageArchiveDao implements ImageArchiveDao {
+class FileImageArchiveRepository implements ImageArchiveDao {
 
-    private static final Logger log = LoggerFactory.getLogger( FileImageArchiveDao )
+    private static final Logger log = LoggerFactory.getLogger( FileImageArchiveRepository )
     private static final String ARCHIVE_TEMPLATE = 'archive-%d-%d.%s'
 
     @Autowired private Resource archiveDirectory
