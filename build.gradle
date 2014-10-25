@@ -13,6 +13,8 @@ buildscript {
 apply plugin:'war'
 apply plugin:'groovy'
 apply plugin:'spring-boot'
+apply plugin:'jacoco'
+apply plugin:'codenarc'
 
 compileJava {
     sourceCompatibility = javaVersion
@@ -96,3 +98,11 @@ task copyTestResourcesToTest(type: Copy) {
     into "${buildDir}/classes/test"
 }
 processTestResources.dependsOn copyTestResourcesToTest
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/reports/coverage"
+    }
+}
