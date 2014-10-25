@@ -83,3 +83,16 @@ task wrapper(type: Wrapper) {
 war {
     baseName = 'photopile'
 }
+
+// work-around to fix IDE-run test failures (may be fixed in future Gradle versions)
+task copyMainResourcesToTest(type: Copy) {
+    from "${projectDir}/src/main/resources"
+    into "${buildDir}/classes/test"
+}
+processTestResources.dependsOn copyMainResourcesToTest
+
+task copyTestResourcesToTest(type: Copy) {
+    from "${projectDir}/src/test/resources"
+    into "${buildDir}/classes/test"
+}
+processTestResources.dependsOn copyTestResourcesToTest

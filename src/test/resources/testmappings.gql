@@ -1,0 +1,41 @@
+
+mappings {
+
+    map( 'INSERT' ){
+        'insert into somewhere (a,b,c) values (?,?,?)'
+    }
+
+    map( 'SELECT' ){
+        'select a,b,c from somewhere'
+    }
+
+    map( 'COUNT' ){
+        'select count(*) from somewhere'
+    }
+
+    map( 'SELECT_SORTED' ){
+        return { sortOrder ->
+            "${sql('SELECT')} ${sql('_ORDERING_', sortOrder)}"
+        }
+    }
+
+    map( 'QUERY_1' ){
+        return { a-> "select a,b,c from somewhere where a=$a" }
+    }
+
+    map( 'QUERY_2' ){
+        return { a,b-> "select a,b,c from somewhere where a=$a and b=$b" }
+    }
+
+    map( 'QUERY_3' ){
+        return { a,b,c-> "select a,b,c from somewhere where a=$a and b=$b and c=$c" }
+    }
+
+    // fragments
+
+    map( '_ORDERING_' ){
+        return { sortOrder->
+            "order by ${sortOrder.toOrderString()}, id ${sortOrder.toOrderString(false)}"
+        }
+    }
+}

@@ -38,8 +38,8 @@ class LocationBounds {
         def coords = bounds.split(',')
 
         new LocationBounds(
-            new GeoLocation(coords[1] as double, coords[0]  as double),
-            new GeoLocation(coords[3] as double, coords[2]  as double)
+            new GeoLocation(coords[1] as double, coords[0]  as double, -1),
+            new GeoLocation(coords[3] as double, coords[2]  as double, -1)
         )
     }
 }

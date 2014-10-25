@@ -58,4 +58,8 @@ class SortBy {
      * The direction of the desired ordering.
      */
     Direction direction = Direction.ASCENDING
+
+    String toOrderString( final boolean includeField = true ){
+        "${includeField ? field : ''} ${direction.direction}"
+    }
 }

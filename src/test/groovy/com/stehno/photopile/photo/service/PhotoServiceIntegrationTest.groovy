@@ -22,6 +22,7 @@ import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.image.domain.ImageScale
 import com.stehno.photopile.photo.PhotoConfig
 import com.stehno.photopile.photo.PhotoService
+import com.stehno.photopile.photo.domain.CameraInfo
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.test.Integration
 import com.stehno.photopile.test.config.TestConfig
@@ -53,7 +54,7 @@ class PhotoServiceIntegrationTest {
 
     @Test void 'addPhoto'(){
         def photo = new Photo(
-            cameraInfo:'HTC Sensation',
+            cameraInfo:new CameraInfo('HTC','Sensation'),
             dateTaken: Date.parse('MM/dd/yyyy','10/21/2011'),
             dateUploaded: new Date(),
             name: 'test-photo',

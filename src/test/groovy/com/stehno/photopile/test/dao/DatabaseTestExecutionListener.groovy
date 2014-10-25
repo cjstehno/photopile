@@ -15,6 +15,7 @@
  */
 
 package com.stehno.photopile.test.dao
+
 import groovy.util.logging.Slf4j
 import org.flywaydb.core.Flyway
 import org.springframework.jdbc.core.JdbcTemplate
@@ -22,6 +23,7 @@ import org.springframework.test.context.TestContext
 import org.springframework.test.context.support.AbstractTestExecutionListener
 
 import javax.sql.DataSource
+
 /**
  * Spring TestExecutionListener used to build/tear-down the test database for each test case.
  */
@@ -38,9 +40,7 @@ class DatabaseTestExecutionListener extends AbstractTestExecutionListener {
     private rebuildDatabase( DataSource dataSource ){
         log.debug 'Rebuilding database...'
 
-        def flyway = new Flyway()
-        flyway.dataSource = dataSource
-
+        def flyway = new Flyway( dataSource:dataSource )
         flyway.clean()
         flyway.migrate()
     }

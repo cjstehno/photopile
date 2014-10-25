@@ -16,26 +16,19 @@
 
 package com.stehno.photopile.photo.repository
 
+import com.stehno.gsm.SqlMappings
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.photo.PhotoRepository
-import com.stehno.photopile.photo.domain.GeoLocation
 import com.stehno.photopile.photo.domain.Photo
-import com.stehno.photopile.photo.domain.Tag
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.*
 import org.springframework.stereotype.Repository
 
-import java.sql.ResultSet
-import java.sql.SQLException
-import java.sql.Timestamp
-
 import static com.stehno.photopile.common.SortBy.Direction.DESCENDING
-import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
 import static org.springframework.dao.support.DataAccessUtils.requiredSingleResult
 import static org.springframework.util.Assert.notNull
 
@@ -46,21 +39,14 @@ import static org.springframework.util.Assert.notNull
 @Repository @Slf4j
 class JdbcPhotoRepository implements PhotoRepository {
 
-    private static final String INSERT_SQL = 'insert into photos (name,description,camera_info,date_uploaded,date_taken,longitude,latitude) values (?,?,?,?,?,?,?) returning id,version,date_updated'
-    private static final String UPDATE_SQL = 'update photos set version=version+1,name=?,description=?,camera_info=?,date_uploaded=?,date_taken=?,date_updated=now(),longitude=?,latitude=? where id=? and version=? returning id,version,date_updated'
-    private static final String SELECT_SQL = 'select p.id,p.version,p.name,p.description,p.camera_info,p.date_uploaded,p.date_updated,p.date_taken,p.longitude,p.latitude,t.id as tag_id,t.name tag_name from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id'
-    private static final String FETCH_SQL =  SELECT_SQL + ' where p.id=?'
-    private static final String OFFSET_SUFFIX = ' offset ? limit ?'
-    private static final String COUNT_SQL = 'select count(*) from photos'
-    private static final String DELETE_SQL = 'delete from photos where id=?'
+    static enum Sql {
+        INSERT, SELECT, SELECT_SORTED, SELECT_WITHIN, UPDATE, DELETE, FETCH, COUNT, TAG_LIST, CLEAR_TAGS, INSERT_TAGS,
+        SELECT_ID_SORTED_LIMITED, TAGGED_AS, TAGGED_AS_ORDERED, SELECT_IDS
+    }
 
     private static final ORDERINGS = [ name:'name', cameraInfo:'camera_info', dateUploaded:'date_uploaded', dateUpdated:'date_updated', dateTaken:'date_taken' ]
-    private static final String CLEAR_TAGS_SQL = 'delete from photo_tags where photo_id=?'
-    private static final String INSERT_TAGS_SQL = 'insert into photo_tags (photo_id,tag_id) values (?,?)'
-    private static final String LOCATION_BOUNDS_SQL = ' where p.latitude >= ? and p.latitude <= ? and p.longitude >= ? and p.longitude <= ?'
-    private static final String TAG_LIST_SQL = 'select distinct(tag) from photo_tags order by tag'
-    private static final String INTERSECT_SQL = ' intersect distinct '
-    private static final String UNION_SQL = ' union distinct '
+
+    @Delegate private final SqlMappings sqlMappings = SqlMappings.compile( '/sql/photorepository.gql' )
 
     @Autowired private JdbcTemplate jdbcTemplate
 
@@ -73,15 +59,17 @@ class JdbcPhotoRepository implements PhotoRepository {
     @Override
     long create( final Photo photo ){
         def returns = jdbcTemplate.queryForObject(
-            INSERT_SQL,
+            sql(Sql.INSERT),
             mapRowMapper,
             photo.name,
             photo.description,
-            photo.cameraInfo,
+            photo.cameraInfo.make,
+            photo.cameraInfo.model,
             photo.dateUploaded,
             photo.dateTaken,
             photo.location?.longitude,
-            photo.location?.latitude
+            photo.location?.latitude,
+            photo.location?.altitude
         )
 
         // update the incoming object
@@ -95,15 +83,17 @@ class JdbcPhotoRepository implements PhotoRepository {
     @Override
     void update(final Photo photo) {
         def returns = jdbcTemplate.queryForObject(
-            UPDATE_SQL,
+            sql(Sql.UPDATE),
             mapRowMapper,
             photo.name,
             photo.description,
-            photo.cameraInfo,
+            photo.cameraInfo.make,
+            photo.cameraInfo.model,
             photo.dateUploaded,
             photo.dateTaken,
             photo.location.longitude,
             photo.location.latitude,
+            photo.location.altitude,
             photo.id,
             photo.version
         )
@@ -116,17 +106,13 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     long count() {
-        jdbcTemplate.queryForObject(COUNT_SQL, singleLongMapper)
+        jdbcTemplate.queryForObject(sql(Sql.COUNT), singleLongMapper)
     }
 
     @Override
     long count( final TaggedAs taggedAs ){
         if( taggedAs?.tags ){
-            def sql = taggedAs.tags.collect { t->
-                '(select p.id from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)'
-            }.join( taggedAs.grouping == ALL ? INTERSECT_SQL : UNION_SQL )
-
-            return jdbcTemplate.query( sql, taggedAs.tags as Object[], idColumnMapper).size()
+            return jdbcTemplate.query(sql(Sql.TAGGED_AS, taggedAs), taggedAs.tags as Object[], idColumnMapper).size()
 
         } else {
             return count()
@@ -135,27 +121,26 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     List<Photo> list( final SortBy sortOrder=null ){
-        jdbcTemplate.query SELECT_SQL + orderingSql(sortOrder), photoResultSetExtractor
+        jdbcTemplate.query sql(Sql.SELECT_SORTED, sortBy(sortOrder)), photoResultSetExtractor
     }
 
 //    @Override
     List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ){
         def selectedPhotoIds
         if( taggedAs?.tags ){
-            def sql = taggedAs.tags.collect { t->
-                def ordering = ORDERINGS[sortOrder?.field ?: 'dateTaken']
-                "(select p.id,p.$ordering from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)"
-            }.join( taggedAs.grouping == ALL ? INTERSECT_SQL : UNION_SQL ) + orderingSql(sortOrder) + OFFSET_SUFFIX
-
-            def params = taggedAs.tags as List<String>
+            def params = taggedAs.tags as List
             params << pageBy.start
             params << pageBy.limit
 
-            selectedPhotoIds = jdbcTemplate.query( sql, params as Object[], idColumnMapper)
+            selectedPhotoIds = jdbcTemplate.query(
+                sql(Sql.TAGGED_AS_ORDERED, taggedAs, sortBy(sortOrder)),
+                params as Object[],
+                idColumnMapper
+            )
 
         } else {
             selectedPhotoIds = jdbcTemplate.query(
-                'select id from photos' + orderingSql(sortOrder) + OFFSET_SUFFIX,
+                sql(Sql.SELECT_ID_SORTED_LIMITED, sortBy(sortOrder)),
                 idColumnMapper,
                 pageBy.start,
                 pageBy.limit
@@ -163,7 +148,7 @@ class JdbcPhotoRepository implements PhotoRepository {
         }
 
         if( selectedPhotoIds ){
-            jdbcTemplate.query( SELECT_SQL + " where p.id in (${selectedPhotoIds.join(',')})" + orderingSql(sortOrder), photoResultSetExtractor)
+            jdbcTemplate.query( sql(Sql.SELECT_IDS, selectedPhotoIds.join(','), sortBy(sortOrder)), photoResultSetExtractor)
         } else {
             return [] as List<Photo>
         }
@@ -171,18 +156,18 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     boolean delete(final long photoId) {
-        jdbcTemplate.update(DELETE_SQL, photoId)
+        jdbcTemplate.update(sql(Sql.DELETE), photoId)
     }
 
     @Override
     Photo fetch(final long photoId) {
-        requiredSingleResult jdbcTemplate.query(FETCH_SQL, photoResultSetExtractor, photoId)
+        requiredSingleResult jdbcTemplate.query(sql(Sql.FETCH), photoResultSetExtractor, photoId)
     }
 
     @Override
     List<Photo> findWithin( final LocationBounds bounds ){
         jdbcTemplate.query(
-            SELECT_SQL + LOCATION_BOUNDS_SQL,
+            sql(Sql.SELECT_WITHIN),
             photoResultSetExtractor,
             bounds.southwest.latitude,
             bounds.northeast.latitude,
@@ -193,13 +178,11 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     @Override
     List<String> listTags( ){
-        jdbcTemplate.query( TAG_LIST_SQL, singleStringMapper )
+        jdbcTemplate.query( sql(Sql.TAG_LIST), singleStringMapper )
     }
 
-    private String orderingSql( final SortBy sortOrder ){
-        def ordering = ORDERINGS[sortOrder?.field ?: 'dateTaken']
-
-        " order by $ordering ${(sortOrder?.direction ?: DESCENDING).direction}, id ${(sortOrder?.direction ?: DESCENDING).direction}"
+    private SortBy sortBy( final SortBy sortOrder ){
+        return new SortBy( field:ORDERINGS[sortOrder?.field ?: 'dateTaken'], direction:sortOrder?.direction ?: DESCENDING )
     }
 
     private void applyReturns( map, Photo photo ){
@@ -210,76 +193,12 @@ class JdbcPhotoRepository implements PhotoRepository {
 
     private void saveTags( final Photo photo ){
         if( photo?.id ){
-            jdbcTemplate.update CLEAR_TAGS_SQL, photo.id
+            jdbcTemplate.update sql(Sql.CLEAR_TAGS), photo.id
 
             photo.tags?.each { tag->
                 notNull tag.id, "Tag (${tag.name}) does not exist or has not been persisted."
-                jdbcTemplate.update INSERT_TAGS_SQL, photo.id, tag.id
+                jdbcTemplate.update sql(Sql.INSERT_TAGS), photo.id, tag.id
             }
         }
     }
 }
-
-class IdColumnRowMapper implements RowMapper<Long> {
-
-    @Override
-    Long mapRow( final ResultSet resultSet, final int i ) throws SQLException {
-        resultSet.getLong(1)
-    }
-}
-
-/**
- * ResultSetExtractor used to join tags with photos.
- */
-class PhotoResultSetExtractor implements ResultSetExtractor<List<Photo>>{
-
-    @Override
-    List<Photo> extractData(final ResultSet rs) throws SQLException, DataAccessException {
-        def photos = [:]
-
-        while( rs.next() ){
-            def photoId = rs.getLong('id')
-
-            Photo photo = photos[photoId]
-            if( photo ){
-                addTag photo.tags, rs
-
-            } else {
-                photos[photoId] = mapRow(rs)
-            }
-        }
-
-        return photos.values() as List<Photo>
-    }
-
-    private Photo mapRow( final ResultSet rs ) throws SQLException {
-        def lon = rs.getDouble('longitude')
-        def lat = rs.getDouble('latitude')
-
-        new Photo(
-            id: rs.getLong('id'),
-            version: rs.getLong('version'),
-            name: rs.getString('name'),
-            description: rs.getString('description'),
-            cameraInfo: rs.getString('camera_info'),
-            dateUploaded: new Date(rs.getTimestamp('date_uploaded').time),
-            dateUpdated: new Date(rs.getTimestamp('date_updated').time),
-            dateTaken: getDate(rs.getTimestamp('date_taken')),
-            location: lon && lat ? new GeoLocation(lat,lon) : null,
-            tags: addTag([] as Set<Tag>, rs)
-        )
-    }
-
-    private Date getDate( final Timestamp timestamp ){
-        timestamp ? new Date(timestamp.time) : null
-    }
-
-    private Set<Tag> addTag( final tags, final ResultSet rs ){
-        def tagId = rs.getLong('tag_id')
-        if( tagId ){
-            tags << new Tag( id:tagId, name:rs.getString('tag_name') )
-        }
-        return tags
-    }
-}
-
