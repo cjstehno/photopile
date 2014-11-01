@@ -18,6 +18,7 @@ package com.stehno.photopile.importer.service
 
 import com.stehno.photopile.importer.ImporterService
 import com.stehno.photopile.importer.actor.FileSetLoader
+import com.stehno.photopile.importer.msg.ImporterInput
 import com.stehno.vanilla.FileSet
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -28,10 +29,11 @@ import org.springframework.stereotype.Service
 @Service
 class DefaultImporterService implements ImporterService {
 
-    @Autowired private FileSetLoader fileSetLoader
+    @Autowired
+    private FileSetLoader fileSetLoader
 
     @Override
     void submit(final long userId, final FileSet fileSet) {
-        fileSetLoader.send fileSet
+        fileSetLoader.send new ImporterInput(userId, fileSet)
     }
 }

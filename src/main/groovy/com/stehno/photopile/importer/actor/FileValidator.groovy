@@ -16,32 +16,45 @@
 
 package com.stehno.photopile.importer.actor
 
+import static org.springframework.util.Assert.isTrue
+
 import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import com.stehno.photopile.importer.msg.ImporterMessage
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import groovyx.gpars.actor.Actor
 
 /**
- * Created by cjstehno on 10/25/2014.
+ * File validation actor - used to validate that the file provided is accessible and that it contains an image
+ * file. The image file validation is done simply by file extension.
+ *
+ * Currently, the validation checks that the following conditions are true:
+ * - the file exists
+ * - the file is readable
+ * - the file has content (non-zero length)
+ * - the file name ends with .jpg
  */
-@Component
-class FileValidator extends AbstractImporterActor<ImporterMessage<File>> {
+class FileValidator extends AbstractImporterActor<ImporterMessage> {
 
-    @Autowired private MetadataExtractor metadataExtractor
-    @Autowired private ErrorCollector errorCollector
+    Actor downstream
+    Actor errors
+
+    private static final String JPG_EXTENSION = '.jpg'
 
     @Override
-    protected void handleMessage( final ImporterMessage<File> input ){
-        if( validate(input.payload) ){
-            metadataExtractor << input
+    protected void handleMessage(final ImporterMessage input) {
+        try {
+            validate input.file
 
-        } else {
-            errorCollector << new ImporterErrorMessage<File>( input.userId, input.payload, 'The file is invalid.')
+            downstream << input
+
+        } catch (IllegalArgumentException iae) {
+            errors << new ImporterErrorMessage(input.userId, input.file, iae.message)
         }
     }
 
-    private boolean validate( final File file ){
-        // TODO: useful validation here
-        return true
+    private static void validate(final File file) {
+        isTrue file.exists(), 'The file does not exist.'
+        isTrue file.canRead(), 'The file is not readable.'
+        isTrue file.length() > 0, 'The file contains no data.'
+        isTrue file.name.toLowerCase().endsWith(JPG_EXTENSION), 'The file is not the correct type (.jpg).'
     }
 }

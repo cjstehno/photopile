@@ -16,19 +16,12 @@
 
 package com.stehno.photopile.importer.actor
 
-import com.stehno.photopile.importer.msg.ImporterMessage
-import groovy.util.logging.Slf4j
-import org.springframework.stereotype.Component
+import org.junit.Test
 
-/**
- * Created by cjstehno on 10/25/2014.
- */
-@Component
-@Slf4j
-class ImportFinisher extends AbstractImporterActor<ImporterMessage> {
+class ErrorCollectorTest {
 
-    @Override
-    protected void handleMessage(ImporterMessage input) {
-
+    @Test
+    void 'nothing'() {
+        // FIXME: needs testing
     }
 }

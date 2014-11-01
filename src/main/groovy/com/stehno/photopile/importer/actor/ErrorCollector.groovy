@@ -18,16 +18,15 @@ package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import groovy.util.logging.Slf4j
-import org.springframework.stereotype.Component
 
 /**
- * Created by cjstehno on 10/25/2014.
+ * Collects errors encountered by the importer system for aggregation and reporting.
  */
-@Component @Slf4j
-class ErrorCollector extends AbstractImporterActor<ImporterErrorMessage<?>>{
+@Slf4j
+class ErrorCollector extends AbstractImporterActor<ImporterErrorMessage> {
 
     @Override
-    protected void handleMessage(ImporterErrorMessage<?> input) {
+    protected void handleMessage(ImporterErrorMessage input) {
         // TODO: something useful
         log.warn 'Received message from user ({}) and file ({}) with error: {}', input.userId, input.payload, input.description
     }

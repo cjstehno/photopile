@@ -3,18 +3,18 @@ version = projectVersion
 
 buildscript {
     repositories {
-		jcenter()
-	}
+        jcenter()
+    }
     dependencies {
         classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE'
     }
 }
 
-apply plugin:'war'
-apply plugin:'groovy'
-apply plugin:'spring-boot'
-apply plugin:'jacoco'
-apply plugin:'codenarc'
+apply plugin: 'war'
+apply plugin: 'groovy'
+apply plugin: 'spring-boot'
+apply plugin: 'jacoco'
+apply plugin: 'codenarc'
 
 compileJava {
     sourceCompatibility = javaVersion
@@ -28,7 +28,7 @@ compileGroovy {
 }
 
 repositories {
-	jcenter()
+    jcenter()
 }
 
 configurations {
@@ -38,14 +38,14 @@ configurations {
 dependencies {
     compile groovySpec
 
-	// spring-managed dependencies
+    // spring-managed dependencies
 
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     compile 'org.springframework.boot:spring-boot-starter-logging'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile( 'org.springframework.boot:spring-boot-starter-remote-shell' ){
-        exclude group:'org.codehaus.groovy'
+    compile('org.springframework.boot:spring-boot-starter-remote-shell') {
+        exclude group: 'org.codehaus.groovy'
     }
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -58,8 +58,11 @@ dependencies {
 
     compile 'org.postgresql:postgresql:9.3-1102-jdbc41'
 
-	// verify these are needed (start)
-	compile 'com.google.guava:guava:14.0.1'
+    compile 'org.apache.tika:tika-parsers:1.6'
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+
+    // verify these are needed (start)
+    compile 'com.google.guava:guava:14.0.1'
 
     compile "org.imgscalr:imgscalr-lib:4.2"
     compile "org.apache.sanselan:sanselan:0.97-incubator"
@@ -67,10 +70,8 @@ dependencies {
     compile "commons-codec:commons-codec:1.8"
     compile "commons-io:commons-io:2.4"
     compile "commons-lang:commons-lang:2.6"
+    // verify these are needed (end)
 
-    compile 'org.codehaus.gpars:gpars:1.0.0'
-	// verify these are needed (end)
-	
     // test dependencies
 
     testCompile 'junit:junit'
@@ -112,7 +113,7 @@ codenarcMain {
 
     // TODO: these numbers need to come down
     maxPriority1Violations 0
-    maxPriority2Violations 45
+    maxPriority2Violations 10
     maxPriority3Violations 65
 }
 

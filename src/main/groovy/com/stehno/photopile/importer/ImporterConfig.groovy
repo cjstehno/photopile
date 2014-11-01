@@ -16,13 +16,87 @@
 
 package com.stehno.photopile.importer
 
+import com.stehno.photopile.importer.actor.*
+import groovyx.gpars.group.DefaultPGroup
+import groovyx.gpars.group.PGroup
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-
 /**
  * Configuration for the Photopile importer system.
  */
 @Configuration
-@ComponentScan(basePackages = ['com.stehno.photopile.importer.service', 'com.stehno.photopile.importer.actor'])
+@ComponentScan(basePackages = [
+    'com.stehno.photopile.importer.service'
+])
 class ImporterConfig {
+
+    // TODO: pull this into a property
+    private static final int THREAD_COUNT = 4
+
+    @Autowired
+    private PGroup importerParallelGroup
+    @Autowired
+    private ErrorCollector errorCollector
+
+    @Bean
+    PGroup importerPGroup() {
+        new DefaultPGroup(THREAD_COUNT)
+    }
+
+    @Bean
+    @Autowired
+    ErrorCollector errorCollector() {
+        new ErrorCollector(
+            parallelGroup: importerParallelGroup
+        )
+    }
+
+    @Bean
+    @Autowired
+    ImageSaver imageSaver() {
+        new ImageSaver(
+            parallelGroup: importerParallelGroup
+        )
+    }
+
+    @Bean
+    @Autowired
+    PhotoSaver photoSaver(final ImageSaver saver) {
+        new PhotoSaver(
+            parallelGroup: importerParallelGroup,
+            downstream: saver,
+            errors: errorCollector
+        )
+    }
+
+    @Bean
+    @Autowired
+    MetadataExtractor metadataExtractor(final PhotoSaver saver) {
+        new MetadataExtractor(
+            parallelGroup: importerParallelGroup,
+            downstream: saver,
+            errors: errorCollector
+        )
+    }
+
+    @Bean
+    @Autowired
+    FileValidator fileValidator(final MetadataExtractor extractor) {
+        new FileValidator(
+            parallelGroup: importerParallelGroup,
+            downstream: extractor,
+            errors: errorCollector
+        )
+    }
+
+    @Bean
+    @Autowired
+    FileSetLoader fileSetLoader(final FileValidator fileValidator) {
+        new FileSetLoader(
+            parallelGroup: importerParallelGroup,
+            downstream: fileValidator
+        )
+    }
 }

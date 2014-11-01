@@ -14,31 +14,30 @@
  * limitations under the License.
  */
 
+
 package com.stehno.photopile.importer.actor
 
+import com.stehno.photopile.importer.msg.ImporterInput
 import com.stehno.photopile.importer.msg.ImporterMessage
-import com.stehno.vanilla.FileSet
 import groovy.util.logging.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import groovyx.gpars.actor.Actor
 
 /**
- * Actor used to load the contents of a FileSet into the importer system.
+ * Actor used to load the contents of a FileSet into the importer system. The contents of the provided FileSet
+ * are loaded into the import system without any validation - this is simply a bulk-loading step to kick off
+ * the importer process.
  */
-@Component @Slf4j
-class FileSetLoader extends AbstractImporterActor<ImporterMessage<FileSet>> {
+@Slf4j
+class FileSetLoader extends AbstractImporterActor<ImporterInput> {
 
-    // FIXME: need to be able to config the pgroup in all actors!
-    // FIXME: bring over the unit tests
-
-    @Autowired private FileValidator fileValidator
+    Actor downstream
 
     @Override
-    protected void handleMessage( final ImporterMessage<FileSet> input ){
-        input.payload.each { File f ->
+    protected void handleMessage(final ImporterInput input) {
+        input.fileSet.each { File f ->
             log.trace 'Loading file ({})', f
 
-            fileValidator << new ImporterMessage<File>( input.userId, f )
+            downstream << ImporterMessage.create(input.userId, f)
         }
     }
 }

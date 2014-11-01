@@ -19,11 +19,16 @@ package com.stehno.photopile.importer.msg
 import groovy.transform.Immutable
 
 /**
- * Created by cjstehno on 10/25/2014.
+ * Represents an actor-to-actor message in the importer system.
  */
-@Immutable(knownImmutables = ['payload'])
-class ImporterMessage<T> {
+@Immutable(knownImmutables = ['attributes'], knownImmutableClasses = [File])
+class ImporterMessage {
 
     long userId
-    T payload
+    File file
+    Map attributes
+
+    static ImporterMessage create(final long userId, final File file, final Map attributes = [:]) {
+        new ImporterMessage(userId, file, attributes)
+    }
 }

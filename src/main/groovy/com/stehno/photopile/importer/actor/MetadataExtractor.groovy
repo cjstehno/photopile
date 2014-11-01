@@ -16,21 +16,39 @@
 
 package com.stehno.photopile.importer.actor
 
+import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import com.stehno.photopile.importer.msg.ImporterMessage
-import groovy.util.logging.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
+import groovyx.gpars.actor.Actor
+import org.apache.tika.metadata.Metadata
+import org.apache.tika.parser.image.ImageMetadataExtractor
 
 /**
- * Created by cjstehno on 10/25/2014.
+ * Actor used to extract the image metadata from the image file.
+ * Currently only supports JPEG image files.
  */
-@Component @Slf4j
-class MetadataExtractor extends AbstractImporterActor<ImporterMessage<File>> {
+class MetadataExtractor extends AbstractImporterActor<ImporterMessage> {
 
-    @Autowired private PhotoSaver photoSaver
+    Actor downstream
+    Actor errors
 
     @Override
-    protected void handleMessage(ImporterMessage<File> input) {
+    protected void handleMessage(final ImporterMessage input) {
+        try {
+            def meta = new Metadata()
 
+            def extractor = new ImageMetadataExtractor(meta)
+            extractor.parseJpeg(input.file)
+
+            def extracted = [:]
+
+            meta.names().each { name ->
+                extracted[name] = meta.get(name)
+            }
+
+            downstream << new ImporterMessage(input.userId, input.file, extracted.asImmutable())
+
+        } catch (Exception ex) {
+            errors << new ImporterErrorMessage(input.userId, input.file, ex.message)
+        }
     }
 }

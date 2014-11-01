@@ -20,7 +20,7 @@ import org.junit.rules.ExternalResource
 import org.junit.rules.TemporaryFolder
 
 /**
- * Unit testing fixture for managing a set of temporary files.
+ * JUnit Rule fixture for managing a set of temporary files.
  */
 class FileSetFixture extends ExternalResource {
 
@@ -46,15 +46,15 @@ class FileSetFixture extends ExternalResource {
         golfFile = folder.newFile 'charlie/foxtrot/golf.txt'
         hotelFile = folder.newFile 'charlie/foxtrot/hotel.bin'
 
-        files = [ alphaFile, bravoFile, deltaFile, echoFile, golfFile, hotelFile ]
+        files = [alphaFile, bravoFile, deltaFile, echoFile, golfFile, hotelFile]
     }
 
     @Override
-    protected void after(){
+    protected void after() {
         folder.after()
     }
 
-    FileSet fileSetOfAll(){
+    FileSet fileSetOfAll() {
         FileSet.fileSet {
             files.each {
                 file it

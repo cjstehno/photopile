@@ -20,20 +20,22 @@ import com.stehno.photopile.image.ImageDao
 import com.stehno.photopile.importer.msg.ImporterMessage
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
 
 /**
  * Created by cjstehno on 10/25/2014.
  */
-@Component @Slf4j
-class ImageSaver extends AbstractImporterActor<ImporterMessage<File>>{
+@Slf4j
+class ImageSaver extends AbstractImporterActor<ImporterMessage> {
 
-    @Autowired private ImportFinisher importFinisher
-    @Autowired private ErrorCollector errorCollector
-    @Autowired private ImageDao imageDao
+    @Autowired
+    private ImportFinisher importFinisher
+    @Autowired
+    private ErrorCollector errorCollector
+    @Autowired
+    private ImageDao imageDao
 
     @Override
-    protected void handleMessage( final ImporterMessage<File> input) {
+    protected void handleMessage(final ImporterMessage input) {
 
 
         imageDao.exists()

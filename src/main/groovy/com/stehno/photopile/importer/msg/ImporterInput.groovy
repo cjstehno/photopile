@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer.actor
+package com.stehno.photopile.importer.msg
 
-import com.stehno.photopile.importer.msg.ImporterMessage
-import groovy.util.logging.Slf4j
-import org.springframework.stereotype.Component
+import com.stehno.vanilla.FileSet
+import groovy.transform.Immutable
 
 /**
- * Created by cjstehno on 10/25/2014.
+ * Represents the primary input message for the importer actor system.
  */
-@Component
-@Slf4j
-class ImportFinisher extends AbstractImporterActor<ImporterMessage> {
+@Immutable
+class ImporterInput {
 
-    @Override
-    protected void handleMessage(ImporterMessage input) {
-
-    }
+    long userId
+    FileSet fileSet
 }
