@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+
 /**
  * Configuration for the Photopile importer system.
  */
@@ -35,65 +36,50 @@ class ImporterConfig {
     // TODO: pull this into a property
     private static final int THREAD_COUNT = 4
 
-    @Autowired
-    private PGroup importerParallelGroup
-    @Autowired
-    private ErrorCollector errorCollector
+    @Autowired private PGroup importerParallelGroup
+    @Autowired private ErrorCollector errorCollection
 
-    @Bean
-    PGroup importerPGroup() {
+    @Bean PGroup importerPGroup() {
         new DefaultPGroup(THREAD_COUNT)
     }
 
-    @Bean
-    @Autowired
-    ErrorCollector errorCollector() {
+    @Bean @Autowired ErrorCollector errorCollector() {
         new ErrorCollector(
             parallelGroup: importerParallelGroup
         )
     }
 
-    @Bean
-    @Autowired
-    ImageSaver imageSaver() {
-        new ImageSaver(
+    @Bean @Autowired ImportFinisher importFinisher() {
+        new ImportFinisher(
             parallelGroup: importerParallelGroup
         )
     }
 
-    @Bean
-    @Autowired
-    PhotoSaver photoSaver(final ImageSaver saver) {
+    @Bean @Autowired PhotoSaver photoSaver(final ImportFinisher finisher) {
         new PhotoSaver(
             parallelGroup: importerParallelGroup,
-            downstream: saver,
-            errors: errorCollector
+            downstream: finisher,
+            errors: errorCollection
         )
     }
 
-    @Bean
-    @Autowired
-    MetadataExtractor metadataExtractor(final PhotoSaver saver) {
+    @Bean @Autowired MetadataExtractor metadataExtractor(final PhotoSaver saver) {
         new MetadataExtractor(
             parallelGroup: importerParallelGroup,
             downstream: saver,
-            errors: errorCollector
+            errors: errorCollection
         )
     }
 
-    @Bean
-    @Autowired
-    FileValidator fileValidator(final MetadataExtractor extractor) {
+    @Bean @Autowired FileValidator fileValidator(final MetadataExtractor extractor) {
         new FileValidator(
             parallelGroup: importerParallelGroup,
             downstream: extractor,
-            errors: errorCollector
+            errors: errorCollection
         )
     }
 
-    @Bean
-    @Autowired
-    FileSetLoader fileSetLoader(final FileValidator fileValidator) {
+    @Bean @Autowired FileSetLoader fileSetLoader(final FileValidator fileValidator) {
         new FileSetLoader(
             parallelGroup: importerParallelGroup,
             downstream: fileValidator

@@ -109,12 +109,12 @@ run {
 }
 
 codenarcMain {
-    ignoreFailures = false
+    ignoreFailures false
 
     // TODO: these numbers need to come down
     maxPriority1Violations 0
-    maxPriority2Violations 10
-    maxPriority3Violations 65
+    maxPriority2Violations 40
+    maxPriority3Violations 60
 }
 
 codenarcTest {

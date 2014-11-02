@@ -34,6 +34,9 @@ class DefaultImporterService implements ImporterService {
 
     @Override
     void submit(final long userId, final FileSet fileSet) {
-        fileSetLoader.send new ImporterInput(userId, fileSet)
+        // TODO: figure out a better batch naming system
+        String batch = UUID.randomUUID()
+
+        fileSetLoader.send new ImporterInput(batch, userId, fileSet)
     }
 }

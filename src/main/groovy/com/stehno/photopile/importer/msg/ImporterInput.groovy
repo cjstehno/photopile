@@ -25,6 +25,7 @@ import groovy.transform.Immutable
 @Immutable
 class ImporterInput {
 
+    String batchId
     long userId
     FileSet fileSet
 }

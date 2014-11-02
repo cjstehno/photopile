@@ -44,9 +44,11 @@ class JdbcPhotoRepository implements PhotoRepository {
         SELECT_ID_SORTED_LIMITED, TAGGED_AS, TAGGED_AS_ORDERED, SELECT_IDS
     }
 
-    private static final ORDERINGS = [ name:'name', cameraInfo:'camera_info', dateUploaded:'date_uploaded', dateUpdated:'date_updated', dateTaken:'date_taken' ]
+    private static final ORDERINGS = [
+        name: 'name', cameraInfo: 'camera_info', dateUploaded: 'date_uploaded', dateUpdated: 'date_updated', dateTaken: 'date_taken'
+    ]
 
-    private final SqlMappings sqlMappings = SqlMappings.compile( '/sql/photorepository.gql' )
+    private final SqlMappings sqlMappings = SqlMappings.compile('/sql/photorepository.gql')
 
     @Autowired private JdbcTemplate jdbcTemplate
 
@@ -57,7 +59,7 @@ class JdbcPhotoRepository implements PhotoRepository {
     private final RowMapper idColumnMapper = new IdColumnRowMapper()
 
     @Override
-    long create( final Photo photo ){
+    long create(final Photo photo) {
         def returns = jdbcTemplate.queryForObject(
             sqlMappings.sql(Sql.INSERT),
             mapRowMapper,
@@ -110,22 +112,22 @@ class JdbcPhotoRepository implements PhotoRepository {
     }
 
     @Override
-    long count( final TaggedAs taggedAs ){
-        if( taggedAs?.tags ){
+    long count(final TaggedAs taggedAs) {
+        if (taggedAs?.tags) {
             return jdbcTemplate.query(sqlMappings.sql(Sql.TAGGED_AS, taggedAs), taggedAs.tags as Object[], idColumnMapper).size()
         }
         return count()
     }
 
     @Override
-    List<Photo> list( final SortBy sortOrder=null ){
+    List<Photo> list(final SortBy sortOrder = null) {
         jdbcTemplate.query sqlMappings.sql(Sql.SELECT_SORTED, sortBy(sortOrder)), photoResultSetExtractor
     }
 
 //    @Override
-    List<Photo> list( final PageBy pageBy, final SortBy sortOrder=null, final TaggedAs taggedAs=null ){
+    List<Photo> list(final PageBy pageBy, final SortBy sortOrder = null, final TaggedAs taggedAs = null) {
         def selectedPhotoIds
-        if( taggedAs?.tags ){
+        if (taggedAs?.tags) {
             def params = taggedAs.tags as List
             params << pageBy.start
             params << pageBy.limit
@@ -145,8 +147,8 @@ class JdbcPhotoRepository implements PhotoRepository {
             )
         }
 
-        if( selectedPhotoIds ){
-            jdbcTemplate.query( sqlMappings.sql(Sql.SELECT_IDS, selectedPhotoIds.join(','), sortBy(sortOrder)), photoResultSetExtractor)
+        if (selectedPhotoIds) {
+            jdbcTemplate.query(sqlMappings.sql(Sql.SELECT_IDS, selectedPhotoIds.join(','), sortBy(sortOrder)), photoResultSetExtractor)
         } else {
             return []
         }
@@ -163,7 +165,7 @@ class JdbcPhotoRepository implements PhotoRepository {
     }
 
     @Override
-    List<Photo> findWithin( final LocationBounds bounds ){
+    List<Photo> findWithin(final LocationBounds bounds) {
         jdbcTemplate.query(
             sqlMappings.sql(Sql.SELECT_WITHIN),
             photoResultSetExtractor,
@@ -175,25 +177,25 @@ class JdbcPhotoRepository implements PhotoRepository {
     }
 
     @Override
-    List<String> listTags( ){
-        jdbcTemplate.query( sqlMappings.sql(Sql.TAG_LIST), singleStringMapper )
+    List<String> listTags() {
+        jdbcTemplate.query(sqlMappings.sql(Sql.TAG_LIST), singleStringMapper)
     }
 
-    private SortBy sortBy( final SortBy sortOrder ){
-        return new SortBy( field:ORDERINGS[sortOrder?.field ?: 'dateTaken'], direction:sortOrder?.direction ?: DESCENDING )
+    private SortBy sortBy(final SortBy sortOrder) {
+        return new SortBy(field: ORDERINGS[sortOrder?.field ?: 'dateTaken'], direction: sortOrder?.direction ?: DESCENDING)
     }
 
-    private void applyReturns( map, Photo photo ){
+    private void applyReturns(map, Photo photo) {
         photo.id = map.id
         photo.version = map.version
         photo.dateUpdated = map.date_updated
     }
 
-    private void saveTags( final Photo photo ){
-        if( photo?.id ){
+    private void saveTags(final Photo photo) {
+        if (photo?.id) {
             jdbcTemplate.update sqlMappings.sql(Sql.CLEAR_TAGS), photo.id
 
-            photo.tags?.each { tag->
+            photo.tags?.each { tag ->
                 notNull tag.id, "Tag (${tag.name}) does not exist or has not been persisted."
                 jdbcTemplate.update sqlMappings.sql(Sql.INSERT_TAGS), photo.id, tag.id
             }

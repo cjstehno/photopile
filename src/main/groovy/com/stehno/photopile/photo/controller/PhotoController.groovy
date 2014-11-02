@@ -15,6 +15,7 @@
  */
 
 package com.stehno.photopile.photo.controller
+
 import com.stehno.photopile.common.PageBy
 import com.stehno.photopile.common.SortBy
 import com.stehno.photopile.common.WrappedCollection
@@ -36,68 +37,74 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 
+/**
+ * Controller providing web-based operations for photos.
+ */
 @Controller @Slf4j
-@RequestMapping(value='/photos', consumes=MediaType.APPLICATION_JSON_VALUE, produces=MediaType.APPLICATION_JSON_VALUE )
+@RequestMapping(value = '/photos', consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 class PhotoController {
 
     private static final String META_TOTAL = 'total'
+    private static final String TRACE_DETAILS = ' - {}'
 
     @Autowired private PhotoService photoService
     @Autowired private TagDao tagDao    // FIXME: should prob be in a service
 
     @InitBinder
-    void initBinder( final WebDataBinder binder ){
+    void initBinder(final WebDataBinder binder) {
         binder.registerCustomEditor(
             String[],
             new StringArrayPropertyEditor(StringArrayPropertyEditor.DEFAULT_SEPARATOR, true, true)
         )
     }
 
-    @RequestMapping(value='/album/{album}', method=RequestMethod.GET)
-    ResponseEntity<WrappedCollection<Photo>> list( @PathVariable('album') final String album, final TaggedAs taggedAs, final PageBy pageBy, final SortBy sortBy ){
+    @RequestMapping(value = '/album/{album}', method = RequestMethod.GET)
+    ResponseEntity<WrappedCollection<Photo>> list(
+        @PathVariable('album') final String album, final TaggedAs taggedAs, final PageBy pageBy, final SortBy sortBy
+    ) {
         // FIXME: album does nothing yet
 
-        Collection<Photo> photos = photoService.listPhotos( pageBy, sortBy, taggedAs )
+        Collection<Photo> photos = photoService.listPhotos(pageBy, sortBy, taggedAs)
 
         log.debug 'Found {} photos in album ({}) @ {}, sorting by {} and tagged with {}', photos.size(), album, pageBy, sortBy, taggedAs
 
-        if(log.traceEnabled){
-            photos.each { p->
-                log.trace ' - {}', p
+        if (log.traceEnabled) {
+            photos.each { p ->
+                log.trace TRACE_DETAILS, p
             }
         }
 
-        final WrappedCollection<Photo> wrapped = new WrappedCollection<>( photos )
-        wrapped.getMeta().put( META_TOTAL, photoService.countPhotos(taggedAs) )
+        final WrappedCollection<Photo> wrapped = new WrappedCollection<>(photos)
+        wrapped.meta.put(META_TOTAL, photoService.countPhotos(taggedAs))
 
-        return new ResponseEntity<>( wrapped, HttpStatus.OK )
+        return new ResponseEntity<>(wrapped, HttpStatus.OK)
     }
 
-    @RequestMapping(value='/{photoId}', method=RequestMethod.GET)
-    ResponseEntity<WrappedCollection<Photo>> single( @PathVariable('photoId') final Long photoId ){
+    @RequestMapping(value = '/{photoId}', method = RequestMethod.GET)
+    ResponseEntity<WrappedCollection<Photo>> single(@PathVariable('photoId') final Long photoId) {
         // FIXME: error handling
 
-        Photo photo = photoService.fetch( photoId )
+        Photo photo = photoService.fetch(photoId)
 
         log.debug 'Found photo ({} v{})', photo.id, photo.version
-        log.trace ' - {}', photo
+        log.trace TRACE_DETAILS, photo
 
-        return new ResponseEntity<>( photo, HttpStatus.OK )
+        return new ResponseEntity<>(photo, HttpStatus.OK)
     }
 
-    @RequestMapping(value='/within/{bounds}', method=RequestMethod.GET)
-    ResponseEntity<List<Photo>> listWithin( @PathVariable('bounds') final String bounds ){
+    @RequestMapping(value = '/within/{bounds}', method = RequestMethod.GET)
+    ResponseEntity<List<Photo>> listWithin(@PathVariable('bounds') final String bounds) {
         final List<Photo> photos = photoService.findPhotosWithin(LocationBounds.fromString(bounds))
 
         log.debug 'Found {} photos within bounds ({})', photos.size(), bounds
 
-        return new ResponseEntity<>( photos, HttpStatus.OK )
+        return new ResponseEntity<>(photos, HttpStatus.OK)
     }
 
     // TODO: not sure if this belongs here or not
-    @RequestMapping(value='/tags', method=RequestMethod.GET)
-    ResponseEntity<List<String>> listTags(){
+    @RequestMapping(value = '/tags', method = RequestMethod.GET)
+    ResponseEntity<List<String>> listTags() {
         // FIXME: refactor to return tag objects
-        return new ResponseEntity<>( tagDao.list()*.name, HttpStatus.OK )
+        return new ResponseEntity<>(tagDao.list()*.name, HttpStatus.OK)
     }
 }

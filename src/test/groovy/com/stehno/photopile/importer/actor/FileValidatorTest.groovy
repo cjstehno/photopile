@@ -25,11 +25,10 @@ import org.junit.Test
 
 class FileValidatorTest {
 
-    @Rule
-    public FileSetFixture fixture = new FileSetFixture()
-    @Rule
-    public ActorEnvironment actors = new ActorEnvironment()
+    @Rule public FileSetFixture fixture = new FileSetFixture()
+    @Rule public ActorEnvironment actors = new ActorEnvironment()
 
+    private static final String BATCH_ID = 'a-batch'
     private static final Long USER_ID = 8675
     private FileValidator validator
     private TestActor downstream
@@ -51,11 +50,11 @@ class FileValidatorTest {
         File file = new File(FileValidatorTest.getResource('/test-image.jpg').toURI())
 
         actors.withActors(1) {
-            validator.send(ImporterMessage.create(USER_ID, file))
+            validator.send(ImporterMessage.create(BATCH_ID, USER_ID, file))
         }
 
         errors.assertEmpty()
-        downstream.assertMessages(ImporterMessage.create(USER_ID, file))
+        downstream.assertMessages(ImporterMessage.create(BATCH_ID, USER_ID, file))
     }
 
     @Test
@@ -63,10 +62,10 @@ class FileValidatorTest {
         File file = new File('/blah.txt')
 
         actors.withActors(1) {
-            validator.send(ImporterMessage.create(USER_ID, file))
+            validator.send(ImporterMessage.create(BATCH_ID, USER_ID, file))
         }
 
-        errors.assertMessages(new ImporterErrorMessage(USER_ID, file, 'The file does not exist.'))
+        errors.assertMessages(new ImporterErrorMessage(BATCH_ID, USER_ID, file, 'The file does not exist.'))
         downstream.assertEmpty()
     }
 
@@ -76,20 +75,20 @@ class FileValidatorTest {
         assert file.createNewFile()
 
         actors.withActors(1) {
-            validator.send(ImporterMessage.create(USER_ID, file))
+            validator.send(ImporterMessage.create(BATCH_ID, USER_ID, file))
         }
 
-        errors.assertMessages(new ImporterErrorMessage(USER_ID, file, 'The file contains no data.'))
+        errors.assertMessages(new ImporterErrorMessage(BATCH_ID, USER_ID, file, 'The file contains no data.'))
         downstream.assertEmpty()
     }
 
     @Test
     void 'validating: wrong type'() {
         actors.withActors(1) {
-            validator.send(ImporterMessage.create(USER_ID, fixture.alphaFile))
+            validator.send(ImporterMessage.create(BATCH_ID, USER_ID, fixture.alphaFile))
         }
 
-        errors.assertMessages(new ImporterErrorMessage(USER_ID, fixture.alphaFile, 'The file contains no data.'))
+        errors.assertMessages(new ImporterErrorMessage(BATCH_ID, USER_ID, fixture.alphaFile, 'The file contains no data.'))
         downstream.assertEmpty()
     }
 }

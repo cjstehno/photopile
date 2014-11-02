@@ -23,9 +23,9 @@ import org.junit.Test
 
 class MetadataExtractorTest {
 
-    @Rule
-    public ActorEnvironment actors = new ActorEnvironment()
+    @Rule public ActorEnvironment actors = new ActorEnvironment()
 
+    private static final String BATCH_ID = 'thebatch'
     private static final Long USER_ID = 8675
     private MetadataExtractor extractor
     private TestActor downstream
@@ -47,7 +47,7 @@ class MetadataExtractorTest {
         File file = new File(FileValidatorTest.getResource('/test-image.jpg').toURI())
 
         actors.withActors(1) {
-            extractor.send(ImporterMessage.create(USER_ID, file))
+            extractor.send(ImporterMessage.create(BATCH_ID, USER_ID, file))
         }
 
         errors.assertEmpty()

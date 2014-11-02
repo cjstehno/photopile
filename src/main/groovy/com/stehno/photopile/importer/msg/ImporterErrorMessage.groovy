@@ -24,7 +24,12 @@ import groovy.transform.Immutable
 @Immutable(knownImmutableClasses = [File])
 class ImporterErrorMessage {
 
+    String batchId
     long userId
     File file
     String description
+
+    static ImporterErrorMessage fromMessage(final ImporterMessage message, final String description) {
+        new ImporterErrorMessage(message.batchId, message.userId, message.file, description)
+    }
 }

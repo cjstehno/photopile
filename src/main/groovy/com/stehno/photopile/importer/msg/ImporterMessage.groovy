@@ -24,11 +24,16 @@ import groovy.transform.Immutable
 @Immutable(knownImmutables = ['attributes'], knownImmutableClasses = [File])
 class ImporterMessage {
 
+    String batchId
     long userId
     File file
     Map attributes
 
-    static ImporterMessage create(final long userId, final File file, final Map attributes = [:]) {
-        new ImporterMessage(userId, file, attributes)
+    static ImporterMessage create(final String batchId, final long userId, final File file, final Map attributes = [:]) {
+        new ImporterMessage(batchId, userId, file, attributes)
+    }
+
+    static ImporterMessage create(final ImporterMessage message, final Map attrs = [:]) {
+        new ImporterMessage(message.batchId, message.userId, message.file, attrs)
     }
 }

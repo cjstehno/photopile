@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-
 package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.importer.msg.ImporterInput
@@ -37,7 +36,7 @@ class FileSetLoader extends AbstractImporterActor<ImporterInput> {
         input.fileSet.each { File f ->
             log.trace 'Loading file ({})', f
 
-            downstream << ImporterMessage.create(input.userId, f)
+            downstream << ImporterMessage.create(input.batchId, input.userId, f)
         }
     }
 }

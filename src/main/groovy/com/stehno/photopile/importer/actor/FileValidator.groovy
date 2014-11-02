@@ -47,7 +47,7 @@ class FileValidator extends AbstractImporterActor<ImporterMessage> {
             downstream << input
 
         } catch (IllegalArgumentException iae) {
-            errors << new ImporterErrorMessage(input.userId, input.file, iae.message)
+            errors << ImporterErrorMessage.fromMessage(input, iae.message)
         }
     }
 

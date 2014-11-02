@@ -31,7 +31,7 @@ class MetadataExtractor extends AbstractImporterActor<ImporterMessage> {
     Actor downstream
     Actor errors
 
-    @Override
+    @Override @SuppressWarnings('CatchException')
     protected void handleMessage(final ImporterMessage input) {
         try {
             def meta = new Metadata()
@@ -45,10 +45,10 @@ class MetadataExtractor extends AbstractImporterActor<ImporterMessage> {
                 extracted[name] = meta.get(name)
             }
 
-            downstream << new ImporterMessage(input.userId, input.file, extracted.asImmutable())
+            downstream << ImporterMessage.create(input, extracted.asImmutable())
 
         } catch (Exception ex) {
-            errors << new ImporterErrorMessage(input.userId, input.file, ex.message)
+            errors << ImporterErrorMessage.fromMessage(input, ex.message)
         }
     }
 }

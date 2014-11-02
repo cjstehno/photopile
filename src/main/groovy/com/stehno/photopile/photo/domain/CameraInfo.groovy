@@ -10,4 +10,8 @@ class CameraInfo {
 
     String make
     String model
+
+    String getFullName() {
+        "$make $model"
+    }
 }

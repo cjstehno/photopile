@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.stehno.photopile.photo
 
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+
 /**
  * Configuration for the buildPhoto management module.
  */
@@ -27,4 +27,5 @@ import org.springframework.context.annotation.Configuration
     'com.stehno.photopile.photo.service',
     'com.stehno.photopile.photo.controller'
 ])
-public class PhotoConfig { /* just an annotation container */ }
+class PhotoConfig { /* just an annotation container */
+}

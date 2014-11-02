@@ -43,13 +43,14 @@ class FileSetLoaderTest {
 
     @Test
     void loading() {
+        String batch = 'stuff'
         def userId = 8675
         def allFiles = fixture.fileSetOfAll()
 
         actors.withActors(6) {
-            loader.send(new ImporterInput(userId, allFiles))
+            loader.send(new ImporterInput(batch, userId, allFiles))
         }
 
-        downstream.assertMessageCollection(allFiles.collect { File f -> ImporterMessage.create(userId, f) })
+        downstream.assertMessageCollection(allFiles.collect { File f -> ImporterMessage.create(batch, userId, f) })
     }
 }

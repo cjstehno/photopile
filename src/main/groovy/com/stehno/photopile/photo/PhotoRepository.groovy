@@ -22,6 +22,9 @@ import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.dto.LocationBounds
 import com.stehno.photopile.photo.dto.TaggedAs
 
+/**
+ * Defines the interactions available for a Photo database repository.
+ */
 interface PhotoRepository {
 
     /**
@@ -34,14 +37,14 @@ interface PhotoRepository {
      * @param photo the Photo object to be created
      * @return the id of the created photo
      */
-    long create( Photo photo )
+    long create(Photo photo)
 
     /**
      * Used to update an existing Photo in the database (an id and version must be specified).
      *
      * @param photo the Photo to be updated
      */
-    void update( Photo photo )
+    void update(Photo photo)
 
     /**
      * Retrieves a count of all photos in the database.
@@ -49,7 +52,8 @@ interface PhotoRepository {
      * @return count of all photos.
      */
     long count()
-    long count( TaggedAs taggedAs )
+
+    long count(TaggedAs taggedAs)
 
     /**
      * Retrieves a list of all photos in the database. It is generally preferable to use the paged version of this
@@ -58,7 +62,8 @@ interface PhotoRepository {
      * @return a List containing all photos in the database.
      */
     List<Photo> list()
-    List<Photo> list( SortBy sortOrder )
+
+    List<Photo> list(SortBy sortOrder)
 
     /**
      * Retrieves a sub-list of photos from the database, starting with the specified index and returning at most
@@ -68,24 +73,25 @@ interface PhotoRepository {
      * @param limit the number of photos to retrieve
      * @return a sub-list of all photos in the database
      */
-    List<Photo> list( PageBy pageBy )
-    List<Photo> list( PageBy pageBy, SortBy sortOrder, TaggedAs taggedAs )
+    List<Photo> list(PageBy pageBy)
 
-    List<Photo> findWithin( LocationBounds bounds )
+    List<Photo> list(PageBy pageBy, SortBy sortOrder, TaggedAs taggedAs)
+
+    List<Photo> findWithin(LocationBounds bounds)
 
     /**
      * Deletes the Photo with the specified id, removing it from the database.
      *
      * @param photoId
      */
-    boolean delete( final long photoId )
+    boolean delete(final long photoId)
 
     /**
      *
      * @param photoId
      * @return
      */
-    Photo fetch( final long photoId )
+    Photo fetch(final long photoId)
 
     /**
      * List all tags in the system.
