@@ -17,6 +17,7 @@
 package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.importer.msg.ImporterMessage
+import com.stehno.photopile.meta.TikaMetadataExtractor
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -37,6 +38,7 @@ class MetadataExtractorTest {
         errors = actors << new TestActor()
 
         extractor = actors << new MetadataExtractor(
+            photoMetadataExtractor: new TikaMetadataExtractor(),
             downstream: downstream,
             errors: errors
         )
@@ -59,19 +61,14 @@ class MetadataExtractorTest {
         assert message.userId == USER_ID
         assert message.file == file
 
-        assert message.attributes['Date/Time Original'] == '2010:07:23 18:50:37'
-        assert message.attributes['Creation-Date'] == '2010-07-23T18:50:37'
-        assert message.attributes['Date/Time Digitized'] == '2010:07:23 18:50:37'
-        assert message.attributes['Make'] == 'HTC'
-        assert message.attributes['Model'] == 'T-Mobile myTouch 3G'
-        assert message.attributes['tiff:Make'] == 'HTC'
-        assert message.attributes['tiff:Model'] == 'T-Mobile myTouch 3G'
-        assert message.attributes['Image Height'] == '1536 pixels'
-        assert message.attributes['Image Width'] == '2048 pixels'
-        assert message.attributes['tiff:ImageWidth'] == '2048'
-        assert message.attributes['tiff:ImageLength'] == '1536'
-        assert message.attributes['geo:long'] == '-96.753544'
-        assert message.attributes['geo:lat'] == '33.096683'
-        assert message.attributes['GPS Altitude'] == '196 metres'
+        assert message.metadata.dateTaken.format('yyyy:MM:dd HH:mm:ss') == '2010:07:23 18:50:37'
+        assert message.metadata.cameraMake == 'HTC'
+        assert message.metadata.cameraModel == 'T-Mobile myTouch 3G'
+        assert message.metadata.height == 1536
+        assert message.metadata.width == 2048
+        assert message.metadata.contentType == 'image/jpeg'
+        assert message.metadata.longitude == -96.753544
+        assert message.metadata.latitude == 33.096683
+        assert message.metadata.altitude == 196
     }
 }

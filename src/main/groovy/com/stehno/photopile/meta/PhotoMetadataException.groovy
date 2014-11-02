@@ -21,7 +21,7 @@ package com.stehno.photopile.meta
  */
 class PhotoMetadataException extends RuntimeException {
 
-    PhotoMetadataException( final String message, final Exception cause ){
-        super( message, cause )
+    PhotoMetadataException(final String message, final Exception cause) {
+        super(message, cause)
     }
 }

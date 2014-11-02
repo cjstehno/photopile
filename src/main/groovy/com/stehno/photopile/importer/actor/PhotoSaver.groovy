@@ -15,12 +15,13 @@
  */
 package com.stehno.photopile.importer.actor
 
-import static com.stehno.photopile.importer.utils.MetadataFieldExtractor.*
-
 import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import com.stehno.photopile.importer.msg.ImporterMessage
+import com.stehno.photopile.meta.PhotoMetadata
 import com.stehno.photopile.photo.PhotoService
+import com.stehno.photopile.photo.domain.CameraInfo
+import com.stehno.photopile.photo.domain.GeoLocation
 import com.stehno.photopile.photo.domain.Photo
 import com.stehno.photopile.photo.domain.Tag
 import groovy.util.logging.Slf4j
@@ -43,9 +44,9 @@ class PhotoSaver extends AbstractImporterActor<ImporterMessage> {
         try {
             Photo photo = new Photo(
                 name: input.file.name,
-                dateTaken: extractDateTaken(input.attributes),
-                cameraInfo: extractCamera(input.attributes),
-                location: extractLocation(input.attributes)
+                dateTaken: input.metadata.dateTaken,
+                cameraInfo: new CameraInfo(input.metadata.cameraMake, input.metadata.cameraModel),
+                location: geoLocation(input.metadata)
             )
 
             if (photo.cameraInfo) {
@@ -61,10 +62,10 @@ class PhotoSaver extends AbstractImporterActor<ImporterMessage> {
             photo.tags << new Tag(name: "batch:${input.batchId}")
 
             Image image = new Image(
-                width: extractWidth(input.attributes),
-                height: extractHeight(input.attributes),
+                width: input.metadata.width,
+                height: input.metadata.height,
                 contentLength: input.file.length(),
-                contentType: 'image/jpg',
+                contentType: input.metadata.contentType,
                 content: input.file.bytes
             )
 
@@ -76,5 +77,9 @@ class PhotoSaver extends AbstractImporterActor<ImporterMessage> {
         } catch (Exception ex) {
             errors << ImporterErrorMessage.fromMessage(input, ex.message)
         }
+    }
+
+    private static GeoLocation geoLocation(final PhotoMetadata metadata) {
+        metadata.hasLocation() ? new GeoLocation(metadata.latitude, metadata.longitude, metadata.altitude ?: 0) : null
     }
 }

@@ -18,9 +18,10 @@ package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import com.stehno.photopile.importer.msg.ImporterMessage
+import com.stehno.photopile.meta.PhotoMetadataException
+import com.stehno.photopile.meta.PhotoMetadataExtractor
 import groovyx.gpars.actor.Actor
-import org.apache.tika.metadata.Metadata
-import org.apache.tika.parser.image.ImageMetadataExtractor
+import org.springframework.beans.factory.annotation.Autowired
 
 /**
  * Actor used to extract the image metadata from the image file.
@@ -31,24 +32,15 @@ class MetadataExtractor extends AbstractImporterActor<ImporterMessage> {
     Actor downstream
     Actor errors
 
-    @Override @SuppressWarnings('CatchException')
+    @Autowired PhotoMetadataExtractor photoMetadataExtractor
+
+    @Override
     protected void handleMessage(final ImporterMessage input) {
         try {
-            def meta = new Metadata()
+            downstream << ImporterMessage.create(input, photoMetadataExtractor.extract(input.file))
 
-            def extractor = new ImageMetadataExtractor(meta)
-            extractor.parseJpeg(input.file)
-
-            def extracted = [:]
-
-            meta.names().each { name ->
-                extracted[name] = meta.get(name)
-            }
-
-            downstream << ImporterMessage.create(input, extracted.asImmutable())
-
-        } catch (Exception ex) {
-            errors << ImporterErrorMessage.fromMessage(input, ex.message)
+        } catch (PhotoMetadataException pme) {
+            errors << ImporterErrorMessage.fromMessage(input, pme.message)
         }
     }
 }

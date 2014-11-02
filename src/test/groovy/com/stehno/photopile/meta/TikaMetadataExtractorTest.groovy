@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Christopher J. Stehno
+ * Copyright (c) 2014 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,13 @@ package com.stehno.photopile.meta
 import org.junit.Before
 import org.junit.Test
 
-class CommonsImagingMetadataExtractorTest {
+class TikaMetadataExtractorTest {
 
     private PhotoMetadataExtractor metadataExtractor
 
     @Before
     void before() {
-        metadataExtractor = new CommonsImagingMetadataExtractor()
+        metadataExtractor = new TikaMetadataExtractor()
     }
 
     @Test
@@ -38,8 +38,8 @@ class CommonsImagingMetadataExtractorTest {
         assert '07/23/2010 18:50:37' == metaData.dateTaken.format('MM/dd/yyyy HH:mm:ss')
         assert 2048 == metaData.width
         assert 1536 == metaData.height
-        assert 33.09668333333334 == metaData.latitude
-        assert -96.75354444444444 == metaData.longitude
-        assert !metaData.altitude
+        assert 33.096683 == metaData.latitude
+        assert -96.753544 == metaData.longitude
+        assert 196 == metaData.altitude
     }
 }

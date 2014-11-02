@@ -15,31 +15,52 @@
  */
 
 package com.stehno.photopile.meta
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+
+import groovy.transform.Immutable
+
 /**
  * Metadata extracted from the embedded photo image data.
  */
-@ToString(includeNames=true,ignoreNulls=true) @EqualsAndHashCode
-public class PhotoMetadata {
+@Immutable
+class PhotoMetadata {
 
     Date dateTaken
-    String cameraInfo
-    int width, height
-    Double latitude, longitude
+
+    String cameraMake
+    String cameraModel
+
+    int width
+    int height
+
+    Double latitude
+    Double longitude
+    Integer altitude
+
     String contentType
 
-    public void setSize( final int width, final int height ){
-        this.width = width
-        this.height = height
+    boolean hasCamera() {
+        cameraMake || cameraModel
     }
 
-    public void setLocation( final double latitude, final double longitude ){
-        this.latitude = latitude
-        this.longitude = longitude
-    }
-
-    public boolean hasLocation(){
+    boolean hasLocation() {
         latitude && longitude
+    }
+
+    PhotoMetadata plus(PhotoMetadata other) {
+        new PhotoMetadata(
+            dateTaken: (other.dateTaken ?: dateTaken),
+            cameraMake: (other.cameraMake ?: cameraMake),
+            cameraModel: (other.cameraModel ?: cameraModel),
+            width: (other.width ?: width),
+            height: (other.height ?: height),
+            latitude: (other.latitude ?: latitude),
+            longitude: (other.longitude ?: longitude),
+            altitude: (other.altitude ?: altitude),
+            contentType: (other.contentType ?: contentType)
+        )
+    }
+
+    static PhotoMetadata empty() {
+        new PhotoMetadata(null, null, null, 0, 0, null, null, null, null)
     }
 }

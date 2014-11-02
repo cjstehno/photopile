@@ -22,10 +22,10 @@ package com.stehno.photopile.meta
 interface PhotoMetadataExtractor {
 
     /**
-     * Extracts the metadata from the image content data and builds a PhotoMetadata instance.
+     * Extracts the metadata from the image content of the given file and builds a PhotoMetadata instance.
      *
-     * @param content the image content
+     * @param file the image file
      * @return a PhotoMetadata object populated with all available data
      */
-    PhotoMetadata extract( byte[] content )
+    PhotoMetadata extract(File file)
 }

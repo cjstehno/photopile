@@ -20,6 +20,7 @@ import static org.mockito.Mockito.verify
 
 import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.importer.msg.ImporterMessage
+import com.stehno.photopile.meta.PhotoMetadata
 import com.stehno.photopile.photo.PhotoService
 import com.stehno.photopile.photo.domain.CameraInfo
 import com.stehno.photopile.photo.domain.GeoLocation
@@ -61,31 +62,26 @@ class PhotoSaverTest {
     @Test void 'saving'() {
         File file = new File(FileValidatorTest.getResource('/test-image.jpg').toURI())
 
-        def attrs = [
-            'Date/Time Original' : '2010:07:23 18:50:37',
-            'Creation-Date'      : '2010-07-23T18:50:37',
-            'Date/Time Digitized': '2010:07:23 18:50:37',
-            'Make'               : 'HTC',
-            'Model'              : 'T-Mobile myTouch 3G',
-            'tiff:Make'          : 'HTC',
-            'tiff:Model'         : 'T-Mobile myTouch 3G',
-            'Image Height'       : '1536 pixels',
-            'Image Width'        : '2048 pixels',
-            'tiff:ImageWidth'    : '2048',
-            'tiff:ImageLength'   : '1536',
-            'geo:long'           : '-96.753544',
-            'geo:lat'            : '33.096683',
-            'GPS Altitude'       : '196 metres'
-        ].asImmutable()
+        def metadata = new PhotoMetadata(
+            dateTaken: Date.parse('yyyy:MM:dd HH:mm:ss', '2010:07:23 18:50:37'),
+            cameraMake: 'HTC',
+            cameraModel: 'T-Mobile myTouch 3G',
+            width: 2048,
+            height: 1536,
+            latitude: 33.096683,
+            longitude: -96.753544,
+            altitude: 196,
+            contentType: 'image/jpeg'
+        )
 
         def batch = 'somebatch'
 
         actors.withActors(1) {
-            saver << new ImporterMessage(batch, 123, file, attrs)
+            saver << new ImporterMessage(batch, 123, file, metadata)
         }
 
         errors.assertEmpty()
-        downstream.assertMessages(new ImporterMessage(batch, 123, file, attrs))
+        downstream.assertMessages(new ImporterMessage(batch, 123, file, metadata))
 
         verify(photoService).addPhoto(photoCaptor.capture(), imageCaptor.capture())
 
@@ -104,7 +100,7 @@ class PhotoSaverTest {
         assert imageCaptor.value.width == 2048
         assert imageCaptor.value.height == 1536
         assert imageCaptor.value.contentLength == file.length()
-        assert imageCaptor.value.contentType == 'image/jpg'
+        assert imageCaptor.value.contentType == 'image/jpeg'
         assert imageCaptor.value.content == file.bytes
     }
 }

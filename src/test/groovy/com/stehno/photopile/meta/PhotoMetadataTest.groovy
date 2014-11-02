@@ -17,51 +17,81 @@
 package com.stehno.photopile.meta
 
 import static com.stehno.photopile.test.EqualsAndHashTester.assertValidEqualsAndHash
-import static org.junit.Assert.assertEquals
 
 import org.junit.Test
 
 class PhotoMetadataTest {
 
-    @Test
-    void props(){
+    @Test void props() {
         def now = new Date()
 
         def photoMeta = new PhotoMetadata(
             dateTaken: now,
-            cameraInfo: 'Foo2000',
+            cameraMake: 'Foo',
+            cameraModel: 'Mega-2000',
             width: 100,
             height: 200,
             latitude: -10d,
             longitude: 24d,
+            altitude: 100,
             contentType: 'image/png'
         )
 
-        assertEquals now, photoMeta.dateTaken
-        assertEquals 'Foo2000', photoMeta.cameraInfo
-        assertEquals 100, photoMeta.width
-        assertEquals 200, photoMeta.height
-        assertEquals( -10d, photoMeta.latitude, 0.1d)
-        assertEquals 24d, photoMeta.longitude, 0.1d
-        assertEquals 'image/png', photoMeta.contentType
-
-        photoMeta.setLocation( 11d, 22d )
-        assertEquals( 11d, photoMeta.latitude, 0.1d)
-        assertEquals( 22d, photoMeta.longitude, 0.1d)
-
-        photoMeta.setSize( 800, 600 )
-        assertEquals 800, photoMeta.width
-        assertEquals 600, photoMeta.height
+        assert now == photoMeta.dateTaken
+        assert 'Foo' == photoMeta.cameraMake
+        assert 'Mega-2000' == photoMeta.cameraModel
+        assert 100 == photoMeta.width
+        assert 200 == photoMeta.height
+        assert -10d == photoMeta.latitude
+        assert 24d == photoMeta.longitude
+        assert photoMeta.altitude == 100
+        assert 'image/png' == photoMeta.contentType
     }
 
-    @Test
-    void equalsAndHash(){
+    @Test void additive() {
+        def now = new Date()
+
+        def pmA = new PhotoMetadata(
+            dateTaken: now,
+            cameraMake: 'Foo',
+            cameraModel: 'Mega-2000',
+            width: 100,
+            height: 200,
+            latitude: -10d,
+            longitude: 24d,
+            altitude: 100,
+            contentType: 'image/png'
+        )
+
+        def pmB = new PhotoMetadata(
+            width: 110,
+            height: 210,
+            contentType: 'image/jpeg'
+        )
+
+        def merged = pmA + pmB
+
+        assert merged == new PhotoMetadata(
+            dateTaken: now,
+            cameraMake: 'Foo',
+            cameraModel: 'Mega-2000',
+            width: 110,
+            height: 210,
+            latitude: -10d,
+            longitude: 24d,
+            altitude: 100,
+            contentType: 'image/jpeg'
+        )
+    }
+
+    @Test void equalsAndHash() {
         def now = new Date()
 
         def sames = [
             new PhotoMetadata(
                 dateTaken: now,
-                cameraInfo: 'Foo2000',
+                cameraMake: 'Foo',
+                cameraModel: 'Mega-2000',
                 width: 100,
                 height: 200,
                 latitude: -10d,
@@ -70,7 +100,8 @@ class PhotoMetadataTest {
             ),
             new PhotoMetadata(
                 dateTaken: now,
-                cameraInfo: 'Foo2000',
+                cameraMake: 'Foo',
+                cameraModel: 'Mega-2000',
                 width: 100,
                 height: 200,
                 latitude: -10d,
@@ -79,7 +110,8 @@ class PhotoMetadataTest {
             ),
             new PhotoMetadata(
                 dateTaken: now,
-                cameraInfo: 'Foo2000',
+                cameraMake: 'Foo',
+                cameraModel: 'Mega-2000',
                 width: 100,
                 height: 200,
                 latitude: -10d,
@@ -90,7 +122,8 @@ class PhotoMetadataTest {
 
         def diff = new PhotoMetadata(
             dateTaken: now,
-            cameraInfo: 'Blahpix',
+            cameraMake: 'Nicon',
+            cameraModel: 'Nopix',
             width: 100,
             height: 200,
             latitude: -10d,
@@ -98,6 +131,6 @@ class PhotoMetadataTest {
             contentType: 'image/jpg'
         )
 
-        assertValidEqualsAndHash( sames[0], sames[1], sames[2], diff )
+        assertValidEqualsAndHash(sames[0], sames[1], sames[2], diff)
     }
 }
