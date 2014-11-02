@@ -25,43 +25,27 @@ import org.codehaus.groovy.control.CompilerConfiguration
  * The DSL is basically a Groovy file with the following syntax:
  *
  * <pre>
- *     mappings {
- *         map( 'SQL_A' ){
- *             'select * from something'
- *         }
- *
- *         map( 'SQL_B' ){
- *             return { foo->
+ *     mappings {*         map( 'SQL_A' ){*             'select * from something'
+ *}*
+ *         map( 'SQL_B' ){*             return { foo->
  *                 "select a,b,c from $foo"
- *             }
- *         }
- *
- *         map( 'SQL_C' ){
- *             "${sql('SQL_A')} where a=?"
- *         }
- *     }
- * </pre>
+ *}*}*
+ *         map( 'SQL_C' ){*             "${sql('SQL_A')} where a=?"
+ *}*}* </pre>
  *
  * It is a Groovy script so any valid Groovy is fair game.
  *
  * Mappings may also be created directly in code, using:
  *
  * <pre>
- *  def sqlMappings = new SqlMappings().mappings {
- *      map('alpha'){
- *          'select a from b where c=?'
- *      }
- *      map('bravo'){
- *          return { x->
+ *  def sqlMappings = new SqlMappings().mappings {*      map('alpha'){*          'select a from b where c=?'
+ *}*      map('bravo'){*          return { x->
  *              "select $x from y"
- *          }
- *      }
- *  }
- * </pre>
+ *}*}*}* </pre>
  */
 class SqlMappings {
 
-    private final mappings = [:]
+    private final sqlMappings = [:]
 
     /**
      * Maps a closure to a given key. The closure must return either a String or another closure that returns a string.
@@ -73,8 +57,8 @@ class SqlMappings {
      * @param key the mapping key
      * @param closure the mapped closure returning a String or another Closure
      */
-    void map( final key, final Closure closure ){
-        mappings[key] = closure()
+    void map(final key, final Closure closure) {
+        sqlMappings[key] = closure()
     }
 
     /**
@@ -84,8 +68,8 @@ class SqlMappings {
      * @param key the mapping key
      * @return a String or a Closure
      */
-    def mapping( final key ){
-        mappings[key]
+    def mapping(final key) {
+        sqlMappings[key]
     }
 
     /**
@@ -100,22 +84,20 @@ class SqlMappings {
      * @return
      */
     @Memoized
-    String sql( final key, final p0=null, final p1=null, final p2=null ){
+    String sql(final key, final p0 = null, final p1 = null, final p2 = null) {
         def mapped = mapping(key)
-        if( mapped instanceof Closure ){
-            if( p2 ){
+        if (mapped instanceof Closure) {
+            if (p2) {
                 return mapped(p0, p1, p2)
-            } else if( p1 ){
+            } else if (p1) {
                 return mapped(p0, p1)
-            } else if( p0 ){
+            } else if (p0) {
                 return mapped(p0)
-            } else {
-                return mapped()
             }
+            return mapped()
 
-        } else {
-            return (mapped as String)
         }
+        return (mapped as String)
     }
 
     /**
@@ -124,7 +106,7 @@ class SqlMappings {
      * @param closure the configuration closure containing map() calls
      * @return a configured SqlMappings object
      */
-    SqlMappings mappings( final Closure closure ){
+    SqlMappings mappings(final Closure closure) {
         closure.delegate = this
         closure()
         return this
@@ -136,15 +118,15 @@ class SqlMappings {
      * @param location classpath location of a gql file
      * @return the populated SqlMappings object
      */
-    static SqlMappings compile( final String location ){
+    static SqlMappings compile(final String location) {
         def script = new GroovyShell(
             new CompilerConfiguration(
-                scriptBaseClass:DelegatingScript.class.name
+                scriptBaseClass: DelegatingScript.name
             )
-        ).parse( SqlMappings.class.getResource(location).toURI() )
+        ).parse(SqlMappings.getResource(location).toURI())
 
         SqlMappings sqlMappings = new SqlMappings()
-        script.setDelegate( sqlMappings )
+        script.setDelegate(sqlMappings)
         script.run()
 
         return sqlMappings

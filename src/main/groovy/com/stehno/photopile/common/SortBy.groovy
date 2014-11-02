@@ -40,7 +40,7 @@ class SortBy {
             this.direction = direction
         }
 
-        public static Direction fromDirection( final String direction ){
+        static Direction fromDirection(final String direction) {
             def dir = values().find { it.direction.equalsIgnoreCase(direction) } as Direction
 
             notNull dir, "Unknown order direction: $direction"

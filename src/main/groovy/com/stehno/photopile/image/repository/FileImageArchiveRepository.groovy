@@ -56,7 +56,7 @@ class FileImageArchiveRepository implements ImageArchiveDao {
 
         } catch( IOException e ){
             // FIXME: better exception
-            throw new RuntimeException("Unable to save archive: ${e.message}", e );
+            throw new RuntimeException("Unable to save archive: ${e.message}", e)
         }
     }
 
@@ -71,7 +71,7 @@ class FileImageArchiveRepository implements ImageArchiveDao {
     }
 
     private Path resolvePhotoDirectory( final long photoId ) throws IOException {
-        Files.createDirectories archiveDirectory.getFile().toPath().resolve( "${(photoId / 100) as int}00" )
+        Files.createDirectories archiveDirectory.file.toPath().resolve("${(photoId / 100) as int}00")
     }
 
     private String resolveExtension( final String contentType ){

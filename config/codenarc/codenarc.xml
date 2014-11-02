@@ -79,7 +79,11 @@
         </rule-config>
     </ruleset-ref>
 
-    <ruleset-ref path='rulesets/security.xml'/>
+    <ruleset-ref path='rulesets/security.xml'>
+        <rule-config name="JavaIoPackageAccess">
+            <property name="enabled" value="false"/>
+        </rule-config>
+    </ruleset-ref>
 
     <ruleset-ref path='rulesets/serialization.xml'/>
 

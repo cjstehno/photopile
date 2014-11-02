@@ -33,6 +33,8 @@ import org.springframework.context.annotation.Configuration
 ])
 class ImporterConfig {
 
+    // FIXME: refactor the scaling to use actors and get rid of old message queue
+
     // TODO: pull this into a property
     private static final int THREAD_COUNT = 4
 

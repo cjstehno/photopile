@@ -15,6 +15,7 @@
  */
 
 package com.stehno.photopile.image.scaling
+
 import com.stehno.photopile.image.domain.ImageScale
 import groovy.transform.Immutable
 

@@ -53,7 +53,7 @@ final class FileSet {
  * Builder used to create an immutable file set, may be used directly or via the DSL (see FileSet.fileSet(Closure)).
  */
 class FileSetBuilder {
-    private final Set<File> files = new HashSet<>()
+    private final Set<File> files = [] as Set<File>
 
     void file( final String filePath ){
         file new File(filePath)

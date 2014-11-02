@@ -16,7 +16,12 @@
 
 package com.stehno.photopile.common
 
-public class WrappedCollection<T> {
+/**
+ * A collection of items with associated meta data attributes.
+ *
+ * @param < T >  the type of items being stored in the collection.
+ */
+class WrappedCollection<T> {
 
     private final Map<String, Object> meta = new HashMap<>()
     private final Collection<T> data
