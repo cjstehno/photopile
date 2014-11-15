@@ -45,15 +45,16 @@ class ImporterConfig {
         new DefaultPGroup(THREAD_COUNT)
     }
 
-    @Bean @Autowired ErrorCollector errorCollector() {
-        new ErrorCollector(
+    @Bean @Autowired ImportFinisher importFinisher() {
+        new ImportFinisher(
             parallelGroup: importerParallelGroup
         )
     }
 
-    @Bean @Autowired ImportFinisher importFinisher() {
-        new ImportFinisher(
-            parallelGroup: importerParallelGroup
+    @Bean @Autowired ErrorCollector errorCollector(final ImportFinisher finisher) {
+        new ErrorCollector(
+            parallelGroup: importerParallelGroup,
+            downstream: finisher
         )
     }
 

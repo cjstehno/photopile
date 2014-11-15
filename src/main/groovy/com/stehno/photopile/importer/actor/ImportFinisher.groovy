@@ -21,11 +21,14 @@ import groovy.util.logging.Slf4j
 import org.springframework.stereotype.Component
 
 /**
- * Created by cjstehno on 10/25/2014.
+ * FIXME: document
  */
 @Component
 @Slf4j
 class ImportFinisher extends AbstractImporterActor<ImporterMessage> {
+
+    // FIXME: fire some sort of message that the user can be eventually notified - so that they know when images are loaded
+    // at least just a web-based log of some sort for audit purposes (combined with errors)
 
     @Override
     protected void handleMessage(ImporterMessage input) {

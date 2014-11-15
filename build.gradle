@@ -110,20 +110,20 @@ run {
 
 codenarcMain {
     ignoreFailures false
+    configFile file('config/codenarc/codenarc-main.rules')
 
-    // TODO: these numbers need to come down
     maxPriority1Violations 0
-    maxPriority2Violations 30
-    maxPriority3Violations 60
+    maxPriority2Violations 10
+    maxPriority3Violations 10
 }
 
 codenarcTest {
     ignoreFailures true
+    configFile file('config/codenarc/codenarc-test.rules')
 
-    // TODO: work on these so they can be enabled - not as worried about tests
     maxPriority1Violations 0
-    maxPriority2Violations 5
-    maxPriority3Violations 10
+    maxPriority2Violations 10
+    maxPriority3Violations 20
 }
 
 jacocoTestReport {

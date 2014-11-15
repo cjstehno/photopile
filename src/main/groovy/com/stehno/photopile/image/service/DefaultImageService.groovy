@@ -21,7 +21,6 @@ import com.stehno.photopile.image.ImageDao
 import com.stehno.photopile.image.ImageService
 import com.stehno.photopile.image.domain.Image
 import com.stehno.photopile.image.domain.ImageScale
-import com.stehno.photopile.image.scaling.ImageScaleRequest
 import groovy.util.logging.Slf4j
 import org.apache.commons.lang.ArrayUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -48,9 +47,15 @@ class DefaultImageService implements ImageService {
 
         imageDao.create image, ImageScale.FULL
 
-        requestScaling image.photoId
-
         log.debug 'Image stored for photo ({}) with {} bytes.', image.photoId, image.contentLength
+    }
+
+    @Override
+    void scaleImage(final long photoId, final ImageScale scale) {
+        // FIXME: implement
+
+        log.debug 'ScalingRequest sent for photo {} at {} scale.', photoId, scale
+
     }
 
     @Override
@@ -74,26 +79,12 @@ class DefaultImageService implements ImageService {
 
         imageDao.update image, ImageScale.FULL
 
-        requestScaling image.photoId
-
         log.debug 'Image ({}) updated with {} bytes.', image.photoId, image.contentLength
     }
 
     @Override
     public void deleteImage( final long photoId ){
         imageDao.delete photoId
-    }
-
-    private requestScaling( final long photoId ){
-        (ImageScale.values() - ImageScale.FULL).each { final ImageScale scale ->
-            try {
-                imageScalingQueue.enqueue new ImageScaleRequest( photoId:photoId, scale:scale )
-
-                log.debug 'ScalingRequest sent for photo {} at {} scale.', photoId, scale
-            } catch( Exception ex ){
-                log.error 'Unable to enqueue scaling request for photo {} at {} scale.', photoId, scale
-            }
-        }
     }
 
     private void verifyImage( final Image image ){

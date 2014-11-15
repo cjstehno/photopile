@@ -15,7 +15,9 @@
  */
 package com.stehno.photopile.importer.actor
 
+import com.stehno.photopile.image.ImageService
 import com.stehno.photopile.image.domain.Image
+import com.stehno.photopile.image.domain.ImageScale
 import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import com.stehno.photopile.importer.msg.ImporterMessage
 import com.stehno.photopile.meta.PhotoMetadata
@@ -27,7 +29,6 @@ import com.stehno.photopile.photo.domain.Tag
 import groovy.util.logging.Slf4j
 import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
-
 /**
  * Saves the image metadata as a Photo and the image content as an Image.
  */
@@ -38,6 +39,7 @@ class PhotoSaver extends AbstractImporterActor<ImporterMessage> {
     Actor errors
 
     @Autowired private PhotoService photoService
+    @Autowired private ImageService imageService
 
     @Override @SuppressWarnings('CatchException')
     protected void handleMessage(final ImporterMessage input) {
@@ -70,7 +72,12 @@ class PhotoSaver extends AbstractImporterActor<ImporterMessage> {
             )
 
             long photoId = photoService.addPhoto(photo, image)
-            log.trace 'Created photo ({}) from file ({}).', photoId, input.file
+
+//            no, pull this actor into importer and remove the scaleImage method
+
+            (ImageScale.values() - ImageScale.FULL).each { final ImageScale scale ->
+                imageService.scaleImage( photoId, scale )
+            }
 
             downstream << input
 

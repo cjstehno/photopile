@@ -14,25 +14,33 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.importer.actor
+package com.stehno.photopile.image.actor
 
-import com.stehno.photopile.importer.msg.ImporterErrorMessage
 import groovy.util.logging.Slf4j
-import groovyx.gpars.actor.Actor
+import groovyx.gpars.actor.DefaultActor
+
+import javax.annotation.PostConstruct
 
 /**
- * Collects errors encountered by the importer system for aggregation and reporting.
+ * Created by cjstehno on 11/4/2014.
  */
 @Slf4j
-class ErrorCollector extends AbstractImporterActor<ImporterErrorMessage> {
-
-    Actor downstream
+class ImageScaler extends DefaultActor {
 
     @Override
-    protected void handleMessage(ImporterErrorMessage input) {
-        // TODO: something useful
-        log.warn 'Received message from user ({}) and file ({}) with error: {}', input.userId, input.payload, input.description
-
-        // FIXME: what kind of message should go to finisher? or should this be an end point that fires a notification?
+    protected final void act(){
+        loop {
+            react { M input ->
+                handleMessage input
+            }
+        }
     }
+
+    @PostConstruct
+    void init(){
+        start()
+        log.info 'Started.'
+    }
+
+    protected abstract void handleMessage( final M input )
 }

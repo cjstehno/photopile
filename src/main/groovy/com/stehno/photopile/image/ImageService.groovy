@@ -44,6 +44,17 @@ interface ImageService {
     void deleteImage( long photoId )
 
     /**
+     * Request that the image stored for the specified photoId be scaled to the specified scale factor and saved in the database.
+     * Any existing scaled copy for the image at the given scale factor is overwritten.
+     *
+     * The scaling operations should be done in an asynchronous background manner such that this method will return immediately.
+     *
+     * @param photoId the id of the photo whose image is to be scaled
+     * @param scale the scale to be generated
+     */
+    void scaleImage( long photoId, ImageScale scale )
+
+    /**
      * Finds the image for the photo with the given id at the specified scale. If no
      * image exists for the specified scale, the next FULL scale image will be retrieved.
      *
