@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.1.8.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.1.9.RELEASE'
     }
 }
 
@@ -21,7 +21,7 @@ compileJava {
     targetCompatibility = javaVersion
 }
 
-mainClassName = 'com.stehno.photopile.config.AppConfig'
+mainClassName = 'com.stehno.photopile.config.PhotopileApplication'
 
 compileGroovy {
     groovyOptions.optimizationOptions.indy = false
@@ -80,7 +80,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '2.2'
 }
 
 war {
@@ -108,8 +108,12 @@ run {
     jvmArgs '-Xverify:none'
 }
 
+codenarc {
+    toolVersion = '0.22'
+}
+
 codenarcMain {
-    ignoreFailures false
+    ignoreFailures true
     configFile file('config/codenarc/codenarc-main.rules')
 
     maxPriority1Violations 0
