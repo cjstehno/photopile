@@ -16,6 +16,7 @@
 
 package com.stehno.photopile.test
 
+import com.stehno.photopile.test.config.TestConfig
 import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import groovy.transform.AnnotationCollector
 import org.junit.runner.RunWith
@@ -30,7 +31,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
  */
 @org.junit.experimental.categories.Category(Integration)
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration
+@ContextConfiguration(classes = [TestConfig])
 @TestExecutionListeners([
     DatabaseTestExecutionListener,
     DependencyInjectionTestExecutionListener,

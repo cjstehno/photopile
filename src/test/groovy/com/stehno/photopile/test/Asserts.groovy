@@ -51,4 +51,15 @@ class Asserts {
     static void assertToday( Date date ){
         assert DateUtils.isSameDay(new Date(), date)
     }
+
+    static void assertException(Closure operation) {
+        boolean caught = false
+        try {
+            operation()
+        } catch (ex) {
+            caught = true
+        } finally {
+            assert caught
+        }
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Christopher J. Stehno
+ * Copyright (c) 2014 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.common
+package com.stehno.photopile.domain
 
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import groovy.transform.Immutable
 
 /**
- * Defines pagination input parameters.
+ *  Represents the map location of a Photo.
  */
-@ToString(includeNames=true) @EqualsAndHashCode
-class PageBy {
+@Immutable
+class GeoLocation {
 
-    /**
-     * The zero-based starting index.
-     */
-    int start
-
-    /**
-     * The maximum number of records to be retrieved.
-     */
-    int limit
+    double latitude
+    double longitude
+    int altitude
 }

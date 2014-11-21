@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Christopher J. Stehno
+ * Copyright (c) 2014 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile
+package com.stehno.photopile.domain
+
+import groovy.transform.Immutable
 
 /**
- *
+ * Representation of the type of camera used to take a photo.
  */
-class Fixtures {
+@Immutable
+class CameraInfo {
 
-    static final String FIX_A = 'A'
-    static final String FIX_B = 'B'
-    static final String FIX_C = 'C'
-    static final String FIX_D = 'D'
-    static final String FIX_E = 'E'
-    static final String FIX_F = 'F'
-    static final String FIX_G = 'G'
+    String make
+    String model
+
+    String getName() {
+        "$make $model"
+    }
 }

@@ -1,8 +1,8 @@
 package com.stehno.gsm
 
-import static com.stehno.photopile.common.SortBy.Direction.ASCENDING
+import static com.stehno.photopile.service.SortBy.Direction.ASCENDING
 
-import com.stehno.photopile.common.SortBy
+import com.stehno.photopile.service.SortBy
 import org.junit.Test
 
 class SqlMappingsTest {

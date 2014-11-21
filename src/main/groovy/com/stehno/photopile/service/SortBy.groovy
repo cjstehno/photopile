@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.common
+package com.stehno.photopile.service
 
 import static org.springframework.util.Assert.notNull
 
+import groovy.transform.Canonical
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 /**
  * Defines sorting parameters.
  */
-@ToString(includeNames=true) @EqualsAndHashCode
+@ToString(includeNames = true) @EqualsAndHashCode @Canonical
 class SortBy {
 
     /**
@@ -36,7 +37,7 @@ class SortBy {
 
         final String direction
 
-        private Direction( final String direction ){
+        private Direction(final String direction) {
             this.direction = direction
         }
 
@@ -50,7 +51,7 @@ class SortBy {
     }
 
     /**
-     * The field to be sorted, generally a property name (not database column name).
+     * The field to be sorted, a property name (not database column name).
      */
     String field
 
@@ -59,7 +60,7 @@ class SortBy {
      */
     Direction direction = Direction.ASCENDING
 
-    String toOrderString( final boolean includeField = true ){
+    String toOrderString(final boolean includeField = true) {
         "${includeField ? field : ''} ${direction.direction}"
     }
 }

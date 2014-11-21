@@ -16,3 +16,51 @@
 -   investigate actuator use
 
 groovydoc, javadoc, coverage, codenarc
+
+
+Photos
+
+	POST /photo - add a new photo
+		- image content and desired meta data including tags, albums
+		- specified meta data will override any image metadata
+
+	PUT /photo/{photoid} - update existing photo (may include image)
+
+	GET /photo/{photoid}/image/{scale} - get image content for photo at scale
+
+	GET /photo/{photoid} - get photo data (not image) for photo
+
+	GET /photo[?offset={}&limit={}] - list photos (no images) with optional page offset/limit
+
+	DELETE /photo/{photoid} - mark a photo and its images as "archived"
+
+Albums
+
+	POST /album - add a new album
+		- content is data
+
+	PUT /album/{albumid} - update existign album
+
+	GET /album/{albumid} - get data for a specific album
+
+	GET /album/{albumid}/photos[?offset={}&limit={}] - retrieve the photos for a specified album
+
+	GET /album[?offset={}&limit={}] - list albums with optional page offset/limit
+
+	DELETE /album/{albumid} - delete an album (not contents)
+
+Tags
+
+	POST /tag/{category}/{name} - add a new tag
+
+	PUT /tag/{tagid}/{category}/{name}
+
+	GET /tag/{tagid} - get data for a specific tag
+
+	GET /tag/{tagids}/photos[?offset={}&limit={}] - tagids is comma-separated tagids to collect unique set of photos
+
+	GET /tag[?offset={}&limit={}] - list tags with optional page offset/limit
+
+	DELETE /tag/{tagid} - delete a tag (not contents)
+
+

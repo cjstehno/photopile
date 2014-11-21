@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.config
+package com.stehno.photopile
 
-import com.stehno.photopile.security.SecurityConfig
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.Import
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
@@ -33,8 +30,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  */
 @Configuration
 @EnableAutoConfiguration
-@Import([DataSourceConfig, SecurityConfig, /*PhotoConfig, ImageConfig*/])
-@ComponentScan(['com.stehno.photopile.controller'])
+//@Import([DataSourceConfig, SecurityConfig, /*PhotoConfig, ImageConfig*/])
+//@ComponentScan(['com.stehno.photopile.controller'])
 class PhotopileApplication extends WebMvcConfigurerAdapter {
 
     @Override

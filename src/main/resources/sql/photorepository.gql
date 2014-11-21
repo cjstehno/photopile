@@ -1,121 +1,36 @@
-import static com.stehno.photopile.photo.dto.TaggedAs.Grouping.ALL
-import static com.stehno.photopile.photo.repository.JdbcPhotoRepository.Sql.*
+import static com.stehno.photopile.repository.JdbcPhotoRepository.Sql.*
 
 mappings {
 
     // fragments
 
-    map( '_ORDERING_' ){
-        return { sortOrder->
-            "order by ${sortOrder.toOrderString()}, id ${sortOrder.toOrderString(false)}"
-        }
-    }
-
-    map( '_WITHIN_' ){
-        'where p.geo_latitude >= ? and p.geo_latitude <= ? and p.geo_longitude >= ? and p.geo_longitude <= ?'
-    }
-
-    map( '_OFFSET_' ){
-        'offset ? limit ?'
-    }
-
     // statements
 
-    map( INSERT ){
+    map(INSERT) {
         '''insert into photos (name,description,camera_make,camera_model,date_uploaded,date_taken,geo_longitude,geo_latitude,geo_altitude)
             values (?,?,?,?,?,?,?,?,?)
             returning id,version,date_updated
         '''
     }
 
+    map(INSERT_TAGS) {
+        'insert into photo_tags (photo_id,tag_id) values (?,?)'
+    }
+
     map( SELECT ){
         '''select
-            p.id,p.version,p.name,p.description,p.camera_make,p.camera_model,p.date_uploaded,p.date_updated,p.date_taken,
-            p.geo_longitude,p.geo_latitude,p.geo_altitude,t.id as tag_id,t.name tag_name
+            p.id,p.version,p.name,p.description,
+            p.camera_make,p.camera_model,
+            p.date_uploaded,p.date_updated,p.date_taken,
+            p.geo_longitude,p.geo_latitude,p.geo_altitude,
+            t.id as tag_id,t.version as tag_version,t.category as tag_category,t.name tag_name
            from photos p
                 left outer join photo_tags pt on pt.photo_id=p.id
                 left outer join tags t on t.id=pt.tag_id
         '''
     }
 
-    map( FETCH ){
+    map(RETRIEVE) {
         "${sql(SELECT)} where p.id=?"
-    }
-
-    map( UPDATE ){
-        '''update photos
-            set
-                version=version+1,
-                name=?,
-                description=?,
-                camera_make=?,
-                camera_model=?,
-                date_uploaded=?,
-                date_taken=?,
-                date_updated=now(),
-                geo_longitude=?,
-                geo_latitude=?,
-                geo_altitude=?
-            where id=? and version=?
-            returning id,version,date_updated
-        '''
-    }
-
-    map( COUNT ){
-        'select count(*) from photos'
-    }
-
-    map( DELETE ){
-        'delete from photos where id=?'
-    }
-
-    map( SELECT_SORTED ){
-        return { sortOrder ->
-            "${sql(SELECT)} ${sql('_ORDERING_', sortOrder)}"
-        }
-    }
-
-    map( SELECT_WITHIN ){
-        "${sql(SELECT)} ${sql('_WITHIN_')}"
-    }
-
-    map( SELECT_ID_SORTED_LIMITED ){
-        return { sortOrder->
-            "select id from photos ${sql('_ORDERING_', sortOrder)} ${sql('_OFFSET_')}"
-        }
-    }
-
-    map( SELECT_IDS ){
-        return { ids, ordered->
-            "${sql(SELECT)} where p.id in ($ids) ${sql('_ORDERING_', ordered)}"
-        }
-    }
-
-    map( TAG_LIST ){
-        'select distinct(tag) from photo_tags order by tag'
-    }
-
-    map( CLEAR_TAGS ){
-        'delete from photo_tags where photo_id=?'
-    }
-
-    map( INSERT_TAGS ){
-        'insert into photo_tags (photo_id,tag_id) values (?,?)'
-    }
-
-    map( TAGGED_AS ){
-        return { tagged->
-            tagged.tags.collect { t->
-                '(select p.id from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)'
-            }.join( tagged.grouping == ALL ? ' intersect distinct ' : ' union distinct ' )
-        }
-    }
-
-    map( TAGGED_AS_ORDERED ){
-        return { tagged, sorted->
-            tagged.tags.collect { t->
-                "(select p.id,p.${sorted.field} from photos p left outer join photo_tags pt on pt.photo_id=p.id left outer join tags t on t.id=pt.tag_id where t.name=?)"
-            }.join( tagged.grouping == ALL ? ' intersect distinct ' : ' union distinct ' ) + "${sql('_ORDERING_', sorted)} ${sql('_OFFSET_')}"
-        }
     }
 }
