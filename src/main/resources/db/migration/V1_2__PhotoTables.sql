@@ -1,4 +1,3 @@
-CREATE SEQUENCE hibernate_sequence;
 
 CREATE TABLE photos (
   id            BIGINT NOT NULL PRIMARY KEY,

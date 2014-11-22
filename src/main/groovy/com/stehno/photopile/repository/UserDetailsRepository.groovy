@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Christopher J. Stehno
+ * Copyright (c) 2014 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,15 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.fixtures
+package com.stehno.photopile.repository
+
+import com.stehno.photopile.domain.PhotopileUserDetails
+import org.springframework.data.repository.CrudRepository
 
 /**
- *
+ * Repository providing access to UserDetails.
  */
-public enum Fixtures {
+interface UserDetailsRepository extends CrudRepository<PhotopileUserDetails, Long> {
 
-    FIX_A,
-    FIX_B,
-    FIX_C,
-    FIX_D,
-    FIX_E,
-    FIX_F,
-    FIX_G
-
-    static boolean bool(Fixtures fix) {
-        !(fix.ordinal() % 2)
-    }
+    PhotopileUserDetails findFirstByUsername(String username)
 }

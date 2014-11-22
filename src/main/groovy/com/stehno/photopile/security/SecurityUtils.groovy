@@ -32,18 +32,4 @@ class SecurityUtils {
     public static String currentUsername(){
         ((UserDetails)SecurityContextHolder.context.authentication.principal).username;
     }
-
-    /**
-     * Used to determine whether or not the current user has the specified role.
-     *
-     * @param role the role being tested
-     * @return true, if the user has the role
-     */
-    public static boolean hasRole( final role ){
-        // FIXME: reimplement with spring security defaults
-        return false
-//        SecurityContextHolder.context.authentication.authorities.find { auth->
-//            auth.authority == role.fullName()
-//        }
-    }
 }

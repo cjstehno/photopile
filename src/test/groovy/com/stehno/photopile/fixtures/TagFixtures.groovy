@@ -25,18 +25,18 @@ import com.stehno.photopile.domain.Tag
  */
 class TagFixtures {
 
-    static String tagCategory(String fixId) {
-        "Category-$fixId"
+    static String tagCategory(Fixtures fix) {
+        "Category-${fix.name()}"
     }
 
-    static String tagName(String fixId) {
-        "Name-$fixId"
+    static String tagName(Fixtures fix) {
+        "Name-${fix.name()}"
     }
 
-    static tagFixtureFor(String fixId) {
+    static tagFixtureFor(Fixtures fix) {
         [
-            category: tagCategory(fixId),
-            name    : tagName(fixId)
+            category: tagCategory(fix),
+            name    : tagName(fix)
         ]
     }
 
@@ -46,8 +46,9 @@ class TagFixtures {
      * @param tag the tag
      * @param fixId the fixture id
      */
-    static void assertTagFixture(final Tag tag, final String fixId = FIX_A) {
-        assert tag.category == tagCategory(fixId)
-        assert tag.name == tagName(fixId)
+    static void assertTagFixture(final Tag tag, final Fixtures fix = FIX_A) {
+        assert tag.category == tagCategory(fix)
+        assert tag.name == tagName(fix)
+        assert tag.label == "${tagCategory(fix)}:${tagName(fix)}"
     }
 }

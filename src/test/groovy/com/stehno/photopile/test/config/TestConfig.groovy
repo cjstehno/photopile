@@ -29,7 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableJpaRepositories(basePackages = ['com.stehno.photopile.repository'])
 @EntityScan(basePackages = ['com.stehno.photopile.domain'])
 @ComponentScan(basePackages = [
-    'com.stehno.photopile.repository'
+    'com.stehno.photopile.repository', 'com.stehno.photopile.service'
 ])
 @ActiveProfiles(['test'])
 class TestConfig {

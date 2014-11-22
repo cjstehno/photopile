@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Christopher J. Stehno
+ * Copyright (c) 2014 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.fixtures
+package com.stehno.photopile.domain
+
+import org.springframework.security.core.GrantedAuthority
+
+import javax.persistence.*
 
 /**
- *
+ * Created by cjstehno on 11/22/2014.
  */
-public enum Fixtures {
+@Entity @Table(name = 'authorities')
+class UserAuthority implements GrantedAuthority {
 
-    FIX_A,
-    FIX_B,
-    FIX_C,
-    FIX_D,
-    FIX_E,
-    FIX_F,
-    FIX_G
+    @Id @GeneratedValue long id
 
-    static boolean bool(Fixtures fix) {
-        !(fix.ordinal() % 2)
-    }
+    @Column(length = 50) String authority
 }
