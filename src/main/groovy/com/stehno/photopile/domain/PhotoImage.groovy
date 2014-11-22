@@ -27,7 +27,7 @@ import javax.persistence.*
 class PhotoImage {
 
     @Id @GeneratedValue long id
-    @Version long version
+    @Version Long version
 
     ImageScale scale
     int width

@@ -33,7 +33,18 @@ interface PhotoService {
      * @param image the photo image object to be associated with the photo
      * @return the newly created photo object with all populated data
      */
-    Photo create(final Photo photo, final PhotoImage image)
+    Photo create(final URI contentLocation) // TODO: allow meta info override - this method sedns to actors?
+    // void createAsync() ?
+
+    /*
+        come up with an import controller
+        might not need services per-se
+
+        need a means of creating a photo async and sync (createAsync and create)
+
+        provide a PhotoInfo dto type object that allows overriding of some photo/image meta data
+        start from controller layer as transactional, prob wont need much in services
+     */
 
     /**
      * Updates an existing photo with the contents of the incoming Photo object. The image content itself is not modified.

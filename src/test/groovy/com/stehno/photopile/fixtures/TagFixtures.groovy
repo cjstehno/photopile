@@ -49,6 +49,7 @@ class TagFixtures {
     static void assertTagFixture(final Tag tag, final Fixtures fix = FIX_A) {
         assert tag.category == tagCategory(fix)
         assert tag.name == tagName(fix)
+
         assert tag.label == "${tagCategory(fix)}:${tagName(fix)}"
     }
 }

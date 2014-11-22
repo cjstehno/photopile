@@ -27,7 +27,7 @@ import javax.persistence.*
 class Photo {
 
     @Id @GeneratedValue long id
-    @Version long version
+    @Version Long version
 
     @Column(length = 50) String name
     @Column(length = 2000) String description

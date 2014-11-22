@@ -24,5 +24,11 @@ import org.springframework.data.repository.CrudRepository
  */
 interface UserDetailsRepository extends CrudRepository<PhotopileUserDetails, Long> {
 
+    /**
+     * Retrieves the first user with the specified username - there should only be one.
+     *
+     * @param username the username
+     * @return the user, or null
+     */
     PhotopileUserDetails findFirstByUsername(String username)
 }

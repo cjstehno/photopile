@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.domain
+package com.stehno.photopile.repository
 
-import org.springframework.security.core.GrantedAuthority
-
-import javax.persistence.*
+import com.stehno.photopile.domain.UserAuthority
+import org.springframework.data.repository.CrudRepository
 
 /**
  * Created by cjstehno on 11/22/2014.
  */
-@Entity @Table(name = 'authorities')
-class UserAuthority implements GrantedAuthority {
+interface UserAuthorityRepository extends CrudRepository<UserAuthority, Long> {
 
-    static final String AUTHORITY_ADMIN = 'ADMIN'
-
-    @Id @GeneratedValue long id
-
-    @Column(length = 50) String authority
+    UserAuthority findFirstByAuthority(String authority)
 }

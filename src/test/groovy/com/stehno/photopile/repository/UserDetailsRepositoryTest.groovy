@@ -16,62 +16,117 @@
 
 package com.stehno.photopile.repository
 
+import static com.stehno.photopile.domain.UserAuthority.AUTHORITY_ADMIN
 import static com.stehno.photopile.fixtures.Fixtures.FIX_A
 import static com.stehno.photopile.fixtures.Fixtures.FIX_B
-import static com.stehno.photopile.fixtures.UserFixtures.assertUserFixture
-import static com.stehno.photopile.fixtures.UserFixtures.userFixtureFor
+import static com.stehno.photopile.fixtures.UserFixtures.*
 
 import com.stehno.photopile.domain.PhotopileUserDetails
+import com.stehno.photopile.domain.UserAuthority
 import com.stehno.photopile.fixtures.Fixtures
 import com.stehno.photopile.test.config.TestConfig
+import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener
+import org.springframework.test.jdbc.JdbcTestUtils
 import org.springframework.transaction.annotation.Transactional
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes = [TestConfig])
+@TestExecutionListeners([
+    DatabaseTestExecutionListener,
+    DependencyInjectionTestExecutionListener,
+    TransactionalTestExecutionListener
+])
 class UserDetailsRepositoryTest {
 
     /*
-        The pre-configured user is not available during testing, since the database is cleaned out with each run; therefore, users will need
-        to be created as needed for testing - this is probably the best course of action anyway to avoid having hard-coded constructs around
-        the default admin user.
+        Since the database is cleaned with each test, the pre-populated users and authorities are not available.
      */
 
+    static TABLES = ['user_authorities', 'users', 'authorities']
+
     @Autowired private UserDetailsRepository userDetailsRepository
+    @Autowired private UserAuthorityRepository userAuthorityRepository
+    @Autowired private JdbcTemplate jdbcTemplate
 
     @Test @Transactional void 'simple create'() {
         def user = createUser()
 
-        assert user.userId
-        assert user.version == 1
+        assert user.id
+        assert user.version == 0
 
         assertUserFixture user
+        assertAuthority user, AUTHORITY_ADMIN
 
         assert userDetailsRepository.count() == 1
     }
 
     @Test @Transactional void 'create and update'() {
-        def user = createUser()
-
-        assertUserFixture user
+        def existingUser = createUser()
 
         def modified = new PhotopileUserDetails(userFixtureFor(FIX_B))
-        modified.userId = user.userId
-        modified.version = user.version
+        modified.id = existingUser.id
+        modified.version = existingUser.version
 
         def updated = userDetailsRepository.save(modified)
 
         assertUserFixture updated, FIX_B
+        assert !updated.authorities
 
         assert userDetailsRepository.count() == 1
+
+        userDetailsRepository.findOne(existingUser.id).version == 1
+    }
+
+    @Test @Transactional void 'find: by username'() {
+        createUser()
+
+        def user = userDetailsRepository.findFirstByUsername(userName())
+        assert user.id
+        assert user.version == 0
+        assertUserFixture user
+    }
+
+    @Test @Transactional void 'delete: ensure clean'() {
+        def user = createUser()
+
+        assert userDetailsRepository.count() == 1
+
+        userDetailsRepository.delete(user.id)
+
+        assert userDetailsRepository.count() == 0
+        assert userAuthorityRepository.count() == 1
+        assert JdbcTestUtils.countRowsInTable(jdbcTemplate, 'user_authorities') == 0
+    }
+
+    @Transactional
+    private UserAuthority createAuthority(String auth) {
+        userAuthorityRepository.save(new UserAuthority(authority: auth))
     }
 
     @Transactional
     private PhotopileUserDetails createUser(final Fixtures fix = FIX_A) {
-        userDetailsRepository.save(new PhotopileUserDetails(userFixtureFor(fix)))
+        createAuthority(AUTHORITY_ADMIN)
+
+        def details = new PhotopileUserDetails(userFixtureFor(fix))
+
+        details.authorities.add(userAuthorityRepository.findFirstByAuthority(AUTHORITY_ADMIN))
+
+        userDetailsRepository.save(details)
+    }
+
+    private static void assertAuthority(PhotopileUserDetails user, String... auth) {
+        assert user.authorities.size() == auth.length
+        auth.eachWithIndex { a, idx ->
+            assert user.authorities[idx].authority == a
+        }
     }
 }

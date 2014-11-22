@@ -29,10 +29,13 @@ import javax.persistence.*
 class Tag {
 
     @Id @GeneratedValue long id
-    @Version long version
+    @Version Long version
 
     @Column(length = 20) String category
     @Column(length = 40) String name
+
+    @ManyToMany(mappedBy = 'tags', targetEntity = Photo)
+    Set<Photo> photos = [] as Set<Photo>
 
     String getLabel() {
         "$category:$name"

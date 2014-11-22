@@ -5,7 +5,7 @@
   this will need to change.
 */
 
-INSERT INTO users (userid, version, username, password, enabled) VALUES (
+INSERT INTO users (id, version, username, password, enabled) VALUES (
   1,
   1,
   'admin',
@@ -15,7 +15,4 @@ INSERT INTO users (userid, version, username, password, enabled) VALUES (
 
 INSERT INTO authorities (id, authority) VALUES (2, 'ADMIN');
 
-INSERT INTO user_authorities (userid, authority_id) VALUES (
-  1,
-  2
-);
+INSERT INTO user_authorities (user_id, authority_id) VALUES (1, 2);

@@ -16,6 +16,7 @@
 
 package com.stehno.photopile.domain
 
+import groovy.transform.Canonical
 import groovy.transform.ToString
 
 import javax.persistence.Column
@@ -24,7 +25,7 @@ import javax.persistence.Embeddable
 /**
  *  Represents the map location of a Photo.
  */
-@Embeddable @ToString(includeNames = true)
+@Embeddable @ToString(includeNames = true) @Canonical
 class GeoLocation {
 
     @Column(name = 'geo_latitude') double latitude

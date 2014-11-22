@@ -3,13 +3,14 @@ package com.stehno.photopile.domain
 import org.springframework.security.core.userdetails.UserDetails
 
 import javax.persistence.*
+
 /**
  * Custom UserDetails implementation for the Photopile application.
  */
 @Entity @Table(name = 'users')
 class PhotopileUserDetails implements UserDetails {
 
-    @Id @GeneratedValue long userId
+    @Id @GeneratedValue long id
     @Version Long version
 
     @Column(length = 25, unique = true) String username
@@ -20,7 +21,12 @@ class PhotopileUserDetails implements UserDetails {
     boolean credentialsExpired
     boolean accountLocked
 
-    @OneToMany @JoinColumn(name = 'userid')
+    @OneToMany
+    @JoinTable(
+        name = 'user_authorities',
+        joinColumns = @JoinColumn(name = 'user_id'),
+        inverseJoinColumns = @JoinColumn(name = 'authority_id')
+    )
     List<UserAuthority> authorities = [] as List<UserAuthority>
 
     @Override

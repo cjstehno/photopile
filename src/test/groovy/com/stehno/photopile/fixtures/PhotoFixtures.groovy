@@ -27,29 +27,9 @@ import com.stehno.photopile.domain.Photo
  */
 class PhotoFixtures {
 
-    static final String DATE_TAKEN_FORMAT = 'MM/dd/yyyy HH:mm'
+    private static final long BASE_TIME = System.currentTimeMillis() - Integer.MAX_VALUE
 
-    static final DATE_TAKEN_VALUES = [
-        (FIX_A): Date.parse(DATE_TAKEN_FORMAT, '10/21/2010 09:45'),
-        (FIX_B): Date.parse(DATE_TAKEN_FORMAT, '10/22/2010 08:45'),
-        (FIX_C): Date.parse(DATE_TAKEN_FORMAT, '10/23/2010 07:45'),
-        (FIX_D): Date.parse(DATE_TAKEN_FORMAT, '10/24/2010 10:45'),
-        (FIX_E): Date.parse(DATE_TAKEN_FORMAT, '10/25/2010 11:45'),
-        (FIX_F): Date.parse(DATE_TAKEN_FORMAT, '10/26/2010 12:45'),
-        (FIX_G): Date.parse(DATE_TAKEN_FORMAT, '10/27/2010 06:45')
-    ]
-
-    static final DATE_UPLOADED_VALUES = [
-        (FIX_A): Date.parse(DATE_TAKEN_FORMAT, '10/22/2010 09:45'),
-        (FIX_B): Date.parse(DATE_TAKEN_FORMAT, '10/23/2010 08:45'),
-        (FIX_C): Date.parse(DATE_TAKEN_FORMAT, '10/24/2010 07:45'),
-        (FIX_D): Date.parse(DATE_TAKEN_FORMAT, '10/25/2010 10:45'),
-        (FIX_E): Date.parse(DATE_TAKEN_FORMAT, '10/26/2010 11:45'),
-        (FIX_F): Date.parse(DATE_TAKEN_FORMAT, '10/27/2010 11:45'),
-        (FIX_G): Date.parse(DATE_TAKEN_FORMAT, '10/28/2010 11:45')
-    ]
-
-    static final LOCATION_VALUES = [
+    private static final LOCATION_VALUES = [
         (FIX_A): new GeoLocation(45.0d, -10.5d, 0),
         (FIX_B): new GeoLocation(30.0d, -30.0d, 5),
         (FIX_C): new GeoLocation(30.0d, 30.0d, 10),
@@ -59,37 +39,49 @@ class PhotoFixtures {
         (FIX_G): new GeoLocation(-34.0d, 34.0d, 30)
     ]
 
-    static String photoName(String fixId) { "Photo-$fixId" }
-
-    static String photoDescription(String fixId) { "Description-$fixId" }
-
-    static CameraInfo photoCamera(String fixId) {
-        new CameraInfo("Make-$fixId", "Model-$fixId")
+    static photoDateTaken(Fixtures fix = FIX_A) {
+        new Date(BASE_TIME + (fix.ordinal() * 3600000))
     }
 
-    static fixtureFor(String fixId) {
+    static photoDateUploaded(Fixtures fix = FIX_A) {
+        new Date(BASE_TIME + (fix.ordinal() * 360000))
+    }
+
+    static photoLocation(Fixtures fix = FIX_A) {
+        LOCATION_VALUES[fix]
+    }
+
+    static String photoName(Fixtures fixId = FIX_A) { "Photo-${fixId.name()}" }
+
+    static String photoDescription(Fixtures fixId = FIX_A) { "Description-${fixId.name()}" }
+
+    static CameraInfo photoCamera(Fixtures fixId = FIX_A) {
+        new CameraInfo("Make-${fixId.name()}", "Model-${fixId.name()}")
+    }
+
+    static photoFixtureFor(Fixtures fixId = FIX_A) {
         [
             name        : photoName(fixId),
             description : photoDescription(fixId),
             cameraInfo  : photoCamera(fixId),
-            dateTaken   : DATE_TAKEN_VALUES[fixId],
-            dateUploaded: DATE_UPLOADED_VALUES[fixId],
-            location    : LOCATION_VALUES[fixId]
+            dateTaken   : photoDateTaken(fixId),
+            dateUploaded: photoDateUploaded(fixId),
+            location    : photoLocation(fixId)
         ]
     }
 
-    static fixtureFor(String... fixIds) {
+    static photoFixturesFor(Fixtures... fixIds) {
         fixIds.collect {
-            fixtureFor it
+            photoFixtureFor it
         }
     }
 
-    static void assertPhotoFixture(final Photo photo, final String fixId = FIX_A) {
+    static void assertPhotoFixture(final Photo photo, final Fixtures fixId = FIX_A) {
         assert photo.name == photoName(fixId)
         assert photo.description == photoDescription(fixId)
         assert photo.cameraInfo == photoCamera(fixId)
-        assert photo.dateTaken == DATE_TAKEN_VALUES[fixId]
-        assert photo.dateUploaded == DATE_UPLOADED_VALUES[fixId]
-        assert photo.location == LOCATION_VALUES[fixId]
+        assert photo.dateTaken == photoDateTaken(fixId)
+        assert photo.dateUploaded == photoDateUploaded(fixId)
+        assert photo.location == photoLocation(fixId)
     }
 }

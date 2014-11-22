@@ -18,7 +18,10 @@ package com.stehno.photopile.service
 import com.stehno.photopile.domain.ImageScale
 import com.stehno.photopile.domain.Photo
 import com.stehno.photopile.domain.PhotoImage
+import com.stehno.photopile.repository.PhotoRepository
+import com.stehno.photopile.repository.TagRepository
 import groovy.util.logging.Slf4j
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 /**
@@ -27,19 +30,14 @@ import org.springframework.transaction.annotation.Transactional
 @Service @Slf4j @Transactional(readOnly = true)
 class DefaultPhotoService implements PhotoService {
 
-//    @Autowired private PhotoRepository photoRepository
-//    @Autowired private TagRepository tagRepository
+    @Autowired private PhotoRepository photoRepository
+    @Autowired private TagRepository tagRepository
 //    @Autowired private PhotoImageRepository photoImageRepository
 //    @Autowired private ImageArchiveRepository imageArchiveRepository
 
     @Override @Transactional(readOnly = false)
     Photo create(final Photo photo, final PhotoImage image) {
-        // create any unsaved tags
-//        photo.tags.collect { Tag t ->
-//            t.id ? t : tagRepository.create(t)
-//        }
-
-//        Photo savedPhoto = photoRepository.create(photo)
+        Photo savedPhoto = photoRepository.save(photo)
 
         // create an archive copy
 //        imageArchiveRepository.store(savedPhoto.id, image)
