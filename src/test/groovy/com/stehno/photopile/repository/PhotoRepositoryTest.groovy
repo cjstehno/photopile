@@ -15,31 +15,19 @@
  */
 
 package com.stehno.photopile.repository
-
 import com.stehno.photopile.domain.*
 import com.stehno.photopile.test.config.TestConfig
-import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
-import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
-import org.springframework.test.context.transaction.TransactionalTestExecutionListener
 import org.springframework.transaction.annotation.Transactional
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes = [TestConfig])
-@TestExecutionListeners([
-    DatabaseTestExecutionListener,
-    DependencyInjectionTestExecutionListener,
-    TransactionalTestExecutionListener
-])
 class PhotoRepositoryTest {
-
-    static TABLES = ['photos', 'photo_tags', 'tags']
 
     @Autowired private PhotoRepository photoRepository
     @Autowired private TagRepository tagRepository
@@ -48,6 +36,9 @@ class PhotoRepositoryTest {
     @Autowired private JdbcTemplate jdbcTemplate
 
     /// FIXME: test the hell out of deletes and cascade operations
+    // test the interactions and add any finders required
+    // probably test all layers with actual db - its all integration testing
+    // can I setup H2 for testing (maybe a prop so I can switch between h2 and psql as needed)
 
     /*   @Transactional
        void createPhoto(){
@@ -104,5 +95,26 @@ class PhotoRepositoryTest {
         savedAlbum.photos.add(loadedPhoto)
 
         println savedAlbum
+    }
+
+    @Test void somethingElse() {
+        Photo photo = new Photo(
+            name: 'Photo-2',
+            description: 'This is photo-2',
+            dateTaken: new Date(System.currentTimeMillis() - 100000),
+            dateUpdated: new Date(),
+            dateUploaded: new Date(),
+            cameraInfo: new CameraInfo(make: 'Test', model: 'TC-1000')
+        )
+
+        Tag tagA = new Tag(category: 'foo', name: 'bravo')
+        photo.tags.add(tagA)
+
+        PhotoImage image = new PhotoImage(scale: ImageScale.FULL, width: 100, height: 100, contentLength: 1000, contentType: 'image/jpeg')
+        photo.images[ImageScale.FULL] = image
+
+        def savedPhoto = photoRepository.save(photo)
+
+        assert savedPhoto.id
     }
 }
