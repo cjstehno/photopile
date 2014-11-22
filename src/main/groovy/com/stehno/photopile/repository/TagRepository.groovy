@@ -17,26 +17,11 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.domain.Tag
+import org.springframework.data.repository.CrudRepository
 
 /**
  * Repository for interacting with photo tags.
  */
-interface TagRepository {
+interface TagRepository extends CrudRepository<Tag, Long> {
 
-    /**
-     * Persists a new tag in the database. The incoming object will be updated with any missing properties (e.g. id).
-     *
-     * @param Tag the new tag to be created/
-     * @return a populated Tag object
-     */
-    Tag create(final Tag tag)
-
-    /**
-     * Deletes the tag with the given tag id from the database. Tags that are in use cannot be deleted; an exception will be thrown
-     * if an attempt is made to delete a tag that has associations.
-     *
-     * @param tagId the tag id
-     * @return true if a tag was actually deleted
-     */
-    boolean delete(final long tagId)
 }

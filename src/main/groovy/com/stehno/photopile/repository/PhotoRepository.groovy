@@ -17,26 +17,12 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.domain.Photo
+import org.springframework.data.repository.CrudRepository
 
 /**
  * Repository operations for working with photos.
  */
-interface PhotoRepository {
+interface PhotoRepository extends CrudRepository<Photo, Long> {
 
-    /**
-     * Creates a new photo in the database. Any tags associated with this new photo must already exist or the creation will fail.
-     * The incoming photo object will be updated after a successful creation.
-     *
-     * @param photo the photo to be saved
-     * @return the created photo (same as incoming)
-     */
-    Photo create(final Photo photo)
 
-    /**
-     * Retrieve the photo with the specified id from the database. If the photo does not exist, a null value will be returned.
-     *
-     * @param photoId the photo id
-     * @return the populated photo object or null
-     */
-    Photo retrieve(final long photoId)
 }

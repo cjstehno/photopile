@@ -15,7 +15,6 @@
  */
 
 package com.stehno.photopile.test
-
 import com.stehno.photopile.test.config.TestConfig
 import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import groovy.transform.AnnotationCollector
@@ -25,7 +24,6 @@ import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
-
 /**
  * Collected annotation used to denote Spring context integration tests.
  */

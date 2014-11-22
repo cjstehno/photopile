@@ -16,21 +16,35 @@
 
 package com.stehno.photopile.domain
 
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+
+import javax.persistence.*
 
 /**
  * Represents a photo album (named collection of photos) in the database.
  */
-@ToString(includeNames = true) @EqualsAndHashCode
+@Entity
+@Table(name = 'albums')
+@ToString(includeNames = true)
 class Album {
 
-    Long id
-    Long version
+    @Id @GeneratedValue long id
+    @Version long version
 
-    String name
-    String description
+    @Column(length = 50) String name
+    @Column(length = 2000, nullable = true) String description
 
     Date dateCreated
     Date dateUpdated
+
+    @ManyToMany(
+        targetEntity = Photo,
+        cascade = [CascadeType.ALL]
+    )
+    @JoinTable(
+        name = 'album_photos',
+        joinColumns = @JoinColumn(name = 'album_id'),
+        inverseJoinColumns = @JoinColumn(name = 'photo_id')
+    )
+    Set<Photo> photos = [] as Set<Photo>
 }

@@ -16,20 +16,23 @@
 
 package com.stehno.photopile.domain
 
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+
+import javax.persistence.*
 
 /**
  * Represents an informational tag in the database.
  */
-@ToString(includeNames = true) @EqualsAndHashCode
+@Entity
+@Table(name = 'tags', uniqueConstraints = [@UniqueConstraint(columnNames = ['category', 'name'])])
+@ToString(includeNames = true)
 class Tag {
 
-    Long id
-    Long version
+    @Id @GeneratedValue long id
+    @Version long version
 
-    String category
-    String name
+    @Column(length = 20) String category
+    @Column(length = 40) String name
 
     String getLabel() {
         "$category:$name"

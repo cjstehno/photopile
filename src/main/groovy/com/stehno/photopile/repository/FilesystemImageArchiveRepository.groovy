@@ -15,18 +15,12 @@
  */
 
 package com.stehno.photopile.repository
-
 import static java.lang.System.currentTimeMillis
-import static org.springframework.util.Assert.isTrue
 
 import com.stehno.photopile.domain.PhotoImage
 import groovy.util.logging.Slf4j
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Repository
-
-import javax.annotation.PostConstruct
-
 /**
  * Created by cjstehno on 11/16/2014.
  */
@@ -40,16 +34,18 @@ class FilesystemImageArchiveRepository implements ImageArchiveRepository {
      */
 
     // FIXME: need to make this a configurable property
-    @Value('${photopile.archive.root}') private File archiveRoot
-    @Value('${photopile.archive.directorySize}') private int directorySize = 100
+    /*@Value('${photopile.archive.root}')*/
+    private File archiveRoot
+    /*@Value('${photopile.archive.directorySize}')*/
+    private int directorySize = 100
 
-    @PostConstruct void init() {
+/*    @PostConstruct void init() {
         isTrue archiveRoot.exists() && archiveRoot.canWrite(), "The specified archive root ($archiveRoot) does not exist or is not writable."
 
         log.info 'Archiving to ({}) with {} images per directory.', archiveRoot, directorySize
 
         // TODO: generate a readme file if one is not present
-    }
+    }*/
 
     @Override
     void store(final long photoId, final PhotoImage image) {

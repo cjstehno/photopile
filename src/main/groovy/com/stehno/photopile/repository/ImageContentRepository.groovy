@@ -16,10 +16,9 @@
 
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.domain.PhotoImage
-import org.springframework.data.repository.CrudRepository
 /**
- * Created by cjstehno on 11/16/2014.
+ * Created by cjstehno on 11/21/2014.
  */
-interface PhotoImageRepository extends CrudRepository<PhotoImage, Long> {
+interface ImageContentRepository {
+
 }

@@ -16,20 +16,21 @@
 
 package com.stehno.photopile.domain
 
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
+
+import javax.persistence.*
 
 /**
  *  Represents Photo data in the database.
  */
-@ToString(includeNames = true) @EqualsAndHashCode
+@Entity @Table(name = 'photos') @ToString(includeNames = true)
 class Photo {
 
-    Long id
-    Long version
+    @Id @GeneratedValue long id
+    @Version long version
 
-    String name
-    String description
+    @Column(length = 50) String name
+    @Column(length = 2000) String description
 
     Date dateUploaded
     Date dateUpdated
@@ -38,5 +39,18 @@ class Photo {
     CameraInfo cameraInfo
     GeoLocation location
 
+    @ManyToMany(
+        targetEntity = Tag,
+        cascade = [CascadeType.ALL]
+    )
+    @JoinTable(
+        name = 'photo_tags',
+        joinColumns = @JoinColumn(name = 'photo_id'),
+        inverseJoinColumns = @JoinColumn(name = 'tag_id')
+    )
     Set<Tag> tags = [] as Set<Tag>
+
+    @OneToMany(mappedBy = "photo")
+    @MapKey(name = "scale")
+    Map<ImageScale, PhotoImage> images = [:] as Map<ImageScale, PhotoImage>
 }

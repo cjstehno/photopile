@@ -16,28 +16,24 @@
 
 package com.stehno.photopile.domain
 
-import static org.springframework.http.MediaType.IMAGE_JPEG
-
-import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-import org.springframework.http.MediaType
+
+import javax.persistence.*
 
 /**
  * Represents image content in the database.
- *
- * Note: the content-length is separate from the length of the content array so that the image information can be loaded without the content itself,
- * if needed.
  */
-@ToString(includeNames = true) @EqualsAndHashCode
+@Entity @Table(name = 'images') @ToString(includeNames = true)
 class PhotoImage {
 
-    Long version
+    @Id @GeneratedValue long id
+    @Version long version
 
+    ImageScale scale
     int width
     int height
     long contentLength
+    @Column(length = 50) String contentType
 
-    MediaType contentType = IMAGE_JPEG
-
-    byte[] content
+    @ManyToOne Photo photo
 }

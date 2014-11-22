@@ -16,15 +16,18 @@
 
 package com.stehno.photopile.domain
 
-import groovy.transform.Immutable
+import groovy.transform.ToString
+
+import javax.persistence.Column
+import javax.persistence.Embeddable
 
 /**
  *  Represents the map location of a Photo.
  */
-@Immutable
+@Embeddable @ToString(includeNames = true)
 class GeoLocation {
 
-    double latitude
-    double longitude
-    int altitude
+    @Column(name = 'geo_latitude') double latitude
+    @Column(name = 'geo_longitude') double longitude
+    @Column(name = 'geo_altitude') int altitude
 }

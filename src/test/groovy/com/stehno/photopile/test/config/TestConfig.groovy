@@ -15,24 +15,23 @@
  */
 
 package com.stehno.photopile.test.config
-
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.orm.jpa.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.datasource.DriverManagerDataSource
-import org.springframework.jdbc.support.lob.DefaultLobHandler
-import org.springframework.jdbc.support.lob.LobHandler
-import org.springframework.transaction.PlatformTransactionManager
 import org.springframework.transaction.annotation.EnableTransactionManagement
-import org.springframework.transaction.support.TransactionTemplate
 
 import javax.sql.DataSource
 
 @Configuration
 @EnableTransactionManagement
 @EnableAutoConfiguration
+@EnableJpaRepositories(basePackages = ['com.stehno.photopile.repository'])
+@EntityScan(basePackages = ['com.stehno.photopile.domain'])
 @ComponentScan(basePackages = [
     'com.stehno.photopile.repository'
 ])
@@ -51,11 +50,7 @@ class TestConfig {
         new JdbcTemplate(dataSource())
     }
 
-    @Bean LobHandler lobHandler() {
-        new DefaultLobHandler(wrapAsLob: true)
-    }
-
-    @Bean TransactionTemplate transactionTemplate(PlatformTransactionManager txManager) {
+/*    @Bean TransactionTemplate transactionTemplate(PlatformTransactionManager txManager) {
         new TransactionTemplate(txManager)
-    }
+    }*/
 }
