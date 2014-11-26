@@ -14,14 +14,33 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.repository
+package com.stehno.photopile.actor
 
-import com.stehno.photopile.domain.PhotoImage
-import org.springframework.data.repository.CrudRepository
+import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.DefaultActor
+
+import javax.annotation.PostConstruct
 
 /**
- * Created by cjstehno on 11/16/2014.
+ * Abstract base class for Photopile actors.
  */
-interface PhotoImageRepository extends CrudRepository<PhotoImage, Long> {
+@Slf4j
+abstract class AbstractActor<M> extends DefaultActor {
 
+    @Override
+    protected final void act() {
+        loop {
+            react { M input ->
+                handleMessage input
+            }
+        }
+    }
+
+    @PostConstruct
+    void init() {
+        start()
+        log.info 'Initialized and started.'
+    }
+
+    protected abstract void handleMessage(final M input)
 }

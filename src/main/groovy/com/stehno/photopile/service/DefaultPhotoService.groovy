@@ -15,15 +15,21 @@
  */
 
 package com.stehno.photopile.service
-import com.stehno.photopile.domain.ImageScale
-import com.stehno.photopile.domain.Photo
-import com.stehno.photopile.domain.PhotoImage
+
+import static com.stehno.photopile.domain.ImageScale.FULL
+
+import com.stehno.photopile.domain.*
+import com.stehno.photopile.meta.PhotoMetadata
+import com.stehno.photopile.meta.PhotoMetadataExtractor
+import com.stehno.photopile.repository.ImageArchiveRepository
+import com.stehno.photopile.repository.PhotoImageContentRepository
 import com.stehno.photopile.repository.PhotoRepository
-import com.stehno.photopile.repository.TagRepository
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
 /**
  * Standard implementation of the PhotoService interface.
  */
@@ -31,49 +37,137 @@ import org.springframework.transaction.annotation.Transactional
 class DefaultPhotoService implements PhotoService {
 
     @Autowired private PhotoRepository photoRepository
-    @Autowired private TagRepository tagRepository
-//    @Autowired private PhotoImageRepository photoImageRepository
-//    @Autowired private ImageArchiveRepository imageArchiveRepository
+    @Autowired private PhotoImageContentRepository photoImageContentRepository
+    @Autowired private ImageArchiveRepository imageArchiveRepository
+    @Autowired private PhotoMetadataExtractor metadataExtractor
+    @Autowired private ImageScalingService imageScalingService // TODO: this should be external like the meta extractor
 
     @Override @Transactional(readOnly = false)
-    Photo create(final Photo photo, final PhotoImage image) {
-        Photo savedPhoto = photoRepository.save(photo)
+    Photo create(final File contentFile, final PhotoInfo info = null) {
+        Photo photo = savePhotoAndImage(
+            contentFile,
+            extractMetadata(contentFile, info)
+        )
 
-        // create an archive copy
-//        imageArchiveRepository.store(savedPhoto.id, image)
+        MediaType imageContentType = photo.images[FULL].contentType
 
-        // store the full size image
-//        photoImageRepository.create(savedPhoto.id, image, ImageScale.FULL)
+        (ImageScale.values() - FULL).each { ImageScale scale ->
+            imageScalingService.scale(photo.id, imageContentType, scale)
+        }
 
-        // TODO: enqueue the image scaling
-        // imageScaler.send( ?? )
-
-        return savedPhoto
+        return photo
     }
 
-    @Override @Transactional(readOnly = false)
-    Photo update(final Photo photo, final PhotoImage image = null) {
-        // be sure to check versions
-        return null
+    private Photo savePhotoAndImage(final File file, final PhotoInfo info) {
+        Photo photo = new Photo(
+            name: info.name,
+            description: info.description,
+            dateTaken: info.dateTaken,
+            dateUpdated: new Date()
+        )
+
+        if (info.hasCamera()) {
+            photo.cameraInfo = new CameraInfo(info.cameraMake, info.cameraModel)
+        }
+
+        if (info.hasLocation()) {
+            photo.location = new GeoLocation(info.latitude, info.longitude, info.altitude)
+        }
+
+        info.tags.each { String t ->
+            def parts = t.split(':')
+            photo.tags << new Tag(category: parts[0], name: parts[1])
+        }
+
+        photo.images[FULL] = new PhotoImage(
+            scale: FULL,
+            width: info.width,
+            height: info.height,
+            contentLength: file.length(),
+            contentType: info.contentType
+        )
+
+        photo = photoRepository.save(photo)
+
+        byte[] content = file.bytes
+        PhotoImage image = photo.images[FULL]
+
+        // save the image in fs
+        photoImageContentRepository.store(photo.id, content, image.contentType, image.scale)
+
+        // archive the original file
+        imageArchiveRepository.store(photo.id, content, image.contentType)
     }
 
-    @Override
-    Photo retrieve(final long photoId) {
-//        photoRepository.retrieve(photoId)
+    private PhotoInfo extractMetadata(final File file, final PhotoInfo info) {
+        PhotoMetadata photoMetadata = metadataExtractor.extract(file)
+
+        // FIXME: add tags for month, year, camera
+
+        PhotoInfo merged = new PhotoInfo()
+        merged.dateTaken = photoMetadata.dateTaken
+        merged.cameraMake = photoMetadata.cameraMake
+        merged.cameraModel = photoMetadata.cameraModel
+        merged.width = photoMetadata.width
+        merged.height = photoMetadata.height
+        merged.latitude = photoMetadata.latitude
+        merged.longitude = photoMetadata.longitude
+        merged.altitude = photoMetadata.altitude
+        merged.contentType = MediaType.valueOf(photoMetadata.contentType)
+
+        if (info) {
+            merged.name = info.name ?: merged.name
+            merged.description = info.description ?: merged.description
+            merged.dateTaken = info.dateTaken ?: merged.dateTaken
+            merged.cameraMake = info.cameraMake ?: merged.cameraMake
+            merged.cameraModel = info.cameraModel ?: merged.cameraModel
+            merged.width = info.width ?: merged.width
+            merged.height = info.height ?: merged.height
+            merged.latitude = info.latitude ?: merged.latitude
+            merged.longitude = info.longitude ?: merged.longitude
+            merged.altitude = info.altitude ?: merged.altitude
+            merged.contentType = info.contentType ?: merged.contentType
+
+            if (info.tags) {
+                merged.tags.addAll(info.tags)
+            }
+        }
     }
 
-    @Override
-    PhotoImage fetchImage(final long photoId, final ImageScale scale) {
-        return null
+    void createAsync(final File contentFile, final PhotoInfo info = null) {
+        // TODO: steps run on actor framework
+        // TODO: notify user - added step
+    }
+}
+
+// TODO: not really happy with this, but its a starting point
+// a DTO
+class PhotoInfo {
+
+    String name
+    String description
+
+    Date dateTaken
+
+    String cameraMake
+    String cameraModel
+
+    int width
+    int height
+
+    Double latitude
+    Double longitude
+    Integer altitude
+
+    MediaType contentType
+
+    Set<String> tags = [] as Set<String>
+
+    boolean hasCamera() {
+        cameraMake || cameraModel
     }
 
-    @Override @Transactional(readOnly = false)
-    boolean delete(final long photoId) {
-        return false
-    }
-
-    @Override
-    List<Photo> listPhotos(final PageBy pageBy, final SortBy sortBy) {
-        return null
+    boolean hasLocation() {
+        latitude && longitude
     }
 }

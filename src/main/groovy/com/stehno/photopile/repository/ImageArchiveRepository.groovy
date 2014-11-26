@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.domain.PhotoImage
+import org.springframework.http.MediaType
 
 /**
  * Repository used to provide a backup "safe" copy of every original image stored in the system. This is generally considered
@@ -28,8 +28,9 @@ interface ImageArchiveRepository {
     /**
      * Stores an archive copy of the given image for the specified photo id.
      *
-     * @param photoId
-     * @param image
+     * @param photoId the id of the photo being archived
+     * @param content the image content
+     * @param mediaType the content type of the image
      */
-    void store(long photoId, PhotoImage image)
+    void store(long photoId, byte[] content, MediaType mediaType)
 }

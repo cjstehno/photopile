@@ -23,7 +23,7 @@ import groovy.util.logging.Slf4j
 import javax.annotation.PostConstruct
 
 /**
- * Default implementation of the FileStore interface.
+ * Default implementation of the FileStore interface using standard Java file IO functionality.
  */
 @Slf4j
 class DefaultFileStore implements FileStore {
@@ -45,8 +45,28 @@ class DefaultFileStore implements FileStore {
      */
     Closure pathResolver
 
+    /**
+     * Whether or not to generate a README.txt file in the root of the data store. This allows for external users of the
+     * filesystem to be aware of what the directory is being used for. Defaults to true.
+     */
+    boolean generateReadme = true
+
+    /**
+     * If true, the specified root directory and any missing parent directories are created on startup, if they do not already
+     * exist.
+     */
+    boolean createRoot = true
+
+    /**
+     * Initializes the file store and verifies its current state.
+     */
     @PostConstruct void init() {
         isTrue pathResolver != null, 'A path resolver must be configured.'
+
+        if (createRoot && !rootDirectory.exists()) {
+            rootDirectory.mkdirs()
+            log.debug 'Created the root directory ({}).', rootDirectory
+        }
 
         isTrue(
             rootDirectory.exists() && rootDirectory.canWrite(),
@@ -55,7 +75,14 @@ class DefaultFileStore implements FileStore {
 
         log.info 'Initialized storage for "{}" in {}', name, rootDirectory
 
-        // TODO: generate a readme file if one is not present
+        def readmeFile = new File(rootDirectory, 'README.txt')
+        if (generateReadme && !readmeFile.exists()) {
+            readmeFile.text = "Contents of this directory are managed by the $name data-store.\n" +
+                "Do not modify this directory or sub-directories unless you know what you are doing.\n" +
+                "Generated: ${new Date()}"
+
+            log.debug 'Generated README.txt file.'
+        }
     }
 
     @Override

@@ -15,11 +15,7 @@
  */
 
 package com.stehno.photopile.service
-
-import com.stehno.photopile.domain.ImageScale
 import com.stehno.photopile.domain.Photo
-import com.stehno.photopile.domain.PhotoImage
-
 /**
  * Service used to manage and access photos and their images.
  */
@@ -33,9 +29,13 @@ interface PhotoService {
      * @param image the photo image object to be associated with the photo
      * @return the newly created photo object with all populated data
      */
-    Photo create(final URI contentLocation) // TODO: allow meta info override - this method sedns to actors?
-    // void createAsync() ?
+    Photo create(final File contentFile, final PhotoInfo info)
 
+    void createAsync(final File contentFile, final PhotoInfo info)
+
+    Photo create(final File contentFile)
+
+    void createAsync(final File contentFile)
     /*
         come up with an import controller
         might not need services per-se
@@ -53,7 +53,7 @@ interface PhotoService {
      * @param photo the photo containing updated information
      * @return the updated Photo object
      */
-    Photo update(final Photo photo)
+//    Photo update(final Photo photo)
 
     /**
      * Updates an existing photo with the contents of the incoming Photo object. The image content itself is replaced with that from the specified
@@ -63,7 +63,7 @@ interface PhotoService {
      * @param image the PhotoImage object to be associated with the photo
      * @return the updated Photo object
      */
-    Photo update(final Photo photo, final PhotoImage image)
+//    Photo update(final Photo photo, final PhotoImage image)
 
     /**
      * Retrieves the photo information associated with the specified photo id.
@@ -71,7 +71,7 @@ interface PhotoService {
      * @param photoId the id of the photo to be retrieved.
      * @return the Photo represented by the given id
      */
-    Photo retrieve(final long photoId)
+//    Photo retrieve(final long photoId)
 
     /**
      * Fetches the image content for the specified photo at the given scale factor.
@@ -80,7 +80,7 @@ interface PhotoService {
      * @param scale the scale of the image to be retrieved
      * @return the PhotoImage object containing the image information for the photo
      */
-    PhotoImage fetchImage(final long photoId, final ImageScale scale)
+//    PhotoImage fetchImage(final long photoId, final ImageScale scale)
 
     /**
      * Deletes the photo with the specified photo id. The system does not actually destroy deleted photos, they are put into an archived state so that
@@ -89,7 +89,7 @@ interface PhotoService {
      * @param photoId the photo id
      * @return a value of true if a photo was actually deleted
      */
-    boolean delete(final long photoId)
+//    boolean delete(final long photoId)
 
     /**
      * Lists all photos in the system in a paged and sorted manner.
@@ -98,5 +98,5 @@ interface PhotoService {
      * @param sortBy the sorting information
      * @return a list of photos corresponding to the paging and sorting criteria
      */
-    List<Photo> listPhotos(final PageBy pageBy, final SortBy sortBy)
+//    List<Photo> listPhotos(final PageBy pageBy, final SortBy sortBy)
 }

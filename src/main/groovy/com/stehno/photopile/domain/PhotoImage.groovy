@@ -17,6 +17,7 @@
 package com.stehno.photopile.domain
 
 import groovy.transform.ToString
+import org.springframework.http.MediaType
 
 import javax.persistence.*
 
@@ -33,7 +34,7 @@ class PhotoImage {
     int width
     int height
     long contentLength
-    @Column(length = 50) String contentType
+    MediaType contentType
 
     @ManyToOne Photo photo
 }

@@ -17,7 +17,8 @@
 package com.stehno.photopile.file
 
 /**
- * Defines a managed file storage API.
+ * Defines a managed file storage API. This is not meant as a true document store, but mostly a filesystem-based storage
+ * area for file content, where the metadata is stored elsewhere, most likely in a relational database.
  */
 interface FileStore {
 

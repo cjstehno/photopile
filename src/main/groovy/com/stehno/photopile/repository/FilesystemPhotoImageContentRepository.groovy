@@ -19,6 +19,7 @@ package com.stehno.photopile.repository
 import static java.lang.Math.ceil
 import static java.lang.System.currentTimeMillis
 
+import com.stehno.photopile.domain.ImageScale
 import com.stehno.photopile.file.DefaultFileStore
 import com.stehno.photopile.file.FileStore
 import groovy.util.logging.Slf4j
@@ -31,25 +32,21 @@ import org.springframework.web.accept.MediaTypeFileExtensionResolver
 import javax.annotation.PostConstruct
 
 /**
- * Filesystem-based implementation of the ImageArchiveRepository interface. This implementation is based on the FileStore
- * API.
- *
- * The archived image files are stored under the configured root directory in numbered subdirectories based on the id value.
- * The subdirectories will contain the configured number of image files with the name format "photo-PHOTOID-TIMESTAMP.EXT".
+ * FIXME: document
  */
 @Repository @Slf4j
-class FilesystemImageArchiveRepository implements ImageArchiveRepository {
+class FilesystemPhotoImageContentRepository implements PhotoImageContentRepository {
 
-    @Value('${photopile.archive.directory}') File rootDirectory
-    @Value('${photopile.archive.bucketSize:100}') int bucketSize
+    // FIXME: get these properties documented and in the config file
+    @Value('${photopile.storage.directory}') File rootDirectory
+    @Value('${photopile.storage.bucketSize:100}') int bucketSize
 
     @Autowired private MediaTypeFileExtensionResolver fileExtensionResolver
 
-    @SuppressWarnings('GroovyAssignabilityCheck')
     private final FileStore fileStore = new DefaultFileStore(
         name: 'Photopile-Archives',
         pathResolver: { attrs ->
-            "/arch${attrs.bucket}/photo-${attrs.id}-${currentTimeMillis()}.${attrs.extension}"
+            "/ids${attrs.bucket}/${attrs.id}/photo-${attrs.id}-${attrs.scale}-${currentTimeMillis()}.${attrs.extension}"
         }
     )
 
@@ -59,12 +56,22 @@ class FilesystemImageArchiveRepository implements ImageArchiveRepository {
     }
 
     @Override
-    void store(final long photoId, final byte[] content, final MediaType mediaType) {
-        fileStore.store(content, [
+    void store(final long photoId, final byte[] content, final MediaType contentType, final ImageScale scale) {
+        fileStore.store content, attrs(photoId, scale, contentType)
+    }
+
+    @Override
+    byte[] load(long photoId, MediaType contentType, ImageScale scale) {
+        fileStore.read attrs(photoId, scale, contentType)
+    }
+
+    private attrs(long photoId, ImageScale scale, MediaType contentType) {
+        [
             id       : photoId,
             bucket   : calculateBucket(photoId),
-            extension: fileExtensionResolver.resolveFileExtensions(mediaType)[0]
-        ])
+            scale    : scale.name(),
+            extension: fileExtensionResolver.resolveFileExtensions(contentType)[0]
+        ]
     }
 
     private int calculateBucket(long id) {

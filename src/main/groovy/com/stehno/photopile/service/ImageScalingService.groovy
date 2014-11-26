@@ -16,13 +16,20 @@
 
 package com.stehno.photopile.service
 
-/**
- * Created by cjstehno on 11/16/2014.
- */
-interface ImportService {
+import com.stehno.photopile.domain.ImageScale
+import org.springframework.http.MediaType
 
-    /*
-        provides the actor framework such that given a set of files it will
-        process them, extract their data and persist them
+/**
+ * Service interface for the image scaling framework.
+ */
+interface ImageScalingService {
+
+    /**
+     * Requests that the image for the photo with the given ID be scaled to the specified scale. The requested scaling will be done asynchronously
+     * and will be available sometime after the request is made. This method will return immediately.
+     *
+     * @param photoId the id of the photo whose image is to be scaled
+     * @param scale the scale to be generated
      */
+    void scale(long photoId, MediaType contentType, ImageScale scale)
 }

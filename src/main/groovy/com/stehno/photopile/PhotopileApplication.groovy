@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.builder.SpringApplicationBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.PropertySource
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry
@@ -32,6 +33,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableAutoConfiguration
 //@Import([DataSourceConfig, SecurityConfig, /*PhotoConfig, ImageConfig*/])
 //@ComponentScan(['com.stehno.photopile.controller'])
+@PropertySource('classpath:photopile.properties')
 class PhotopileApplication extends WebMvcConfigurerAdapter {
 
     @Override
