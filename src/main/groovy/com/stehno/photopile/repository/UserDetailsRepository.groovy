@@ -17,18 +17,13 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.domain.PhotopileUserDetails
-import org.springframework.data.repository.CrudRepository
 
 /**
  * Repository providing access to UserDetails.
  */
-interface UserDetailsRepository extends CrudRepository<PhotopileUserDetails, Long> {
+interface UserDetailsRepository {
 
-    /**
-     * Retrieves the first user with the specified username - there should only be one.
-     *
-     * @param username the username
-     * @return the user, or null
-     */
-    PhotopileUserDetails findFirstByUsername(String username)
+    PhotopileUserDetails fetchByUsername(String username)
+
+    PhotopileUserDetails fetchById(long userId)
 }

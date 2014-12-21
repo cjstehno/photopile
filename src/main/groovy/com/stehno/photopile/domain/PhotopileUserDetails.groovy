@@ -7,14 +7,14 @@ import javax.persistence.*
 /**
  * Custom UserDetails implementation for the Photopile application.
  */
-@Entity @Table(name = 'users')
+@Effigy(table='users')
 class PhotopileUserDetails implements UserDetails {
 
-    @Id @GeneratedValue long id
+    @Id long id
     @Version Long version
 
-    @Column(length = 25, unique = true) String username
-    @Column(length = 100) String password
+    @Column('user_name') String username
+    String password
 
     boolean enabled
     boolean accountExpired
