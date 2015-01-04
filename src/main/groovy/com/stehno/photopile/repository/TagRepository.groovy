@@ -16,12 +16,9 @@
 
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.domain.Tag
-import org.springframework.data.repository.CrudRepository
-
 /**
  * Repository for interacting with photo tags.
  */
-interface TagRepository extends CrudRepository<Tag, Long> {
+interface TagRepository {
 
 }

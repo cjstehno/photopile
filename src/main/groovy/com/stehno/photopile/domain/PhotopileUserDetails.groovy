@@ -1,13 +1,16 @@
 package com.stehno.photopile.domain
 
+import com.stehno.effigy.annotation.Association
+import com.stehno.effigy.annotation.Column
+import com.stehno.effigy.annotation.Entity
+import com.stehno.effigy.annotation.Id
+import com.stehno.effigy.annotation.Version
 import org.springframework.security.core.userdetails.UserDetails
-
-import javax.persistence.*
 
 /**
  * Custom UserDetails implementation for the Photopile application.
  */
-@Effigy(table='users')
+@Entity(table = 'users')
 class PhotopileUserDetails implements UserDetails {
 
     @Id long id
@@ -21,12 +24,7 @@ class PhotopileUserDetails implements UserDetails {
     boolean credentialsExpired
     boolean accountLocked
 
-    @OneToMany
-    @JoinTable(
-        name = 'user_authorities',
-        joinColumns = @JoinColumn(name = 'user_id'),
-        inverseJoinColumns = @JoinColumn(name = 'authority_id')
-    )
+    @Association(joinTable = 'user_authorities', entityColumn = 'user_id', assocColumn = 'authority_id')
     List<UserAuthority> authorities = [] as List<UserAuthority>
 
     @Override

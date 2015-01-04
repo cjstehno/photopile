@@ -16,19 +16,19 @@
 
 package com.stehno.photopile.domain
 
+import com.stehno.effigy.annotation.Entity
+import com.stehno.effigy.annotation.Id
 import org.springframework.security.core.GrantedAuthority
-
-import javax.persistence.*
 
 /**
  * Created by cjstehno on 11/22/2014.
  */
-@Entity @Table(name = 'authorities')
+@Entity(table = 'authorities')
 class UserAuthority implements GrantedAuthority {
 
     static final String AUTHORITY_ADMIN = 'ADMIN'
 
-    @Id @GeneratedValue long id
+    @Id long id
 
-    @Column(length = 50) String authority
+    String authority
 }

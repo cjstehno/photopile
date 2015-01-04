@@ -16,13 +16,10 @@
 
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.domain.Photo
-import org.springframework.data.repository.CrudRepository
-
 /**
  * Repository operations for working with photos.
  */
-interface PhotoRepository extends CrudRepository<Photo, Long> {
+interface PhotoRepository {
 
 
 }

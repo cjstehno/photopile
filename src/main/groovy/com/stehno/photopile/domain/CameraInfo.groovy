@@ -16,20 +16,16 @@
 
 package com.stehno.photopile.domain
 
-import groovy.transform.Canonical
-import groovy.transform.ToString
-
-import javax.persistence.Column
-import javax.persistence.Embeddable
+import groovy.transform.Immutable
 
 /**
  * Representation of the type of camera used to take a photo.
  */
-@Embeddable @ToString @Canonical
+@Immutable
 class CameraInfo {
 
-    @Column(name = 'camera_make', length = 25) String make
-    @Column(name = 'camera_model', length = 25) String model
+    String make
+    String model
 
     String getName() {
         "$make $model"

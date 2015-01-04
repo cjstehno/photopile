@@ -16,11 +16,6 @@
 
 package com.stehno.photopile.controller
 
-import static com.codahale.metrics.MetricRegistry.name
-
-import com.codahale.metrics.Meter
-import com.codahale.metrics.MetricRegistry
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
@@ -33,23 +28,23 @@ import javax.annotation.PostConstruct
 @Controller
 class RootController {
 
-//    @Autowired private UserMessageService userMessageService
-    @Autowired private MetricRegistry metricRegistry
+    //    @Autowired private UserMessageService userMessageService
+    //    @Autowired private MetricRegistry metricRegistry
 
     // TODO: this is just a sample
-    private Meter requests;
+    //    private Meter requests;
 
-    @RequestMapping('/') ModelAndView root(){
-        requests.mark()
+    @RequestMapping('/') ModelAndView root() {
+        //        requests.mark()
 
         // TODO: just going to write this in for now, will look at sockets/push later
 
         return new ModelAndView('root', [
-            unreadCount:0 //userMessageService.count(currentUsername(), false)
+            unreadCount: 0 //userMessageService.count(currentUsername(), false)
         ]);
     }
 
-    @PostConstruct void init(){
-        requests = metricRegistry.meter(name(RootController.class, 'requests'))
+    @PostConstruct void init() {
+        //        requests = metricRegistry.meter(name(RootController.class, 'requests'))
     }
 }

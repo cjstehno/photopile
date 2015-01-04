@@ -48,7 +48,7 @@ import org.springframework.transaction.annotation.Transactional
 class UserDetailsRepositoryTest {
 
     /*
-        Since the database is cleaned with each test, the pre-populated users and authorities are not available.
+        WARNING: Since the database is cleaned with each test, the pre-populated users and authorities are not available.
      */
 
     static TABLES = ['user_authorities', 'users', 'authorities']
@@ -76,20 +76,21 @@ class UserDetailsRepositoryTest {
         modified.id = existingUser.id
         modified.version = existingUser.version
 
-        def updated = userDetailsRepository.save(modified)
+        assert userDetailsRepository.update(modified)
+        def updated = userDetailsRepository.retrieve(modified.id)
 
         assertUserFixture updated, FIX_B
         assert !updated.authorities
 
         assert userDetailsRepository.count() == 1
 
-        userDetailsRepository.findOne(existingUser.id).version == 1
+        userDetailsRepository.retrieve(existingUser.id).version == 1
     }
 
     @Test @Transactional void 'find: by username'() {
         createUser()
 
-        def user = userDetailsRepository.findFirstByUsername(userName())
+        def user = userDetailsRepository.fetchByUsername(userName())
         assert user.id
         assert user.version == 0
         assertUserFixture user
@@ -109,7 +110,8 @@ class UserDetailsRepositoryTest {
 
     @Transactional
     private UserAuthority createAuthority(String auth) {
-        userAuthorityRepository.save(new UserAuthority(authority: auth))
+        long id = userAuthorityRepository.create(new UserAuthority(authority: auth))
+        userAuthorityRepository.retrieve(id)
     }
 
     @Transactional
@@ -118,9 +120,10 @@ class UserDetailsRepositoryTest {
 
         def details = new PhotopileUserDetails(userFixtureFor(fix))
 
-        details.authorities.add(userAuthorityRepository.findFirstByAuthority(AUTHORITY_ADMIN))
+        details.authorities.add(userAuthorityRepository.findByAuthority(AUTHORITY_ADMIN))
 
-        userDetailsRepository.save(details)
+        long userId = userDetailsRepository.create(details)
+        userDetailsRepository.retrieve(userId)
     }
 
     private static void assertAuthority(PhotopileUserDetails user, String... auth) {

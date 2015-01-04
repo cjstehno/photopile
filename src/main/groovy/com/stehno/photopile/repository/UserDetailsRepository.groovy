@@ -23,7 +23,17 @@ import com.stehno.photopile.domain.PhotopileUserDetails
  */
 interface UserDetailsRepository {
 
+    long create(PhotopileUserDetails userDetails)
+
+    boolean update(PhotopileUserDetails userDetails)
+
+    PhotopileUserDetails retrieve(long id)
+
     PhotopileUserDetails fetchByUsername(String username)
 
     PhotopileUserDetails fetchById(long userId)
+
+    int count()
+
+    boolean delete(long id)
 }

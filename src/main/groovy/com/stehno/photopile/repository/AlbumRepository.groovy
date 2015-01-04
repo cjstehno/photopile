@@ -16,11 +16,8 @@
 
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.domain.Album
-import org.springframework.data.repository.CrudRepository
-
 /**
  * Created by cjstehno on 11/21/2014.
  */
-interface AlbumRepository extends CrudRepository<Album, Long> {
+interface AlbumRepository {
 }

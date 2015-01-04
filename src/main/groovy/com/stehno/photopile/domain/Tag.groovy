@@ -16,26 +16,23 @@
 
 package com.stehno.photopile.domain
 
+import com.stehno.effigy.annotation.Entity
+import com.stehno.effigy.annotation.Id
+import com.stehno.effigy.annotation.Version
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
-import javax.persistence.*
 
 /**
  * Represents an informational tag in the database.
  */
-@Entity
-@Table(name = 'tags', uniqueConstraints = [@UniqueConstraint(columnNames = ['category', 'name'])])
-@ToString(includeNames = true)
+@Entity @ToString(includeNames = true) @EqualsAndHashCode
 class Tag {
 
-    @Id @GeneratedValue long id
+    @Id long id
     @Version Long version
 
-    @Column(length = 20) String category
-    @Column(length = 40) String name
-
-    @ManyToMany(mappedBy = 'tags', targetEntity = Photo)
-    Set<Photo> photos = [] as Set<Photo>
+    String category
+    String name
 
     String getLabel() {
         "$category:$name"

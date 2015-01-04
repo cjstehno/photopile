@@ -64,3 +64,16 @@ Tags
 	DELETE /tag/{tagid} - delete a tag (not contents)
 
 
+- convert jpa/jdbc over to effigy
+- get postgresql setup
+- implement new import workflow
+- refactor as restful service
+- implement oauth security
+
+- refactor project into multiproject to add in
+  client - restufl client api
+  server
+  cli
+  desktop
+  android
+

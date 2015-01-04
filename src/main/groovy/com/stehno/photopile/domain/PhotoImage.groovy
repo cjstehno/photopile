@@ -16,18 +16,20 @@
 
 package com.stehno.photopile.domain
 
+import com.stehno.effigy.annotation.Entity
+import com.stehno.effigy.annotation.Id
+import com.stehno.effigy.annotation.Version
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.springframework.http.MediaType
-
-import javax.persistence.*
 
 /**
  * Represents image content in the database.
  */
-@Entity @Table(name = 'images') @ToString(includeNames = true)
+@Entity(table = 'images') @ToString(includeNames = true) @EqualsAndHashCode
 class PhotoImage {
 
-    @Id @GeneratedValue long id
+    @Id long id
     @Version Long version
 
     ImageScale scale
@@ -35,6 +37,4 @@ class PhotoImage {
     int height
     long contentLength
     MediaType contentType
-
-    @ManyToOne Photo photo
 }

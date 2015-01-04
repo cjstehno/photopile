@@ -16,35 +16,28 @@
 
 package com.stehno.photopile.domain
 
+import com.stehno.effigy.annotation.Association
+import com.stehno.effigy.annotation.Entity
+import com.stehno.effigy.annotation.Id
+import com.stehno.effigy.annotation.Version
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
-
-import javax.persistence.*
 
 /**
  * Represents a photo album (named collection of photos) in the database.
  */
-@Entity
-@Table(name = 'albums')
-@ToString(includeNames = true)
+@Entity @ToString(includeNames = true) @EqualsAndHashCode
 class Album {
 
-    @Id @GeneratedValue long id
+    @Id long id
     @Version Long version
 
-    @Column(length = 50) String name
-    @Column(length = 2000, nullable = true) String description
+    String name
+    String description
 
     Date dateCreated
     Date dateUpdated
 
-    @ManyToMany(
-        targetEntity = Photo,
-        cascade = [CascadeType.ALL]
-    )
-    @JoinTable(
-        name = 'album_photos',
-        joinColumns = @JoinColumn(name = 'album_id'),
-        inverseJoinColumns = @JoinColumn(name = 'photo_id')
-    )
+    @Association(joinTable = 'album_photos', entityColumn = 'album_id', assocColumn = 'photo_id')
     Set<Photo> photos = [] as Set<Photo>
 }

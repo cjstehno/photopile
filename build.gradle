@@ -5,7 +5,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.1.9.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.0.RELEASE'
     }
 }
 
@@ -27,6 +27,7 @@ compileGroovy {
 }
 
 repositories {
+    mavenLocal()
     jcenter()
 }
 
@@ -48,11 +49,11 @@ dependencies {
     }
     compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'com.fasterxml.jackson.core:jackson-databind'
     compile 'org.flywaydb:flyway-core'
-    compile 'com.codahale.metrics:metrics-core'
-    compile 'org.aspectj:aspectjweaver'
+//    compile 'com.codahale.metrics:metrics-core'
+//    compile 'org.aspectj:aspectjweaver'
 
     // versioned dependencies
 
@@ -71,6 +72,8 @@ dependencies {
     compile "commons-io:commons-io:2.4"
     compile "commons-lang:commons-lang:2.6"
     // verify these are needed (end)
+
+    compile 'com.stehno.effigy:effigy-core:0.1.0'
 
     // test dependencies
 

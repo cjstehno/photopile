@@ -15,15 +15,14 @@
  */
 
 package com.stehno.photopile.test.config
+
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.orm.jpa.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.EnableTransactionManagement
@@ -33,10 +32,9 @@ import javax.sql.DataSource
 @Configuration
 @EnableTransactionManagement
 @EnableAutoConfiguration
-@EnableJpaRepositories(basePackages = ['com.stehno.photopile.repository'])
-@EntityScan(basePackages = ['com.stehno.photopile.domain'])
 @ComponentScan(basePackages = [
-    'com.stehno.photopile.repository', 'com.stehno.photopile.service'
+    'com.stehno.photopile.repository',
+    'com.stehno.photopile.service'
 ])
 @PropertySource('classpath:photopile-test.properties')
 @ActiveProfiles(['test'])

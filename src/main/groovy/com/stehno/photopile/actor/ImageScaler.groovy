@@ -80,7 +80,7 @@ class ScaledImage {
     byte[] content
 }
 
-@Immutable
+@Immutable(knownImmutableClasses = [MediaType])
 class ScalingRequest {
 
     long photoId
