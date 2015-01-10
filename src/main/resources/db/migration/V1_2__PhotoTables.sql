@@ -1,7 +1,6 @@
-
 CREATE TABLE photos (
-  id            BIGINT NOT NULL PRIMARY KEY,
-  version BIGINT DEFAULT 0,
+  id            SERIAL      NOT NULL PRIMARY KEY,
+  version       BIGINT    DEFAULT 0,
   name          VARCHAR(50) NOT NULL,
   description   VARCHAR(2000),
 
@@ -18,8 +17,8 @@ CREATE TABLE photos (
 );
 
 CREATE TABLE tags (
-  id      BIGINT NOT NULL PRIMARY KEY,
-  version BIGINT DEFAULT 0,
+  id       SERIAL      NOT NULL PRIMARY KEY,
+  version  BIGINT DEFAULT 0,
   category VARCHAR(20) NOT NULL,
   name     VARCHAR(40) NOT NULL,
   UNIQUE (category, name)
@@ -32,13 +31,13 @@ CREATE TABLE photo_tags (
 );
 
 CREATE TABLE images (
-  id           BIGINT      NOT NULL PRIMARY KEY,
-  version BIGINT DEFAULT 0,
-  scale        INT         NOT NULL,
+  id             SERIAL      NOT NULL PRIMARY KEY,
+  version        BIGINT DEFAULT 0,
+  scale          INT         NOT NULL,
   width          INT         NOT NULL,
   height         INT         NOT NULL,
   content_length BIGINT      NOT NULL,
-  content_type VARCHAR(50) NOT NULL
+  content_type   VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE photo_images (
@@ -48,8 +47,8 @@ CREATE TABLE photo_images (
 );
 
 CREATE TABLE albums (
-  id           BIGINT      NOT NULL PRIMARY KEY,
-  version BIGINT DEFAULT 0,
+  id           SERIAL      NOT NULL PRIMARY KEY,
+  version      BIGINT    DEFAULT 0,
   name         VARCHAR(50) NOT NULL,
   description  VARCHAR(2000),
   date_created TIMESTAMP DEFAULT now(),

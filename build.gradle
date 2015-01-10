@@ -53,7 +53,7 @@ dependencies {
     compile 'com.fasterxml.jackson.core:jackson-databind'
     compile 'org.flywaydb:flyway-core'
 //    compile 'com.codahale.metrics:metrics-core'
-//    compile 'org.aspectj:aspectjweaver'
+    compile 'org.aspectj:aspectjweaver'
 
     // versioned dependencies
 

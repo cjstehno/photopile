@@ -1,26 +1,22 @@
 package com.stehno.photopile.repository
 
-import com.stehno.effigy.annotation.Count
 import com.stehno.effigy.annotation.Create
 import com.stehno.effigy.annotation.Repository
 import com.stehno.effigy.annotation.Retrieve
 import com.stehno.photopile.domain.UserAuthority
 
 /**
- * Created by cjstehno on 1/4/15.
+ * Effigy-based implementation of the UserAuthorityRepository interface.
  */
 @Repository(UserAuthority)
 abstract class EffigyUserAuthorityRepository implements UserAuthorityRepository {
 
     @Create
-    abstract long create(UserAuthority userAuthority)
+    abstract Long create(String authority)
 
     @Retrieve
-    abstract UserAuthority retrieve(long id)
+    abstract UserAuthority retrieve(Long id)
 
     @Retrieve
     abstract UserAuthority findByAuthority(String authority)
-
-    @Count
-    abstract int count()
 }

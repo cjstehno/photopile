@@ -16,8 +16,6 @@
 
 package com.stehno.photopile.service
 
-import static com.stehno.photopile.domain.ImageScale.FULL
-
 import com.stehno.photopile.domain.*
 import com.stehno.photopile.meta.PhotoMetadata
 import com.stehno.photopile.meta.PhotoMetadataExtractor
@@ -25,10 +23,11 @@ import com.stehno.photopile.repository.ImageArchiveRepository
 import com.stehno.photopile.repository.PhotoImageContentRepository
 import com.stehno.photopile.repository.PhotoRepository
 import groovy.util.logging.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+import static com.stehno.photopile.domain.ImageScale.FULL
 
 /**
  * Standard implementation of the PhotoService interface.
@@ -36,11 +35,17 @@ import org.springframework.transaction.annotation.Transactional
 @Service @Slf4j @Transactional(readOnly = true)
 class DefaultPhotoService implements PhotoService {
 
-    @Autowired private PhotoRepository photoRepository
-    @Autowired private PhotoImageContentRepository photoImageContentRepository
-    @Autowired private ImageArchiveRepository imageArchiveRepository
-    @Autowired private PhotoMetadataExtractor metadataExtractor
-    @Autowired private ImageScalingService imageScalingService // TODO: this should be external like the meta extractor
+    /*@Autowired */
+    private PhotoRepository photoRepository
+    /*@Autowired */
+    private PhotoImageContentRepository photoImageContentRepository
+    /*@Autowired */
+    private ImageArchiveRepository imageArchiveRepository
+    /*@Autowired */
+    private PhotoMetadataExtractor metadataExtractor
+    /*@Autowired */
+    private ImageScalingService imageScalingService
+    // TODO: this should be external like the meta extractor
 
     @Override @Transactional(readOnly = false)
     Photo create(final File contentFile, final PhotoInfo info = null) {

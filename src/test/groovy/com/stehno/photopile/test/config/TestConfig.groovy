@@ -26,6 +26,8 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import org.springframework.web.accept.MediaTypeFileExtensionResolver
+import org.springframework.web.accept.PathExtensionContentNegotiationStrategy
 
 import javax.sql.DataSource
 
@@ -39,6 +41,10 @@ import javax.sql.DataSource
 @PropertySource('classpath:photopile-test.properties')
 @ActiveProfiles(['test'])
 class TestConfig {
+
+    @Bean MediaTypeFileExtensionResolver mediaTypeFileExtensionResolver() {
+        new PathExtensionContentNegotiationStrategy()
+    }
 
     @Bean @ConfigurationProperties(prefix = 'test.datasource') DataSource dataSource() {
         new DriverManagerDataSource()

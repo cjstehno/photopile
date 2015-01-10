@@ -1,7 +1,6 @@
 package com.stehno.photopile.domain
 
 import com.stehno.effigy.annotation.Association
-import com.stehno.effigy.annotation.Column
 import com.stehno.effigy.annotation.Entity
 import com.stehno.effigy.annotation.Id
 import com.stehno.effigy.annotation.Version
@@ -13,10 +12,10 @@ import org.springframework.security.core.userdetails.UserDetails
 @Entity(table = 'users')
 class PhotopileUserDetails implements UserDetails {
 
-    @Id long id
+    @Id Long id
     @Version Long version
 
-    @Column('user_name') String username
+    String username
     String password
 
     boolean enabled

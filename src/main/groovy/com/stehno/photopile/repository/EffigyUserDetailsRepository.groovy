@@ -15,23 +15,23 @@ import com.stehno.photopile.domain.PhotopileUserDetails
 abstract class EffigyUserDetailsRepository implements UserDetailsRepository {
 
     @Create
-    abstract long create(PhotopileUserDetails userDetails)
+    abstract Long create(PhotopileUserDetails userDetails)
 
     @Update
     abstract boolean update(PhotopileUserDetails userDetails)
 
     @Retrieve
-    abstract PhotopileUserDetails retrieve(long id)
+    abstract PhotopileUserDetails retrieve(Long id)
 
     @Retrieve
     abstract PhotopileUserDetails fetchByUsername(String username)
 
     @Retrieve
-    abstract PhotopileUserDetails fetchById(long id)
+    abstract PhotopileUserDetails fetchById(Long id)
 
     @Count
     abstract int count()
 
     @Delete
-    abstract boolean delete(long id)
+    abstract boolean delete(Long id)
 }

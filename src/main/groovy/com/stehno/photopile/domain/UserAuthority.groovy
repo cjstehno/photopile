@@ -21,14 +21,14 @@ import com.stehno.effigy.annotation.Id
 import org.springframework.security.core.GrantedAuthority
 
 /**
- * Created by cjstehno on 11/22/2014.
+ * Simple user authority for Photopile, based on the Spring security model.
  */
 @Entity(table = 'authorities')
 class UserAuthority implements GrantedAuthority {
 
     static final String AUTHORITY_ADMIN = 'ADMIN'
 
-    @Id long id
+    @Id Long id
 
     String authority
 }

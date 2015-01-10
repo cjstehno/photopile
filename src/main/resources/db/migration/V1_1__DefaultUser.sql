@@ -5,14 +5,13 @@
   this will need to change.
 */
 
-INSERT INTO users (id, version, username, password, enabled) VALUES (
-  1,
+INSERT INTO users (version, username, password, enabled) VALUES (
   1,
   'admin',
   '$2a$10$a.6OATQO9WgdkhTWgJWqxuiTGPdmlWteJxF4SkSRRKNyieIPXZ2Yu',
   TRUE
 );
 
-INSERT INTO authorities (id, authority) VALUES (2, 'ADMIN');
+INSERT INTO authorities (authority) VALUES ('ADMIN');
 
-INSERT INTO user_authorities (user_id, authority_id) VALUES (1, 2);
+INSERT INTO user_authorities (user_id, authority_id) VALUES (1, 1);

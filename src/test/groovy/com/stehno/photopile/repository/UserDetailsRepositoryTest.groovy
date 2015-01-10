@@ -61,7 +61,7 @@ class UserDetailsRepositoryTest {
         def user = createUser()
 
         assert user.id
-        assert user.version == 0
+        assert user.version == 1
 
         assertUserFixture user
         assertAuthority user, AUTHORITY_ADMIN
@@ -92,7 +92,7 @@ class UserDetailsRepositoryTest {
 
         def user = userDetailsRepository.fetchByUsername(userName())
         assert user.id
-        assert user.version == 0
+        assert user.version == 1
         assertUserFixture user
     }
 
@@ -104,13 +104,12 @@ class UserDetailsRepositoryTest {
         userDetailsRepository.delete(user.id)
 
         assert userDetailsRepository.count() == 0
-        assert userAuthorityRepository.count() == 1
         assert JdbcTestUtils.countRowsInTable(jdbcTemplate, 'user_authorities') == 0
     }
 
     @Transactional
     private UserAuthority createAuthority(String auth) {
-        long id = userAuthorityRepository.create(new UserAuthority(authority: auth))
+        long id = userAuthorityRepository.create(auth)
         userAuthorityRepository.retrieve(id)
     }
 
