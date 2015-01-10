@@ -16,9 +16,43 @@
 
 package com.stehno.photopile.repository
 
+import com.stehno.photopile.domain.Tag
+
 /**
  * Repository for interacting with photo tags.
  */
 interface TagRepository {
 
+    /**
+     * Creates a new tag with the given category and name.
+     *
+     * @param category the tag category
+     * @param name the tag name
+     * @return the id of the created tag
+     */
+    Long create(String category, String name)
+
+    /**
+     * Updates the data stored for the given tag.
+     *
+     * @param tag the tag to be updated
+     * @return true, if the tag was updated.
+     */
+    boolean update(Tag tag)
+
+    /**
+     * Retrieves the tag with the specified id value.
+     *
+     * @param id the tag id
+     * @return the Tag with the specified id
+     */
+    Tag retrieve(Long id)
+
+    /**
+     * Deletes the tag with the specified id.
+     *
+     * @param id the tag id
+     * @return true, if the tag was deleted
+     */
+    boolean delete(Long id)
 }

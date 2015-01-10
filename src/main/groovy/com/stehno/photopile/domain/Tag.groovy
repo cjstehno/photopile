@@ -28,7 +28,7 @@ import groovy.transform.ToString
 @Entity @ToString(includeNames = true) @EqualsAndHashCode
 class Tag {
 
-    @Id long id
+    @Id Long id
     @Version Long version
 
     String category

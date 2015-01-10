@@ -16,25 +16,24 @@
 
 package com.stehno.photopile.repository
 
-import static com.stehno.photopile.fixtures.Fixtures.FIX_A
-import static com.stehno.photopile.fixtures.Fixtures.FIX_B
-import static com.stehno.photopile.fixtures.PhotoFixtures.photoFixtureFor
-import static com.stehno.photopile.fixtures.TagFixtures.assertTagFixture
-import static com.stehno.photopile.fixtures.TagFixtures.tagFixtureFor
-
-import com.stehno.photopile.domain.Photo
 import com.stehno.photopile.domain.Tag
 import com.stehno.photopile.test.config.TestConfig
 import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
 import org.springframework.transaction.annotation.Transactional
+
+import static com.stehno.photopile.fixtures.Fixtures.FIX_A
+import static com.stehno.photopile.fixtures.Fixtures.FIX_B
+import static com.stehno.photopile.fixtures.TagFixtures.*
+import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes = [TestConfig])
@@ -46,64 +45,45 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class TagRepositoryTest {
 
-    static TABLES = ['photo_tags', 'tags']
+    static TABLES = ['tags']
 
     @Autowired private TagRepository tagRepository
-    @Autowired private PhotoRepository photoRepository
+    @Autowired private JdbcTemplate jdbcTemplate
 
     @Test void 'create'() {
-        Photo photoA = photoRepository.save(new Photo(photoFixtureFor(FIX_A)))
-        Photo photoB = photoRepository.save(new Photo(photoFixtureFor(FIX_B)))
+        def tagId = tagRepository.create(tagCategory(FIX_A), tagName(FIX_A))
 
-        Tag tag = tagRepository.save(new Tag(tagFixtureFor(FIX_A)))
+        assert countRowsInTable(jdbcTemplate, 'tags') == 1
+
+        Tag tag = tagRepository.retrieve(tagId)
 
         assert tag
-        assert tag.id
-        assert tag.version == 0
+        assert tag.id == tagId
+        assert tag.version == 1
 
         assertTagFixture tag
-
-        tag.photos.add(photoB)
-
-        assert tagRepository.findOne(tag.id).photos.size() == 1
     }
 
     @Test void 'update'() {
-        Tag tag = tagRepository.save(new Tag(tagFixtureFor(FIX_A)))
+        def tagId = tagRepository.create(tagCategory(FIX_A), tagName(FIX_A))
+        Tag tag = tagRepository.retrieve(tagId)
 
-        assert tag
-        assert tag.id
-        assert tag.version == 0
+        tag.category = tagCategory(FIX_B)
+        tag.name = tagName(FIX_B)
 
-        assertTagFixture tag
+        assert tagRepository.update(tag)
 
-        Tag modified = new Tag(tagFixtureFor(FIX_B))
-        modified.id = tag.id
-        modified.version = tag.version
-
-        Tag updated = tagRepository.save(modified)
-
+        Tag updated = tagRepository.retrieve(tagId)
         assertTagFixture updated, FIX_B
     }
 
     @Test void 'delete'() {
-        Photo photoA = photoRepository.save(new Photo(photoFixtureFor(FIX_A)))
-        Photo photoB = photoRepository.save(new Photo(photoFixtureFor(FIX_B)))
+        def tagId = tagRepository.create(tagCategory(FIX_A), tagName(FIX_A))
 
-        Tag tag = tagRepository.save(new Tag(tagFixtureFor(FIX_A)))
+        assert countRowsInTable(jdbcTemplate, 'tags') == 1
 
-        tag.photos.add(photoA)
+        tagRepository.delete(tagId)
 
-        assert tag
-        assert tag.id
-        assert tag.version == 0
-
-        assertTagFixture tag
-        assert tagRepository.count() == 1
-        assert tagRepository.findOne(tag.id).photos.size() == 1
-
-        tagRepository.delete(tag.id)
-
-        assert tagRepository.count() == 0
+        assert countRowsInTable(jdbcTemplate, 'tags') == 0
     }
 }
