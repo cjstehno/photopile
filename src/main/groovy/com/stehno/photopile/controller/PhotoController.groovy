@@ -16,30 +16,21 @@
 
 package com.stehno.photopile.controller
 
-import com.stehno.photopile.service.PhotoService
 import groovy.util.logging.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RestController
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET
 
 /**
  * Created by cjstehno on 11/22/2014.
  */
-@RestController @Slf4j @Transactional(readOnly = true)
+@RestController @Slf4j
 class PhotoController {
 
-    @Autowired private PhotoService photoService
+    @RequestMapping(value = '/testing/photoimport', method = GET)
+    Integer importTesting() {
+        log.info 'Hit import testing!'
 
-    @RequestMapping(value = '/testing/photoimport', method = RequestMethod.GET)
-    @Transactional(readOnly = false)
-    void importTesting() {
-        File photoFile = new File('')
-
-//        photoService.createAsync(photoFile.toURI())
-        photoService.create(photoFile.toURI())
-
-        log.info 'Submitted photo ({}) for upload.', photoFile
     }
 }

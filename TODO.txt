@@ -5,8 +5,6 @@
 
 -   scaling rethink - may not need so many options
 
--   refactor tags to have category/type prefix (?)
-
 -   implement photo details view
 -   implement photo albums
 
@@ -14,8 +12,6 @@
 
 -   investigate shell commands
 -   investigate actuator use
-
-groovydoc, javadoc, coverage, codenarc
 
 
 Photos
@@ -27,6 +23,7 @@ Photos
 	PUT /photo/{photoid} - update existing photo (may include image)
 
 	GET /photo/{photoid}/image/{scale} - get image content for photo at scale
+	- might move images to a separate controller
 
 	GET /photo/{photoid} - get photo data (not image) for photo
 
@@ -65,8 +62,6 @@ Tags
 
 FIXME: date updated does not work under effigy
 
-- convert jpa/jdbc over to effigy
-- get postgresql setup
 - implement new import workflow
 - refactor as restful service
 - implement oauth security

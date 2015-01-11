@@ -60,19 +60,18 @@ class FilesystemImageArchiveRepositoryTest {
         }
 
         def files = []
+
         temporaryFolder.root.eachFileRecurse(FileType.FILES) { file ->
             if (file.name.endsWith('.jpg')) {
-                files << file
+                assert file.length()
+
+                files << ((file.toURI() as String) - (temporaryFolder.root.toURI() as String))
             }
         }
 
+        files = files.sort()
+
         assert files.size() == 11
-
-        files.eachWithIndex { file, idx ->
-            assert file.length()
-
-            files[idx] = ((file.toURI() as String) - (temporaryFolder.root.toURI() as String))
-        }
 
         assert files[0].contains('arch1/photo-1-')
         assert files[1].contains('arch1/photo-2-')

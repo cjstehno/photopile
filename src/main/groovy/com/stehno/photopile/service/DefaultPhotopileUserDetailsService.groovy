@@ -34,13 +34,13 @@ class DefaultPhotopileUserDetailsService implements PhotopileUserDetailsService 
 
     @Override
     PhotopileUserDetails loadUserById(final long userId) throws UsernameNotFoundException {
-        PhotopileUserDetails user = userDetailsRepository.findOne(userId)
+        PhotopileUserDetails user = userDetailsRepository.retrieve(userId)
         returnIfFound user, userId
     }
 
     @Override
     UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
-        PhotopileUserDetails user = userDetailsRepository.findFirstByUsername(username)
+        PhotopileUserDetails user = userDetailsRepository.fetchByUsername(username)
         returnIfFound user, username
     }
 

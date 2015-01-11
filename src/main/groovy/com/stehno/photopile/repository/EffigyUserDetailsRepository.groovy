@@ -26,9 +26,6 @@ abstract class EffigyUserDetailsRepository implements UserDetailsRepository {
     @Retrieve
     abstract PhotopileUserDetails fetchByUsername(String username)
 
-    @Retrieve
-    abstract PhotopileUserDetails fetchById(Long id)
-
     @Count
     abstract int count()
 

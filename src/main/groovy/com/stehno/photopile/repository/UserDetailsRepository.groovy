@@ -31,8 +31,6 @@ interface UserDetailsRepository {
 
     PhotopileUserDetails fetchByUsername(String username)
 
-    PhotopileUserDetails fetchById(Long userId)
-
     int count()
 
     boolean delete(Long id)
