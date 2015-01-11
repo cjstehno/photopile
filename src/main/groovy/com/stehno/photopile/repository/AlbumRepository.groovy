@@ -20,4 +20,6 @@ package com.stehno.photopile.repository
  * Created by cjstehno on 11/21/2014.
  */
 interface AlbumRepository {
+
+    Long create(String name, String description)
 }

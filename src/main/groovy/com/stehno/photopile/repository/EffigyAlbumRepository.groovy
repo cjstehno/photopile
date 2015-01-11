@@ -16,8 +16,16 @@
 
 package com.stehno.photopile.repository
 
+import com.stehno.effigy.annotation.Create
+import com.stehno.effigy.annotation.Repository
+import com.stehno.photopile.domain.Album
+
 /**
  * Created by cjstehno on 1/11/15.
  */
-class EffigyAlbumRepository implements AlbumRepository {
+@Repository(Album)
+abstract class EffigyAlbumRepository implements AlbumRepository {
+
+    @Create
+    abstract Long create(String name, String description)
 }
