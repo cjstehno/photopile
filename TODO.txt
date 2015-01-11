@@ -63,6 +63,7 @@ Tags
 
 	DELETE /tag/{tagid} - delete a tag (not contents)
 
+FIXME: date updated does not work under effigy
 
 - convert jpa/jdbc over to effigy
 - get postgresql setup
@@ -76,4 +77,6 @@ Tags
   cli
   desktop
   android
+
+
 

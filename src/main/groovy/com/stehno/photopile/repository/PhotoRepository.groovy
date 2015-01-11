@@ -16,10 +16,49 @@
 
 package com.stehno.photopile.repository
 
+import com.stehno.photopile.domain.Photo
+
 /**
  * Repository operations for working with photos.
  */
 interface PhotoRepository {
 
+    /**
+     * Creates a new photo with the provided photo information.
+     *
+     * @param photo the Photo object to be created
+     * @return the id of the created photo
+     */
+    Long create(Photo photo)
 
+    /**
+     * Retrieves the photo with the given id.
+     *
+     * @param id the photo id
+     * @return the Photo with the provided id, or null
+     */
+    Photo retrieve(Long id)
+
+    /**
+     * Retrieves all the photos in the database.
+     *
+     * @return a List containing all the photos in the database
+     */
+    List<Photo> retrieveAll()
+
+    /**
+     * Updates the provided photo in the database (using the id).
+     *
+     * @param photo the photo to be updated
+     * @return true, if the photo was actually updated.
+     */
+    boolean update(Photo photo)
+
+    /**
+     * Deletes the photo with the given id.
+     *
+     * @param id the photo id
+     * @return true, if the photo was actually deleted
+     */
+    boolean delete(Long id)
 }

@@ -15,7 +15,8 @@
  */
 
 package com.stehno.photopile.repository
-import com.stehno.photopile.domain.*
+
+import com.stehno.photopile.domain.Photo
 import com.stehno.photopile.test.config.TestConfig
 import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
 import org.junit.Test
@@ -29,6 +30,16 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener
 import org.springframework.transaction.annotation.Transactional
 
+import static com.stehno.photopile.fixtures.Fixtures.*
+import static com.stehno.photopile.fixtures.PhotoFixtures.assertPhotoFixture
+import static com.stehno.photopile.fixtures.PhotoFixtures.photoDescription
+import static com.stehno.photopile.fixtures.PhotoFixtures.photoFixtureFor
+import static com.stehno.photopile.fixtures.PhotoFixtures.photoName
+import static com.stehno.photopile.fixtures.TagFixtures.assertTagFixture
+import static com.stehno.photopile.fixtures.TagFixtures.tagCategory
+import static com.stehno.photopile.fixtures.TagFixtures.tagName
+import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
+
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes = [TestConfig])
 @TestExecutionListeners([
@@ -38,92 +49,109 @@ import org.springframework.transaction.annotation.Transactional
 ])
 class PhotoRepositoryTest {
 
+    static TABLES = ['photos', 'photo_tags', 'tags']
+
     @Autowired private PhotoRepository photoRepository
     @Autowired private TagRepository tagRepository
-    @Autowired private AlbumRepository albumRepository
-    @Autowired private PhotoImageRepository photoImageRepository
     @Autowired private JdbcTemplate jdbcTemplate
 
-    /// FIXME: test the hell out of deletes and cascade operations
-    // test the interactions and add any finders required
-    // probably test all layers with actual db - its all integration testing
-    // can I setup H2 for testing (maybe a prop so I can switch between h2 and psql as needed)
+    @Test @Transactional void 'create'() {
+        def (idA, idB, idC) = createThree()
 
-    /*   @Transactional
-       void createPhoto(){
-           Photo photo = new Photo(
-               name: 'Photo-1',
-               description: 'This is photo-1',
-               dateTaken: new Date(System.currentTimeMillis()-100000),
-               dateUpdated: new Date(),
-               dateUploaded: new Date(),
-               cameraInfo: new CameraInfo(make: 'Test', model: 'TC-2000')
-           )
+        assert idA
+        assert idB
+        assert idC
 
-           Tag tagA = new Tag(category: 'foo', name: 'alpha')
-           photo.tags.add(tagA)
-
-           def savedPhoto = photoRepository.save(photo)
-
-           assert savedPhoto.id
-       }*/
-
-    @Test @Transactional void something() {
-        Photo photo = new Photo(
-            name: 'Photo-1',
-            description: 'This is photo-1',
-            dateTaken: new Date(System.currentTimeMillis() - 100000),
-            dateUpdated: new Date(),
-            dateUploaded: new Date(),
-            cameraInfo: new CameraInfo(make: 'Test', model: 'TC-2000')
-        )
-
-        Tag tagA = new Tag(category: 'foo', name: 'alpha')
-        photo.tags.add(tagA)
-
-        PhotoImage image = new PhotoImage(scale: ImageScale.FULL, width: 100, height: 100, contentLength: 1000, contentType: 'image/jpeg')
-        photo.images[ImageScale.FULL] = image
-
-        def savedPhoto = photoRepository.save(photo)
-
-        assert savedPhoto.id
-
-//        createPhoto()
-
-        assert photoRepository.count() == 1
-        assert tagRepository.count() == 1
-
-        Album album = new Album(name: 'Xmas2014')
-
-        def savedAlbum = albumRepository.save(album)
-
-        def loadedPhoto = photoRepository.findAll()[0]
-
-        assert loadedPhoto.images.size() == 1
-
-        savedAlbum.photos.add(loadedPhoto)
-
-        println savedAlbum
+        assert countRowsInTable(jdbcTemplate, 'photos') == 3
     }
 
-    @Test void somethingElse() {
-        Photo photo = new Photo(
-            name: 'Photo-2',
-            description: 'This is photo-2',
-            dateTaken: new Date(System.currentTimeMillis() - 100000),
-            dateUpdated: new Date(),
-            dateUploaded: new Date(),
-            cameraInfo: new CameraInfo(make: 'Test', model: 'TC-1000')
-        )
+    @Test @Transactional void 'retrieve'() {
+        def (idA, idB, idC) = createThree()
 
-        Tag tagA = new Tag(category: 'foo', name: 'bravo')
-        photo.tags.add(tagA)
+        def photoA = photoRepository.retrieve(idA)
+        assertPhotoFixture(photoA, FIX_A)
+        assert photoA.tags.size() == 1
+        assertTagFixture(photoA.tags[0], FIX_A)
 
-        PhotoImage image = new PhotoImage(scale: ImageScale.FULL, width: 100, height: 100, contentLength: 1000, contentType: 'image/jpeg')
-        photo.images[ImageScale.FULL] = image
+        def photoB = photoRepository.retrieve(idB)
+        assertPhotoFixture(photoB, FIX_B)
+        assert photoB.tags.size() == 2
 
-        def savedPhoto = photoRepository.save(photo)
+        def photoC = photoRepository.retrieve(idC)
+        assertPhotoFixture(photoC, FIX_C)
+    }
 
-        assert savedPhoto.id
+    @Test @Transactional void 'retrieve: non-existing'() {
+        assert !photoRepository.retrieve(100)
+    }
+
+    @Test @Transactional void 'retrieveAll'() {
+        def (idA, idB, idC) = createThree()
+
+        def photos = photoRepository.retrieveAll()
+
+        assertPhotoFixture(photos.find { p -> p.id == idA }, FIX_A)
+        assertPhotoFixture(photos.find { p -> p.id == idB }, FIX_B)
+        assertPhotoFixture(photos.find { p -> p.id == idC }, FIX_C)
+    }
+
+    @Test @Transactional void 'update'() {
+        def (idA, idB, idC) = createThree()
+
+        def photoA = photoRepository.retrieve(idA)
+
+        photoA.name = photoName(FIX_D)
+        photoA.description = photoDescription(FIX_D)
+
+        assert photoRepository.update(photoA)
+
+        def updated = photoRepository.retrieve(idA)
+        assert updated.name == photoName(FIX_D)
+        assert updated.description == photoDescription(FIX_D)
+        assert photoA.tags.size() == 1
+        assertTagFixture(photoA.tags[0], FIX_A)
+    }
+
+    @Test @Transactional void 'delete'() {
+        def (idA, idB, idC) = createThree()
+
+        assert countRowsInTable(jdbcTemplate, 'photos') == 3
+        assert countRowsInTable(jdbcTemplate, 'photo_tags') == 3
+
+        assert photoRepository.delete(idB)
+
+        assert countRowsInTable(jdbcTemplate, 'photos') == 2
+        assert countRowsInTable(jdbcTemplate, 'photo_tags') == 1
+        assert countRowsInTable(jdbcTemplate, 'tags') == 2
+
+        assert photoRepository.retrieve(idA)
+        assert !photoRepository.retrieve(idB)
+        assert photoRepository.retrieve(idC)
+    }
+
+    private List createThree() {
+        def idA = photoRepository.create(new Photo(photoFixtureFor(FIX_A)))
+        def idB = photoRepository.create(new Photo(photoFixtureFor(FIX_B)))
+        def idC = photoRepository.create(new Photo(photoFixtureFor(FIX_C)))
+
+        assert countRowsInTable(jdbcTemplate, 'photos') == 3
+
+        def tagA = tagRepository.retrieve(tagRepository.create(tagCategory(FIX_A), tagName(FIX_A)))
+        def tagB = tagRepository.retrieve(tagRepository.create(tagCategory(FIX_B), tagName(FIX_B)))
+
+        assert countRowsInTable(jdbcTemplate, 'tags') == 2
+
+        def photoA = photoRepository.retrieve(idA)
+        photoA.tags << tagA
+
+        assert photoRepository.update(photoA)
+
+        def photoB = photoRepository.retrieve(idB)
+        photoB.tags << tagA
+        photoB.tags << tagB
+
+        assert photoRepository.update(photoB)
+
+        [idA, idB, idC]
     }
 }

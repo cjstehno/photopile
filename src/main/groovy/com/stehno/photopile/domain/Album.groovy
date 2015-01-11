@@ -29,7 +29,7 @@ import groovy.transform.ToString
 @Entity @ToString(includeNames = true) @EqualsAndHashCode
 class Album {
 
-    @Id long id
+    @Id Long id
     @Version Long version
 
     String name

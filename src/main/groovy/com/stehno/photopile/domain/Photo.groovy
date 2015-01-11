@@ -26,7 +26,7 @@ import groovy.transform.ToString
 @Entity @ToString(includeNames = true) @EqualsAndHashCode
 class Photo {
 
-    @Id long id
+    @Id Long id
     @Version Long version
 
     String name
@@ -39,5 +39,6 @@ class Photo {
     @Embedded(prefix = 'camera') CameraInfo cameraInfo
     @Embedded(prefix = 'geo') GeoLocation location
 
-    @Association Set<Tag> tags = [] as Set<Tag>
+    @Association(joinTable = 'photo_tags', entityColumn = 'photo_id', assocColumn = 'tag_id')
+    Set<Tag> tags = [] as Set<Tag>
 }
