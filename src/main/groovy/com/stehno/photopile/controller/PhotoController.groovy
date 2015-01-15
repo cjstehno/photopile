@@ -32,5 +32,6 @@ class PhotoController {
     Integer importTesting() {
         log.info 'Hit import testing!'
 
+        return 42
     }
 }
