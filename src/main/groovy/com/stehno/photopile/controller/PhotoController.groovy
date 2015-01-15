@@ -17,21 +17,36 @@
 package com.stehno.photopile.controller
 
 import groovy.util.logging.Slf4j
-import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET
-
 /**
- * Created by cjstehno on 11/22/2014.
+ * Controller used for interactions with Photos.
  */
-@RestController @Slf4j
+@RestController('/photos') @Slf4j
 class PhotoController {
 
-    @RequestMapping(value = '/testing/photoimport', method = GET)
-    Integer importTesting() {
-        log.info 'Hit import testing!'
+    private static final String META_TOTAL = 'total'
 
-        return 42
-    }
+    // FIXME: this should not be "album" here - album view should go to alubm controller, "all" should come here
+    // -or- at least the album should be part of the query
+    // it might be best to have some photos in the system to play with, maybe get the import working via shell command
+
+    /*    @RequestMapping(value = '/album/{album}', method = GET)
+        WrappedCollection<Photo> list(
+            @PathVariable('album') final String album,
+            final TaggedAs taggedAs,
+            final PageBy pageBy,
+            final SortBy sortBy
+        ) {
+            // FIXME: album does nothing yet
+
+            Collection<Photo> photos = photoService.listPhotos(pageBy, sortBy, taggedAs)
+
+            log.debug 'Found {} photos in album ({}) @ {}, sorting by {} and tagged with {}', photos.size(), album, pageBy, sortBy, taggedAs
+
+            final WrappedCollection<Photo> wrapped = new WrappedCollection<>(photos)
+            wrapped.meta.put(META_TOTAL, photoService.countPhotos(taggedAs))
+
+            return wrapped
+        }*/
 }

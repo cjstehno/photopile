@@ -1,18 +1,24 @@
 
--   new add/import functionality
--   new user message functionality
-    -   setup email handler
+* wireup the controllers with the existing ui
+* upgrade the ui libraries (webjars?)
 
--   scaling rethink - may not need so many options
+* add/import functionality (remove old and implement new front/back)
+* user messaging (add it back in ui and backend)
 
--   implement photo details view
--   implement photo albums
+* photo details view
+* photo albums views
 
--   document setup, build and der-run procedures
+* investigate shell commands
+	* user management
+	* server side import
+* investigate actuator use
+	* would be nice to have some sort of ui for this
 
--   investigate shell commands
--   investigate actuator use
+* ui needs to work well on mobile (cell and tablet)
 
+FIXME: date updated does not work under effigy
+
+Consider the following while working the new ui/controller interface...
 
 Photos
 
@@ -59,19 +65,3 @@ Tags
 	GET /tag[?offset={}&limit={}] - list tags with optional page offset/limit
 
 	DELETE /tag/{tagid} - delete a tag (not contents)
-
-FIXME: date updated does not work under effigy
-
-- implement new import workflow
-- refactor as restful service
-- implement oauth security
-
-- refactor project into multiproject to add in
-  client - restufl client api
-  server
-  cli
-  desktop
-  android
-
-
-
