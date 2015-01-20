@@ -15,7 +15,8 @@
  */
 
 package com.stehno.photopile.service
-import com.stehno.photopile.domain.Photo
+
+import com.stehno.photopile.meta.PhotoMetadata
 /**
  * Service used to manage and access photos and their images.
  */
@@ -29,13 +30,13 @@ interface PhotoService {
      * @param image the photo image object to be associated with the photo
      * @return the newly created photo object with all populated data
      */
-    Photo create(final File contentFile, final PhotoInfo info)
+    void create(final File contentFile, final PhotoMetadata photoMetadata, final Set<String> tags)
+    void create(final File contentFile, final PhotoMetadata photoMetadata)
+    void create(final File contentFile)
 
-    void createAsync(final File contentFile, final PhotoInfo info)
-
-    Photo create(final File contentFile)
-
-    void createAsync(final File contentFile)
+//    void createAsync(final File contentFile, final PhotoInfo info)
+//
+//    void createAsync(final File contentFile)
     /*
         come up with an import controller
         might not need services per-se

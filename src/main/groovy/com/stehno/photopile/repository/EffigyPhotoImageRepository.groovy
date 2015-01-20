@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Christopher J. Stehno
+ * Copyright (c) 2015 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,20 @@
 
 package com.stehno.photopile.repository
 
+import com.stehno.effigy.annotation.Create
+import com.stehno.effigy.annotation.Repository
+import com.stehno.effigy.annotation.Retrieve
 import com.stehno.photopile.domain.PhotoImage
 
 /**
- * Created by cjstehno on 11/16/2014.
+ * Created by cjstehno on 1/17/15.
  */
-interface PhotoImageRepository {
+@Repository(PhotoImage)
+abstract class EffigyPhotoImageRepository implements PhotoImageRepository {
 
-    Long create(PhotoImage photoImage)
+    @Create
+    abstract Long create(PhotoImage photoImage)
 
-    PhotoImage retrieve(Long id)
+    @Retrieve
+    abstract PhotoImage retrieve(Long id)
 }

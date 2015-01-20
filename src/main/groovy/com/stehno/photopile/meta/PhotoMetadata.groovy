@@ -24,6 +24,10 @@ import groovy.transform.Immutable
 @Immutable
 class PhotoMetadata {
 
+    // TODO: the name and description fields are not used by the extractor - they should be given some default values
+    String name
+    String description
+
     Date dateTaken
 
     String cameraMake
@@ -48,6 +52,8 @@ class PhotoMetadata {
 
     PhotoMetadata plus(PhotoMetadata other) {
         new PhotoMetadata(
+            name: (other.name ?: name),
+            description: (other.description ?: description),
             dateTaken: (other.dateTaken ?: dateTaken),
             cameraMake: (other.cameraMake ?: cameraMake),
             cameraModel: (other.cameraModel ?: cameraModel),
@@ -61,6 +67,6 @@ class PhotoMetadata {
     }
 
     static PhotoMetadata empty() {
-        new PhotoMetadata(null, null, null, 0, 0, null, null, null, null)
+        new PhotoMetadata(null, null, null, null, null, 0, 0, null, null, null, null)
     }
 }

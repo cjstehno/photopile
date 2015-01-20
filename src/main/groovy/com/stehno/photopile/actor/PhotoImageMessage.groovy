@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Christopher J. Stehno
+ * Copyright (c) 2015 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.domain
+package com.stehno.photopile.actor
 
-import com.stehno.effigy.annotation.Entity
-import com.stehno.effigy.annotation.Id
-import com.stehno.effigy.annotation.Version
-import groovy.transform.EqualsAndHashCode
-import groovy.transform.ToString
+import groovy.transform.Immutable
 import org.springframework.http.MediaType
 
 /**
- * Represents image content in the database.
+ * Created by cjstehno on 1/18/15.
  */
-@Entity(table = 'images') @ToString(includeNames = true) @EqualsAndHashCode
-class PhotoImage {
+@Immutable
+class PhotoImageMessage {
 
-    @Id Long id
-    @Version Long version
-
-    ImageScale scale
-    int width
-    int height
-    long contentLength
+    UUID importId
+    Long photoId
     MediaType contentType
+    File file
 }

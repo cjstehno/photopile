@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Christopher J. Stehno
+ * Copyright (c) 2015 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.repository
+package com.stehno.photopile.actor
 
-import com.stehno.photopile.domain.PhotoImage
+import com.stehno.photopile.meta.PhotoMetadata
+import groovy.transform.Immutable
 
 /**
- * Created by cjstehno on 11/16/2014.
+ * Created by cjstehno on 1/18/15.
  */
-interface PhotoImageRepository {
+@Immutable
+class CreatePhotoMessage {
 
-    Long create(PhotoImage photoImage)
-
-    PhotoImage retrieve(Long id)
+    UUID importId
+    File file
+    PhotoMetadata metadata
+    Set<String> tags
 }

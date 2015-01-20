@@ -18,6 +18,7 @@ package com.stehno.photopile.actor
 
 import groovy.util.logging.Slf4j
 import groovyx.gpars.actor.DefaultActor
+import org.springframework.beans.factory.annotation.Autowired
 
 import javax.annotation.PostConstruct
 
@@ -27,11 +28,19 @@ import javax.annotation.PostConstruct
 @Slf4j
 abstract class AbstractActor<M> extends DefaultActor {
 
-    @Override
+    @Autowired private ErrorHandler errorHandler
+
+    @Override @SuppressWarnings('GroovyAssignabilityCheck')
     protected final void act() {
         loop {
             react { M input ->
-                handleMessage input
+                try {
+                    handleMessage input
+                } catch (ex) {
+                    log.warn 'Caught action error: {}', ex.message
+
+                    errorHandler << new ImportErrorMessage(input['importId'], input['photoId'])
+                }
             }
         }
     }

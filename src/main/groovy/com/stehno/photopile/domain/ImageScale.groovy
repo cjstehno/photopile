@@ -24,10 +24,9 @@ import groovy.transform.ToString
 @ToString
 enum ImageScale {
 
-    MINI(0.2d),
-    SMALL(0.4d),
-    MEDIUM(0.6d),
-    LARGE(0.8d),
+    SMALL(0.25d),
+    MEDIUM(0.50d),
+    LARGE(0.75d),
     FULL(1.0d)
 
     final double factor

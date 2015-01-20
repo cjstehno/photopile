@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Christopher J. Stehno
+ * Copyright (c) 2015 Christopher J. Stehno
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.service
+package com.stehno.photopile.actor
 
 import com.stehno.photopile.domain.ImageScale
+import groovy.transform.Immutable
 import org.springframework.http.MediaType
 
 /**
- * Service interface for the image scaling framework.
+ * Created by cjstehno on 1/18/15.
  */
-interface ImageScalingService {
+@Immutable
+class ImageScaleMessage {
 
-    /**
-     * Requests that the image for the photo with the given ID be scaled to the specified scale. The requested scaling will be done asynchronously
-     * and will be available sometime after the request is made. This method will return immediately.
-     *
-     * @param photoId the id of the photo whose image is to be scaled
-     * @param scale the scale to be generated
-     */
-    void scale(long photoId, MediaType contentType, ImageScale scale)
+    UUID importId
+    Long photoId
+    MediaType contentType
+    ImageScale scale
 }

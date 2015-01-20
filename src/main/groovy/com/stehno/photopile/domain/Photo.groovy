@@ -41,4 +41,8 @@ class Photo {
 
     @Association(joinTable = 'photo_tags', entityColumn = 'photo_id', assocColumn = 'tag_id')
     Set<Tag> tags = [] as Set<Tag>
+
+    @Association(joinTable = 'photo_images', entityColumn = 'photo_id', assocColumn = 'image_id')
+    @Mapped(keyProperty = 'scale')
+    Map<ImageScale,PhotoImage> images = [:] as Map<ImageScale,PhotoImage>
 }

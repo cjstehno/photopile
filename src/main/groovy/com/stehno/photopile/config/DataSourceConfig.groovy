@@ -31,6 +31,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @ComponentScan('com.stehno.photopile.repository')
 class DataSourceConfig {
 
+    // FIXME: this should not be required any longer
+
     @Bean LobHandler lobHandler(){
         new DefaultLobHandler( wrapAsLob:true )
     }
