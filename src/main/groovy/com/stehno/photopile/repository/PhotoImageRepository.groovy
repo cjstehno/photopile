@@ -26,4 +26,6 @@ interface PhotoImageRepository {
     Long create(PhotoImage photoImage)
 
     PhotoImage retrieve(Long id)
+
+    boolean delete(Long id)
 }

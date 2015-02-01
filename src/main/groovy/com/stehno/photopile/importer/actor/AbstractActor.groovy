@@ -14,32 +14,64 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
+import com.codahale.metrics.Meter
+import com.codahale.metrics.MetricRegistry
 import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.Actor
 import groovyx.gpars.actor.DefaultActor
 import org.springframework.beans.factory.annotation.Autowired
 
 import javax.annotation.PostConstruct
 
+import static com.codahale.metrics.MetricRegistry.name
+
 /**
- * Abstract base class for Photopile actors.
+ * Abstract base class for Photopile importer actors.
  */
 @Slf4j
 abstract class AbstractActor<M> extends DefaultActor {
 
-    @Autowired private ErrorHandler errorHandler
+    @Autowired MetricRegistry metricRegistry
+    @Autowired Actor errorHandler
+
+    private Meter acceptedMessages
+    private Meter processedMessages
+    private Meter errorMessages
+
+    @Override
+    protected void handleStart() {
+        acceptedMessages = metricRegistry.meter(name(getClass(), 'accepted'))
+        processedMessages = metricRegistry.meter(name(getClass(), 'processed'))
+        errorMessages = metricRegistry.meter(name(getClass(), 'rejected'))
+
+        super.handleStart()
+    }
 
     @Override @SuppressWarnings('GroovyAssignabilityCheck')
     protected final void act() {
+        // TODO: the DSL-style code below seems to have some scoping issues, which cause this variable construct
+        def accepted = acceptedMessages
+        def processed = processedMessages
+        def rejected = errorMessages
+        def errors = errorHandler
+
         loop {
             react { M input ->
                 try {
+                    accepted.mark()
+
                     handleMessage input
+
+                    processed.mark()
+
                 } catch (ex) {
                     log.warn 'Caught action error: {}', ex.message
 
-                    errorHandler << new ImportErrorMessage(input['importId'], input['photoId'])
+                    rejected.mark()
+
+                    errors << new ImportErrorMessage(input['importId'], input['photoId'], input['file'])
                 }
             }
         }

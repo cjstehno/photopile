@@ -16,9 +16,6 @@
 
 package com.stehno.photopile.repository
 
-import static java.lang.Math.ceil
-import static java.lang.System.currentTimeMillis
-
 import com.stehno.photopile.domain.ImageScale
 import com.stehno.photopile.file.DefaultFileStore
 import com.stehno.photopile.file.FileStore
@@ -30,6 +27,8 @@ import org.springframework.stereotype.Repository
 import org.springframework.web.accept.MediaTypeFileExtensionResolver
 
 import javax.annotation.PostConstruct
+
+import static java.lang.Math.ceil
 
 /**
  * FIXME: document
@@ -44,9 +43,9 @@ class FilesystemPhotoImageContentRepository implements PhotoImageContentReposito
     @Autowired private MediaTypeFileExtensionResolver fileExtensionResolver
 
     private final FileStore fileStore = new DefaultFileStore(
-        name: 'Photopile-Archives',
+        name: 'Photopile-Storage',
         pathResolver: { attrs ->
-            "/ids${attrs.bucket}/${attrs.id}/photo-${attrs.id}-${attrs.scale}-${currentTimeMillis()}.${attrs.extension}"
+            "/ids${attrs.bucket}/${attrs.id}/photo-${attrs.id}-${attrs.scale}-${attrs.version}.${attrs.extension}"
         }
     )
 
@@ -56,18 +55,24 @@ class FilesystemPhotoImageContentRepository implements PhotoImageContentReposito
     }
 
     @Override
-    void store(final long photoId, final byte[] content, final MediaType contentType, final ImageScale scale) {
-        fileStore.store content, attrs(photoId, scale, contentType)
+    void store(final long photoId, final byte[] content, final MediaType contentType, final ImageScale scale, final long version) {
+        fileStore.store content, attrs(photoId, scale, contentType, version)
     }
 
     @Override
-    byte[] load(long photoId, MediaType contentType, ImageScale scale) {
-        fileStore.read attrs(photoId, scale, contentType)
+    byte[] load(long photoId, MediaType contentType, ImageScale scale, final long version) {
+        fileStore.read attrs(photoId, scale, contentType, version)
     }
 
-    private attrs(long photoId, ImageScale scale, MediaType contentType) {
+    @Override
+    void delete(long photoId, MediaType contentType, ImageScale scale, final long version) {
+        fileStore.delete attrs(photoId, scale, contentType, version)
+    }
+
+    private attrs(long photoId, ImageScale scale, MediaType contentType, long version) {
         [
             id       : photoId,
+            version  : version,
             bucket   : calculateBucket(photoId),
             scale    : scale.name(),
             extension: fileExtensionResolver.resolveFileExtensions(contentType)[0]

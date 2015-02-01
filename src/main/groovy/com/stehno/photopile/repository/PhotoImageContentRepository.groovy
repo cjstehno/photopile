@@ -33,7 +33,7 @@ interface PhotoImageContentRepository {
      * @param scale the image scale to be stored
      * @param image the photo image object (must be populated)
      */
-    void store(long photoId, byte[] content, MediaType contentType, ImageScale scale)
+    void store(long photoId, byte[] content, MediaType contentType, ImageScale scale, long version)
 
     /**
      * Loads the image content stored with the given photoId, content type and scale.
@@ -43,5 +43,7 @@ interface PhotoImageContentRepository {
      * @param scale the image scale
      * @return the content of the image
      */
-    byte[] load(long photoId, MediaType contentType, ImageScale scale)
+    byte[] load(long photoId, MediaType contentType, ImageScale scale, long version)
+
+    void delete(long photoId, MediaType contentType, ImageScale scale, long version)
 }

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.meta.PhotoMetadata
 import com.stehno.photopile.meta.PhotoMetadataExtractor
 import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -29,8 +30,8 @@ import org.springframework.stereotype.Component
 @Component @Slf4j
 class ExtractPhotoMetadata extends AbstractActor<CreatePhotoMessage> {
 
-    @Autowired private PhotoMetadataExtractor metadataExtractor
-    @Autowired private SavePhoto savePhoto
+    @Autowired PhotoMetadataExtractor metadataExtractor
+    @Autowired Actor savePhoto
 
     @Override
     protected void handleMessage(CreatePhotoMessage input) {
@@ -39,13 +40,13 @@ class ExtractPhotoMetadata extends AbstractActor<CreatePhotoMessage> {
         def tags = [] as Set<String>
 
         if (photoMetadata.dateTaken) {
-            tags << "year:${photoMetadata.dateTaken.format('YYYY')}"
-            tags << "month:${photoMetadata.dateTaken.format('MMM')}"
-            tags << "day:${photoMetadata.dateTaken.format('EEE')}"
+            tags << ("year:${photoMetadata.dateTaken.format('YYYY')}" as String)
+            tags << ("month:${photoMetadata.dateTaken.format('MMM')}" as String)
+            tags << ("day:${photoMetadata.dateTaken.format('EEE')}" as String)
         }
 
         if (photoMetadata.hasCamera()) {
-            tags << "camera:${photoMetadata.cameraMake} ${photoMetadata.cameraModel}"
+            tags << ("camera:${photoMetadata.cameraMake} ${photoMetadata.cameraModel}" as String)
         }
 
         if (input.tags) {

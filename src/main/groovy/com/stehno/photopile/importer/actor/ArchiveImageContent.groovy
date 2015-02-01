@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
+import com.stehno.photopile.importer.ImportTracker
 import com.stehno.photopile.repository.ImageArchiveRepository
 import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -27,8 +29,10 @@ import org.springframework.stereotype.Component
 @Component @Slf4j
 class ArchiveImageContent extends AbstractActor<PhotoImageMessage> {
 
-    @Autowired private ImageArchiveRepository imageArchiveRepository
-    @Autowired private RequestImageScaling requestImageScaling
+    @Autowired ImageArchiveRepository imageArchiveRepository
+    @Autowired ImportTracker importTracker
+    @Autowired Actor requestImageScaling
+    @Autowired Actor notifier
 
     // TODO: this should probably work on stream rather than byte array
 
@@ -43,5 +47,10 @@ class ArchiveImageContent extends AbstractActor<PhotoImageMessage> {
         log.info 'Import ({}) archived image content ({}) for photo ({}).', input.importId, input.file, input.photoId
 
         requestImageScaling << input
+
+        // the import is effectively done here since scaling can happen while viewing full-scale image
+        importTracker.mark input.importId
+
+        notifier << input.importId
     }
 }

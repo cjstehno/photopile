@@ -17,6 +17,7 @@
 package com.stehno.photopile.repository
 
 import com.stehno.effigy.annotation.Create
+import com.stehno.effigy.annotation.Delete
 import com.stehno.effigy.annotation.Repository
 import com.stehno.effigy.annotation.Retrieve
 import com.stehno.photopile.domain.PhotoImage
@@ -32,4 +33,7 @@ abstract class EffigyPhotoImageRepository implements PhotoImageRepository {
 
     @Retrieve
     abstract PhotoImage retrieve(Long id)
+
+    @Delete
+    abstract boolean delete(Long id)
 }

@@ -14,13 +14,17 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
-import com.stehno.photopile.domain.*
+import com.stehno.photopile.domain.CameraInfo
+import com.stehno.photopile.domain.GeoLocation
+import com.stehno.photopile.domain.Photo
+import com.stehno.photopile.domain.PhotoImage
 import com.stehno.photopile.repository.PhotoImageRepository
 import com.stehno.photopile.repository.PhotoRepository
 import com.stehno.photopile.repository.TagRepository
 import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
@@ -33,15 +37,16 @@ import static com.stehno.photopile.domain.ImageScale.FULL
  */
 @Component @Slf4j
 class SavePhoto extends AbstractActor<CreatePhotoMessage> {
+    // FIXME: might be good to have input/output type specified, then keep actors generic so that you could inject
+    // any actor producing/consuming the required type - change AbstractActor to something like ImportActor
 
-    @Autowired private PhotoRepository photoRepository
-    @Autowired private PhotoImageRepository photoImageRepository
-    @Autowired private SaveImageContent saveImageContent
-    @Autowired private ImportTracker importTracker
-    @Autowired private TagRepository tagRepository
+    @Autowired PhotoRepository photoRepository
+    @Autowired PhotoImageRepository photoImageRepository
+    @Autowired TagRepository tagRepository
+    @Autowired Actor saveImageContent
 
     @Override @Transactional
-    protected void handleMessage(CreatePhotoMessage input) {
+    protected void handleMessage(final CreatePhotoMessage input) {
         Photo photo = new Photo(
             name: input.metadata.name,
             description: input.metadata.description,
@@ -74,8 +79,6 @@ class SavePhoto extends AbstractActor<CreatePhotoMessage> {
         photo.images[FULL] = photoImage
 
         def photoId = photoRepository.create(photo)
-
-        importTracker.mark(input.importId)
 
         log.info 'Import ({}) saved photo ({}) for file ({})', input.importId, photoId, input.file
 

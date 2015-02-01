@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.domain.ImageScale
 import com.stehno.photopile.repository.PhotoImageContentRepository
 import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -28,8 +29,8 @@ import org.springframework.stereotype.Component
 @Component @Slf4j
 class SaveImageContent extends AbstractActor<PhotoImageMessage>{
 
-    @Autowired private PhotoImageContentRepository photoImageContentRepository
-    @Autowired private ArchiveImageContent archiveImageContent
+    @Autowired PhotoImageContentRepository photoImageContentRepository
+    @Autowired Actor archiveImageContent
 
     // FIXME: this should probably work on stream rather than byte array
 

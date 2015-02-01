@@ -14,29 +14,32 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer
 
 import groovy.transform.WithReadLock
 import groovy.transform.WithWriteLock
 import org.springframework.stereotype.Component
 
 /**
- * Simple import status tracking object.
+ * Manages and tracks status of current importer operations.
  */
 @Component
 class ImportTracker {
-    // TODO: not sure this belongs in the actor package
 
     private Map<UUID, Integer> actives = new HashMap<>()
+    private Map<UUID, List<File>> errors = new HashMap<>()
 
     /**
-     * Registers the given import Id with the tracker.
+     * Registers a new import job with the specified file count.
      *
-     * @param importId
+     * @param fileCount the expected file count
+     * @return the import job id for the new job
      */
     @WithWriteLock
-    void register(UUID importId) {
-        actives[importId] = 4
+    UUID register(final int fileCount) {
+        UUID importId = UUID.randomUUID()
+        actives[importId] = fileCount
+        return importId
     }
 
     /**
@@ -50,6 +53,25 @@ class ImportTracker {
     }
 
     /**
+     * Flags the import with an error and stores the reference to the bad file.
+     * The file count is still decremented.
+     *
+     * @param importId
+     * @param file
+     */
+    @WithWriteLock
+    void flag(UUID importId, File file){
+        actives[importId] = actives[importId] - 1
+
+        def list = errors[importId]
+        if( !list ){
+            list = []
+            errors[importId] = list
+        }
+        list.add(file)
+    }
+
+    /**
      * Checks whether or not the import with the given id has completed.
      *
      * @param importId
@@ -60,6 +82,16 @@ class ImportTracker {
         actives[importId] == 0
     }
 
+    @WithReadLock
+    boolean hasErrors(UUID importId){
+        errors[importId]
+    }
+
+    @WithReadLock
+    List<File> errors(UUID importId){
+        errors[importId].asImmutable()
+    }
+
     /**
      * Deletes the import tracker with the given id.
      *
@@ -68,5 +100,6 @@ class ImportTracker {
     @WithWriteLock
     void delete(UUID importId) {
         actives.remove(importId)
+        errors.remove(importId)
     }
 }

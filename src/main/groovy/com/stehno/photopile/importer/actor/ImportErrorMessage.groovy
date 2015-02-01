@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
 import groovy.transform.Immutable
-import org.springframework.http.MediaType
 
 /**
  * Created by cjstehno on 1/18/15.
  */
-@Immutable
-class PhotoImageMessage {
+@Immutable(knownImmutableClasses = [File])
+class ImportErrorMessage {
 
     UUID importId
     Long photoId
-    MediaType contentType
     File file
 }

@@ -16,7 +16,7 @@
 
 package com.stehno.photopile.service
 
-import com.stehno.photopile.actor.ImportPhoto
+import com.stehno.photopile.importer.ImporterWorkFlow
 import com.stehno.photopile.meta.PhotoMetadata
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,10 +28,13 @@ import org.springframework.stereotype.Service
 @Service @Slf4j
 class DefaultPhotoService implements PhotoService {
 
-    @Autowired private ImportPhoto importPhoto
+    @Autowired private ImporterWorkFlow importPhoto
 
-    @Override
+    @Override @Deprecated // FIXME: replace this one
     void create(final File contentFile, final PhotoMetadata photoMetadata = null, final Set<String> tags = null) {
-        importPhoto.startImport(contentFile, photoMetadata, tags)
+    }
+
+    void create(final List<File> contentFiles, final PhotoMetadata photoMetadata = null, final Set<String> tags = null) {
+        importPhoto.startImport(contentFiles, photoMetadata, tags)
     }
 }

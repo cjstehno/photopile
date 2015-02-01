@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
+import com.stehno.photopile.importer.ImportTracker
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Component
 class Notifier extends AbstractActor<UUID>{
 
     @Autowired private ImportTracker importTracker
+
+    // TODO: how should errors be handled here? Maybe add a logging error handler for the other actors to use
 
     @Override
     protected void handleMessage(UUID input) {

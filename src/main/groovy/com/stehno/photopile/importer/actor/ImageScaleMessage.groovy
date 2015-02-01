@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
+import com.stehno.photopile.domain.ImageScale
 import groovy.transform.Immutable
+import org.springframework.http.MediaType
 
 /**
  * Created by cjstehno on 1/18/15.
  */
-@Immutable
-class ImportErrorMessage {
+@Immutable(knownImmutableClasses = [MediaType])
+class ImageScaleMessage {
 
     UUID importId
     Long photoId
+    MediaType contentType
+    ImageScale scale
 }

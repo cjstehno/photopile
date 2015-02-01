@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.domain.ImageScale
 import groovy.util.logging.Slf4j
+import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -29,7 +30,7 @@ import static com.stehno.photopile.domain.ImageScale.FULL
 @Component @Slf4j
 class RequestImageScaling extends AbstractActor<PhotoImageMessage> {
 
-    @Autowired private ScaleImage scaleImage
+    @Autowired Actor scaleImage
 
     @Override
     protected void handleMessage(final PhotoImageMessage input) {

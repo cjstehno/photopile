@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.stehno.photopile.actor
+package com.stehno.photopile.importer.actor
 
 import com.stehno.photopile.repository.PhotoImageContentRepository
 import groovy.util.logging.Slf4j
@@ -34,12 +34,13 @@ import static com.stehno.photopile.domain.ImageScale.FULL
 @Component @Slf4j
 class ScaleImage extends AbstractActor<ImageScaleMessage> {
 
-    @Autowired private PhotoImageContentRepository photoImageContentRepository
-    @Autowired private MediaTypeFileExtensionResolver fileExtensionResolver
-    @Autowired private ImportTracker importTracker
-    @Autowired private Notifier notifier
+    @Autowired PhotoImageContentRepository photoImageContentRepository
+    @Autowired MediaTypeFileExtensionResolver fileExtensionResolver
 
     // TODO: this should probably operate on stream rather than byte array
+
+    // FIXME: this needs to account for the error condition where the photo and image content may not
+    //      exist due to error condition and rollback during import - should be handled gracefully
 
     @Override
     protected void handleMessage(ImageScaleMessage input) {
@@ -51,11 +52,7 @@ class ScaleImage extends AbstractActor<ImageScaleMessage> {
 
         photoImageContentRepository.store(input.photoId, scaledImage, input.contentType, input.scale)
 
-        importTracker.mark(input.importId)
-
         log.info 'Import ({}) scaled image for photo ({}) to {}', input.importId, input.photoId, input.scale.name()
-
-        notifier << input.importId
     }
 
     private static byte[] scale(final byte[] content, final double scaling, final String extension) throws IOException {
@@ -78,7 +75,7 @@ class ScaleImage extends AbstractActor<ImageScaleMessage> {
                 }
             }
 
-            scaledContent = outputStream.bytes
+            scaledContent = outputStream.toByteArray()
         }
 
         return scaledContent
