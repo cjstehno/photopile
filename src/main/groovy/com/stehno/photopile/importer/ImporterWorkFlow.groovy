@@ -29,8 +29,8 @@ import org.springframework.stereotype.Component
 @Component @Slf4j
 class ImporterWorkFlow {
 
-    @Autowired private Actor extractPhotoMetadata
-    @Autowired private ImportTracker importTracker
+    @Autowired Actor extractPhotoMetadata
+    @Autowired ImportTracker importTracker
 
     /**
      * Used to start an import of the specified image file into the database. The tasks of the workflow are executed

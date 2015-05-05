@@ -34,9 +34,13 @@ class Notifier extends AbstractActor<UUID>{
     @Override
     protected void handleMessage(UUID input) {
         if( importTracker.completed(input) ){
-            importTracker.delete(input)
 
-            log.info 'Completed import ({}).', input
+            boolean containsErrors = importTracker.hasErrors(input)
+            List<File> errors = containsErrors ? importTracker.errors(input) : []
+
+            log.info 'Completed import ({}) with {} errors.', input, errors.size()
+
+            importTracker.delete(input)
 
             // FIXME: what to do here?
             // somehow notify user that this image is done (user messaging?)

@@ -16,12 +16,16 @@
 
 package com.stehno.photopile.domain
 
+import com.stehno.effigy.annotation.Column
 import com.stehno.effigy.annotation.Entity
 import com.stehno.effigy.annotation.Id
 import com.stehno.effigy.annotation.Version
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 import org.springframework.http.MediaType
+
+import static java.sql.Types.INTEGER
+import static java.sql.Types.VARCHAR
 
 /**
  * Represents image content in the database.
@@ -32,9 +36,36 @@ class PhotoImage {
     @Id Long id
     @Version Long version
 
+    @Column(type = INTEGER, handler = PhotoImageScaleHandler)
     ImageScale scale
+
     int width
     int height
     long contentLength
+
+    @Column(type = VARCHAR, handler = PhotoImageContentTypeHandler)
     MediaType contentType
+}
+
+// TODO: this type of handler should be a default avaiable in effigy
+class PhotoImageScaleHandler {
+
+    static ImageScale readField(Integer field) {
+        field != null ? ImageScale.values()[field] : null
+    }
+
+    static int writeField(ImageScale value) {
+        value.ordinal()
+    }
+}
+
+class PhotoImageContentTypeHandler {
+
+    static MediaType readField(String field) {
+        MediaType.valueOf(field)
+    }
+
+    static String writeField(MediaType value) {
+        value.toString()
+    }
 }

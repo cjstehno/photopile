@@ -15,10 +15,8 @@ apply plugin: 'spring-boot'
 apply plugin: 'jacoco'
 apply plugin: 'codenarc'
 
-compileJava {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
 
 mainClassName = 'com.stehno.photopile.PhotopileApplication'
 
@@ -27,7 +25,7 @@ compileGroovy {
 }
 
 repositories {
-    mavenLocal()
+    maven { url 'http://dl.bintray.com/cjstehno/stehno' }
     jcenter()
 }
 
@@ -73,7 +71,7 @@ dependencies {
     compile "commons-lang:commons-lang:2.6"
     // verify these are needed (end)
 
-    compile 'com.stehno.effigy:effigy-core:0.1.0'
+    compile 'com.stehno.effigy:effigy-core:0.4.1'
 
     // test dependencies
 
@@ -83,7 +81,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.2'
+    gradleVersion = '2.3'
 }
 
 war {

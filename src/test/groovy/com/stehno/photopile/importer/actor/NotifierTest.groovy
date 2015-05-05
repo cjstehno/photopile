@@ -35,30 +35,26 @@ class NotifierTest {
     @Before void before() {
         importTracker = new ImportTracker()
 
-        actor = actors << new ErrorHandler(
+        actor = actors << new Notifier(
             metricRegistry: actors.metricRegistry,
             importTracker: importTracker
         )
     }
 
     @Test void 'handleMessage: ok'() {
-        def importId = importTracker.register(1)
+        def importId = importTracker.register(2)
 
-        actors.withActors {
+        importTracker.mark(importId)
+        importTracker.flag(importId, new File('x.jpg'))
+
+        actors.withActors(1,1){ // there is no output at this point so keep timeout short
             actor << importId
         }
 
-        actors.assertMeterCount(ErrorHandler, 'accepted', 1)
-        actors.assertMeterCount(ErrorHandler, 'processed', 1)
-        actors.assertMeterCount(ErrorHandler, 'rejected', 0)
+        actors.assertMeterCount(Notifier, 'accepted', 1)
+        actors.assertMeterCount(Notifier, 'processed', 1)
+        actors.assertMeterCount(Notifier, 'rejected', 0)
 
-        //        downstream.assertMessages importId
-        //
-        //        assert importTracker.completed(importId)
-        //        assert importTracker.hasErrors(importId)
-        //        assert importTracker.errors(importId).contains(file)
-        //
-        //        verify(photoImageContentRepository).delete(photoId, IMAGE_JPEG, FULL, 1)
-        //        verify(photoImageContentRepository).delete(photoId, IMAGE_JPEG, LARGE, 1)
+        // TODO: better testing when I have an output destination
     }
 }

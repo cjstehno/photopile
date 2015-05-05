@@ -15,10 +15,10 @@
  */
 
 package com.stehno.photopile.repository
-
 import com.stehno.photopile.domain.Photo
 import com.stehno.photopile.test.config.TestConfig
 import com.stehno.photopile.test.dao.DatabaseTestExecutionListener
+import groovy.util.logging.Slf4j
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,13 +31,8 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional
 
 import static com.stehno.photopile.fixtures.Fixtures.*
-import static com.stehno.photopile.fixtures.PhotoFixtures.assertPhotoFixture
-import static com.stehno.photopile.fixtures.PhotoFixtures.photoDescription
-import static com.stehno.photopile.fixtures.PhotoFixtures.photoFixtureFor
-import static com.stehno.photopile.fixtures.PhotoFixtures.photoName
-import static com.stehno.photopile.fixtures.TagFixtures.assertTagFixture
-import static com.stehno.photopile.fixtures.TagFixtures.tagCategory
-import static com.stehno.photopile.fixtures.TagFixtures.tagName
+import static com.stehno.photopile.fixtures.PhotoFixtures.*
+import static com.stehno.photopile.fixtures.TagFixtures.*
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
 @RunWith(SpringJUnit4ClassRunner)
@@ -46,7 +41,7 @@ import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
     DatabaseTestExecutionListener,
     DependencyInjectionTestExecutionListener,
     TransactionalTestExecutionListener
-])
+]) @Slf4j
 class PhotoRepositoryTest {
 
     static TABLES = ['photos', 'photo_tags', 'tags']
