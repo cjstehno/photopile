@@ -16,10 +16,11 @@
 
 package com.stehno.photopile.importer
 
-import com.stehno.photopile.importer.actor.CreatePhotoMessage
+import com.stehno.photopile.importer.actor.PhotoImportPipeline
 import com.stehno.photopile.meta.PhotoMetadata
+import groovy.transform.Immutable
+import groovy.transform.ToString
 import groovy.util.logging.Slf4j
-import groovyx.gpars.actor.Actor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -29,27 +30,36 @@ import org.springframework.stereotype.Component
 @Component @Slf4j
 class ImporterWorkFlow {
 
-    @Autowired Actor extractPhotoMetadata
-    @Autowired ImportTracker importTracker
+    @Autowired ImportMonitor importMonitor
+    @Autowired PhotoImportPipeline importPipeline // actor
 
     /**
-     * Used to start an import of the specified image file into the database. The tasks of the workflow are executed
-     * asynchronously so this method will return once all of the image files have been placed on the workflow queue.
-     *
-     * @param contentFile the image file
-     * @param photoMetadata any predetermined metadata (overrides any extracted from file)
-     * @param tags any tags to be applied (may override extracted from file)
-     * @return the import id for the created import job
+     * FIXME: document
      */
-    UUID startImport(final List<File> contentFiles, final PhotoMetadata photoMetadata = null, final Set<String> tags = null) {
-        UUID importId = importTracker.register(contentFiles.size())
+    UUID enqueueImport(final List<ImportFile> importFiles) {
+        UUID importId = importMonitor.register(importFiles)
 
-        contentFiles.each { file ->
+        importFiles.each { file ->
             log.info 'Starting import ({}) of file ({})', importId, file
 
-            extractPhotoMetadata << new CreatePhotoMessage(importId, file, photoMetadata, tags?.asImmutable())
+            importPipeline << new ImportMessage(importId, file)
         }
 
         importId
     }
+}
+
+@Immutable @ToString(includeNames = true)
+class ImportFile {
+
+    File file
+    PhotoMetadata metadata
+    Set<String> tags
+}
+
+@Immutable
+class ImportMessage {
+
+    UUID importId
+    ImportFile importFile
 }

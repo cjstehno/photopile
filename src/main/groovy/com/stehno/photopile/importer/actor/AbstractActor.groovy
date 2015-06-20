@@ -19,7 +19,6 @@ package com.stehno.photopile.importer.actor
 import com.codahale.metrics.Meter
 import com.codahale.metrics.MetricRegistry
 import groovy.util.logging.Slf4j
-import groovyx.gpars.actor.Actor
 import groovyx.gpars.actor.DefaultActor
 import org.springframework.beans.factory.annotation.Autowired
 
@@ -34,7 +33,6 @@ import static com.codahale.metrics.MetricRegistry.name
 abstract class AbstractActor<M> extends DefaultActor {
 
     @Autowired MetricRegistry metricRegistry
-    @Autowired Actor errorHandler
 
     private Meter acceptedMessages
     private Meter processedMessages
@@ -55,7 +53,6 @@ abstract class AbstractActor<M> extends DefaultActor {
         def accepted = acceptedMessages
         def processed = processedMessages
         def rejected = errorMessages
-        def errors = errorHandler
 
         loop {
             react { M input ->
@@ -71,7 +68,7 @@ abstract class AbstractActor<M> extends DefaultActor {
 
                     rejected.mark()
 
-                    errors << new ImportErrorMessage(input['importId'], input['photoId'], input['file'])
+                    handleError input, ex
                 }
             }
         }
@@ -84,4 +81,6 @@ abstract class AbstractActor<M> extends DefaultActor {
     }
 
     protected abstract void handleMessage(final M input)
+
+    protected abstract void handleError(final M input, Exception ex)
 }

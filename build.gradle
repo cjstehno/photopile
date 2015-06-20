@@ -1,11 +1,12 @@
 group = 'com.stehno.photopile'
+version = '0.0.4'
 
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.0.RELEASE'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE'
     }
 }
 
@@ -15,16 +16,13 @@ apply plugin: 'spring-boot'
 apply plugin: 'jacoco'
 apply plugin: 'codenarc'
 
-sourceCompatibility = javaVersion
-targetCompatibility = javaVersion
+sourceCompatibility = 8
+targetCompatibility = 8
 
 mainClassName = 'com.stehno.photopile.PhotopileApplication'
 
-compileGroovy {
-    groovyOptions.optimizationOptions.indy = false
-}
-
 repositories {
+    mavenLocal()
     maven { url 'http://dl.bintray.com/cjstehno/stehno' }
     jcenter()
 }
@@ -34,7 +32,7 @@ configurations {
 }
 
 dependencies {
-    compile groovySpec
+    compile 'org.codehaus.groovy:groovy-all:2.4.3'
 
     // spring-managed dependencies
 
@@ -76,30 +74,21 @@ dependencies {
     // test dependencies
 
     testCompile 'junit:junit'
+    testCompile 'org.spockframework:spock-core'
+    testCompile 'cglib:cglib-nodep:3.1'
+    testCompile 'org.spockframework:spock-spring'
     testCompile 'com.jayway.jsonpath:json-path'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'com.stehno.vanilla:vanilla-testing:0.0.5'
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.3'
+    gradleVersion = '2.4'
 }
 
 war {
     baseName = 'photopile'
 }
-
-// work-around to fix IDE-run test failures (may be fixed in future Gradle versions)
-task copyMainResourcesToTest(type: Copy) {
-    from "${projectDir}/src/main/resources"
-    into "${buildDir}/classes/test"
-}
-processTestResources.dependsOn copyMainResourcesToTest
-
-task copyTestResourcesToTest(type: Copy) {
-    from "${projectDir}/src/test/resources"
-    into "${buildDir}/classes/test"
-}
-processTestResources.dependsOn copyTestResourcesToTest
 
 test {
     jvmArgs '-Xverify:none'
@@ -110,7 +99,7 @@ run {
 }
 
 codenarc {
-    toolVersion = '0.22'
+    toolVersion = '0.23'
 }
 
 codenarcMain {
