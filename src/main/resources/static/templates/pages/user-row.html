@@ -1,0 +1,18 @@
+<tr>
+    <td><%- user.id %></td>
+    <td><%- user.username %></td>
+    <td><%- user.displayName %></td>
+    <td><%- user.authorities[0].authority %></td>
+    <td><%- user.enabled %></td>
+    <td><%- user.accountExpired %></td>
+    <td><%- user.credentialsExpired %></td>
+    <td><%- user.accountLocked %></td>
+    <td>
+        <a class="btn btn-xs btn-default" href="#edit" data-id="<%- user.id %>" title="Edit user" role="button">
+            <span class="glyphicon glyphicon-edit"></span>
+        </a>
+        <a class="btn btn-xs btn-default <% if( user.authorities[0].authority == 'ADMIN' ){ %>disabled<% } %>" href="#remove" data-id="<%- user.id %>" title="Delete user" role="button">
+            <span class="glyphicon glyphicon-remove"></span>
+        </a>
+    </td>
+</tr>

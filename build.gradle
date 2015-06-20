@@ -1,0 +1,141 @@
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.2.3.RELEASE'
+    }
+}
+
+apply plugin: 'war'
+apply plugin: 'spring-boot'
+apply plugin: 'codenarc'
+apply plugin: 'groovy'
+
+group = 'com.stehno.photopile'
+version = '0.1.0'
+    
+sourceCompatibility = 8
+targetCompatibility = 8
+
+mainClassName = 'com.stehno.photopile.server.PhotopileApplication'
+
+configurations {
+    providedRuntime
+}
+
+sourceSets {
+    integTest {
+        java.srcDir file('src/integTest/java')
+        resources.srcDir file('src/integTest/resources')
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven { url 'http://dl.bintray.com/cjstehno/stehno' }
+    jcenter()
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:2.4.3"
+
+    // spring-managed dependencies
+
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    compile 'org.springframework.boot:spring-boot-starter-logging'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile('org.springframework.boot:spring-boot-starter-remote-shell') {
+        exclude group: 'org.codehaus.groovy'
+    }
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.springframework.boot:spring-boot-starter-jdbc'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile 'com.fasterxml.jackson.core:jackson-databind'
+    compile 'org.hibernate:hibernate-validator'
+    compile 'io.dropwizard.metrics:metrics-core:'
+    compile 'org.flywaydb:flyway-core'
+    compile 'org.aspectj:aspectjweaver'
+
+    // versioned dependencies
+
+    compile 'org.postgresql:postgresql:9.3-1102-jdbc41'
+
+    compile 'org.apache.tika:tika-parsers:1.6'
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+
+    // verify these are needed (start)
+    //compile 'com.google.guava:guava:14.0.1'
+
+    //compile "org.imgscalr:imgscalr-lib:4.2"
+    //compile "org.apache.sanselan:sanselan:0.97-incubator"
+
+    //compile "commons-codec:commons-codec:1.8"
+    //compile "commons-io:commons-io:2.4"
+    //compile "commons-lang:commons-lang:2.6"
+    // verify these are needed (end)
+
+    compile 'com.stehno.effigy:effigy-core:0.4.1'
+
+    // test dependencies
+
+    testCompile 'junit:junit'
+    testCompile 'org.spockframework:spock-core'
+    testCompile 'cglib:cglib-nodep:3.1'
+    testCompile 'org.spockframework:spock-spring'
+    testCompile 'com.jayway.jsonpath:json-path'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'com.stehno.vanilla:vanilla-testing:0.0.7'
+
+    integTestCompile sourceSets.main.output
+    integTestCompile configurations.testCompile
+    integTestCompile sourceSets.test.output
+    integTestRuntime configurations.testRuntime
+}
+
+task integTest(type: Test) {
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+}
+check.dependsOn integTest
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
+}
+
+war {
+    baseName = 'photopile'
+}
+
+codenarc {
+    toolVersion = '0.23'
+}
+
+codenarcMain {
+    ignoreFailures true
+    configFile file('config/codenarc/codenarc-main.rules')
+
+    maxPriority1Violations 0
+    maxPriority2Violations 10
+    maxPriority3Violations 10
+}
+
+codenarcTest {
+    ignoreFailures true
+    configFile file('config/codenarc/codenarc-test.rules')
+
+    maxPriority1Violations 0
+    maxPriority2Violations 10
+    maxPriority3Violations 20
+}
+
+codenarcIntegTest {
+    ignoreFailures true
+    configFile file('config/codenarc/codenarc-test.rules')
+
+    maxPriority1Violations 0
+    maxPriority2Violations 10
+    maxPriority3Violations 20
+}
