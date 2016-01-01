@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PhotoPile: Your photos, your way.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css"/>
+
+    <style type="text/css">
+        body {
+            padding-top: 50px;
+            background-color: gray;
+        }
+
+        img.one-up {
+            border: 1px solid black;
+        }
+
+        table.table thead {
+            background-color: rgba(0, 60, 79, 0.63);
+            color: silver;
+        }
+
+        table.table tbody{
+            background-color: silver;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/onephoto.html"><strong>Image-235423456234.jpg</strong></a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="main-navbar">
+                <ul class="nav navbar-nav">
+
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-download"></span> Download <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#">Full-size (4.5 Mb)</a></li>
+                            <li><a href="#">Medium (2.1 Mb)</a></li>
+                            <li><a href="#">Small (0.98 Mb)</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#" data-toggle="modal" data-target="#photo-editor"><span class="glyphicon glyphicon-edit"></span> Edit</a></li>
+                    <li><a href="application.html"><span class="glyphicon glyphicon-remove-circle"></span> Close</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-8">
+            <img src="photos/photo-06.jpg" class="one-up img-responsive"/>
+        </div>
+        <div class="col-md-4">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Value</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-info-sign"></span> Name</td>
+                    <td>Image-235423456234.jpg</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-book"></span> Album</td>
+                    <td>Hiking</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-tags"></span> Tags</td>
+                    <td>
+                        <span class="badge"><span class="glyphicon glyphicon-calendar"></span> April</span>
+                        <span class="badge"><span class="glyphicon glyphicon-calendar"></span> 2015</span>
+                        <span class="badge"><span class="glyphicon glyphicon-tag"></span> nature</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-calendar"></span> Date Uploaded</td>
+                    <td>04/24/2015</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-calendar"></span> Date Taken</td>
+                    <td>04/23/2015</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-calendar"></span> Date Updated</td>
+                    <td>04/24/2015</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-camera></span> Camera</td>
+                    <td>Nexus 5</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-map-marker"></span> Location</td>
+                    <td>Grapevine Lake</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-file"></span> Size (Mb)</td>
+                    <td>1.2</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-info-sign"></span> Dimensions (w/h)</td>
+                    <td>768x1024</td>
+                </tr>
+                <tr>
+                    <td nowrap="true"><span class="glyphicon glyphicon-info-sign"></span> Description</td>
+                    <td>A nice wooded trail that I walked down one day during the early spring. It was nice.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div id="photo-editor" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Photo Information</h4>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="photoName">Name:</label>
+                        <input type="text" class="form-control" id="photoName">
+                    </div>
+                    <div class="form-group">
+                        <label for="photoAlbum"><span class="glyphicon glyphicon-book"></span> Album:</label>
+                        <select class="form-control" id="photoAlbum">
+                            <option>None</option>
+                            <option>Christmas 2015</option>
+                            <option>Hiking</option>
+                            <option>Cats</option>
+                            <option>Halloween</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="photoTags"><span class="glyphicon glyphicon-tags"></span> Tags:</label>
+                        <div class="pull-right">
+                            <a href="#" title="Add a new tag."><span class="glyphicon glyphicon-plus"></span></a>
+                        </div>
+                        <div style="overflow: auto; height: 100px; border: 1px solid silver;">
+                            <ul class="list-group" id="photoTags">
+                                <li class="list-group-item active">
+                                    <span class="glyphicon glyphicon-star" style="color:green;"></span> Christmas
+                                </li>
+                                <li class="list-group-item active">
+                                    <span class="glyphicon glyphicon-star" style="color:green;"></span>
+                                    <input type="text" style="color:black;width: 75%;" placeholder="Enter new tag name..." />
+                                </li>
+                                <li class="list-group-item active">
+                                    <span class="glyphicon glyphicon-tag"></span> Hiking
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="glyphicon glyphicon-tag"></span> Cats
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="glyphicon glyphicon-tag"></span> Halloween
+                                </li>
+                                <li class="list-group-item active">
+                                    <span class="glyphicon glyphicon-tag"></span> Cars
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="glyphicon glyphicon-tag"></span> Nature
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="glyphicon glyphicon-tag"></span> Buildings
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="photoTaken">Date Taken:</label>
+                        <input type="datetime" class="form-control" id="photoTaken" placeholder="M/d/yyyy HH:mm">
+                    </div>
+                    <div class="form-group">
+                        <label for="photoLocation">Location:</label>
+                        <input type="text" class="form-control" id="photoLocation" placeholder="Latitude, Longitude">
+                    </div>
+                    <div class="form-group">
+                        <label for="photoDescription">Description:</label>
+                        <textarea class="form-control" id="photoDescription" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/libs/jquery-2.1.4.min.js"></script>
+<script src="js/libs/bootstrap.min.js"></script>
+<script src="js/libs/underscore.min.js" type="text/javascript"></script>
+<script src="js/libs/backbone.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+    $('.one-up').css('height', $(window).height() - 55);
+    $(window).on("resize", resize);
+    resize();
+    function resize() {
+        $('.one-up').css('height', $(window).height() - 55);
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+
+body {
+    margin: 0px 0px 0px 0px;
+    background-image: url(../img/login-background.png);
+}
+
+.jumbotron {
+    opacity: 0.60;
+}
+
+.transparent {
+    background: none;
+}
