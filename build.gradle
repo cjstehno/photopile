@@ -43,7 +43,7 @@ dependencies {
     compile 'org.flywaydb:flyway-core'
     compile 'org.aspectj:aspectjweaver'
 
-    compile 'org.codehaus.groovy:groovy:2.4.5'
+    compile 'org.codehaus.groovy:groovy-all:2.4.5'
     compile 'com.stehno.vanilla:vanilla-core:0.1.0'
     compile 'org.postgresql:postgresql:9.4.1207'
 

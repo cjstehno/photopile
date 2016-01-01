@@ -1,35 +1,96 @@
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.entity.UserDetailsExtractor
+import com.stehno.photopile.entity.PhotopileUserDetails
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException
+import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.PreparedStatementCreatorFactory
+import org.springframework.jdbc.support.GeneratedKeyHolder
+import org.springframework.jdbc.support.KeyHolder
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Repository
+
+import static com.stehno.vanilla.Affirmations.affirm
+import static java.sql.Types.*
 
 @Repository
 class UserDetailsRepository {
 
     @Autowired private JdbcTemplate jdbcTemplate
 
-    UserDetails retrieve(long userId) {
-        jdbcTemplate.query(
-            '''select u.id,u.version,u.username,u.display_name,u.password,u.enabled,u.account_expired,
-                    u.credentials_expired,u.account_locked,a.id as authority_id, a.authority as authority_authority
-                from users u, authorities a, user_authorities ua
-                where u.id=? and ua.user_id=u.id and a.id=ua.authority_id''',
-            UserDetailsExtractor.instance,
-            userId
+    List<UserDetails> retrieveAll() {
+        jdbcTemplate.query(select(), UserDetailsListExtractor.instance)
+    }
+
+    UserDetails create(PhotopileUserDetails user) {
+        affirm !user.id, 'Attempted to create user with id specified.', DataIntegrityViolationException
+        affirm !user.version, 'Attempted to create user with version specified.', OptimisticLockingFailureException
+        affirm user.authorities?.size() == 1, 'Attempted to create user with more or less than one authority.'
+
+        KeyHolder keyHolder = new GeneratedKeyHolder()
+
+        PreparedStatementCreatorFactory factory = new PreparedStatementCreatorFactory(
+            '''
+                INSERT INTO users
+                    (version,username,display_name,password,enabled,account_expired,credentials_expired,account_locked)
+                VALUES
+                    (?,?,?,?,?,?,?,?)
+            ''',
+            BIGINT, VARCHAR, VARCHAR, VARCHAR, BOOLEAN, BOOLEAN, BOOLEAN, BOOLEAN
         )
+        factory.returnGeneratedKeys = true
+        factory.setGeneratedKeysColumnNames('id')
+
+        int rowCount = jdbcTemplate.update(
+            factory.newPreparedStatementCreator(
+                1,
+                user.username,
+                user.displayName,
+                user.password,
+                user.enabled,
+                user.accountExpired,
+                user.credentialsExpired,
+                user.accountLocked
+            ),
+            keyHolder
+        )
+        affirm rowCount == 1, "Expected 1 user row insert, but found ${rowCount}.", IncorrectUpdateSemanticsDataAccessException
+
+        rowCount = jdbcTemplate.update('INSERT INTO user_authorities (user_id, authority_id) VALUES (?,?)', keyHolder.key, user.authorities[0].id)
+        affirm rowCount == 1, "Expected 1 user authority row insert, but found ${rowCount}.", IncorrectUpdateSemanticsDataAccessException
+
+        user.id = keyHolder.key
+        user.version = 1
+        user
+    }
+
+    UserDetails update(PhotopileUserDetails user){
+
+    }
+
+    UserDetails retrieve(long userId) {
+        jdbcTemplate.query(select('u.id=?'), UserDetailsExtractor.instance, userId)
     }
 
     UserDetails retrieve(String username) {
-        jdbcTemplate.query(
-            '''select u.id,u.version,u.username,u.display_name,u.password,u.enabled,u.account_expired,
-                    u.credentials_expired,u.account_locked,a.id as authority_id, a.authority as authority_authority
-                from users u, authorities a, user_authorities ua
-                where u.username=? and ua.user_id=u.id and a.id=ua.authority_id''',
-            UserDetailsExtractor.instance,
-            username
-        )
+        jdbcTemplate.query(select('u.username=?'), UserDetailsExtractor.instance, username)
+    }
+
+    boolean delete(long userid) {
+        jdbcTemplate.update('DELETE FROM user_authorities WHERE user_id=?', userid)
+        jdbcTemplate.update('DELETE FROM users WHERE id=?', userid)
+    }
+
+    private static String select(final String where = null) {
+        """select
+                u.id,u.version,u.username,u.display_name,u.password,u.enabled,u.account_expired,u.credentials_expired,u.account_locked,
+                a.id as authority_id, a.authority as authority_authority
+            from
+                users u, authorities a, user_authorities ua
+            where
+                ${where ? where + ' and' : ''} ua.user_id=u.id and a.id=ua.authority_id
+        """
     }
 }
