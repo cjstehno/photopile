@@ -1,4 +1,5 @@
 package com.stehno.photopile.repository
+
 import com.stehno.photopile.entity.PhotopileUserDetails
 import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.test.PropertyRandomizer
@@ -16,6 +17,7 @@ import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 class UserDetailsRepositoryTest {
 
     // FIXME: test the exceptional cases
+    // FIXME: deeper data verification in tests
 
     @Autowired private UserDetailsRepository userDetailsRepository
     @Autowired private JdbcTemplate jdbcTemplate
@@ -45,7 +47,7 @@ class UserDetailsRepositoryTest {
         assert countRowsInTable(jdbcTemplate, 'user_authorities') == 2
     }
 
-    @Test @Transactional void 'delete'(){
+    @Test @Transactional void 'delete'() {
         assert countRowsInTable(jdbcTemplate, 'users') == 1
         assert countRowsInTable(jdbcTemplate, 'user_authorities') == 1
 
@@ -55,7 +57,7 @@ class UserDetailsRepositoryTest {
         assert countRowsInTable(jdbcTemplate, 'user_authorities') == 0
     }
 
-    @Test @Transactional void 'retrieveAll'(){
+    @Test @Transactional void 'retrieveAll'() {
         createUser()
 
         List<UserDetails> users = userDetailsRepository.retrieveAll()
@@ -63,8 +65,23 @@ class UserDetailsRepositoryTest {
         assert users.size() == 2
     }
 
+    @Test @Transactional void 'update'() {
+        PhotopileUserDetails user = createUser()
+        assert user
+
+        user.username = 'blah'
+        user.displayName = 'blah_blah'
+
+        PhotopileUserDetails updated = userDetailsRepository.update(user)
+        assert updated
+        assert updated.version == 2
+
+        assert countRowsInTable(jdbcTemplate, 'users') == 2
+        assert countRowsInTable(jdbcTemplate, 'user_authorities') == 2
+    }
+
     @Transactional
-    private UserDetails createUser(){
+    private UserDetails createUser() {
         userDetailsRepository.create(userRando.one())
     }
 }

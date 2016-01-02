@@ -1,6 +1,7 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.entity.PhotopileUserDetails
+import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException
@@ -15,7 +16,10 @@ import org.springframework.stereotype.Repository
 import static com.stehno.vanilla.Affirmations.affirm
 import static java.sql.Types.*
 
-@Repository
+/**
+ * Database repository for accessing and managing UserDetails entities.
+ */
+@Repository @TypeChecked
 class UserDetailsRepository {
 
     @Autowired private JdbcTemplate jdbcTemplate
@@ -61,13 +65,50 @@ class UserDetailsRepository {
         rowCount = jdbcTemplate.update('INSERT INTO user_authorities (user_id, authority_id) VALUES (?,?)', keyHolder.key, user.authorities[0].id)
         affirm rowCount == 1, "Expected 1 user authority row insert, but found ${rowCount}.", IncorrectUpdateSemanticsDataAccessException
 
-        user.id = keyHolder.key
+        user.id = keyHolder.key.longValue()
         user.version = 1
         user
     }
 
-    UserDetails update(PhotopileUserDetails user){
+    UserDetails update(PhotopileUserDetails user) {
+        affirm user.id > 0, 'Attempted to update user without id specified.', DataIntegrityViolationException
+        affirm user.version > 0, 'Attempted to update user without version specified.', OptimisticLockingFailureException
+        affirm user.authorities?.size() == 1, 'Attempted to update user with more or less than one authority.'
 
+        // TODO: exception will be thrown if version mismatch, how should this be handled?
+        int rowCount = jdbcTemplate.update(
+            '''
+                UPDATE users SET
+                    version=?,
+                    username=?,
+                    display_name=?,
+                    password=?,
+                    enabled=?,
+                    account_expired=?,
+                    credentials_expired=?,
+                    account_locked=?
+                WHERE id=? AND version=?
+            ''',
+            user.version + 1,
+            user.username,
+            user.displayName,
+            user.password,
+            user.enabled,
+            user.accountExpired,
+            user.credentialsExpired,
+            user.accountLocked,
+            user.id,
+            user.version
+        )
+        affirm rowCount == 1, "Expected 1 user row updaet, but found ${rowCount}.", IncorrectUpdateSemanticsDataAccessException
+
+        jdbcTemplate.update('DELETE FROM user_authorities WHERE user_id=?', user.id)
+
+        rowCount = jdbcTemplate.update('INSERT INTO user_authorities (user_id, authority_id) VALUES (?,?)', user.id, user.authorities[0].id)
+        affirm rowCount == 1, "Expected 1 user authority row insert, but found ${rowCount}.", IncorrectUpdateSemanticsDataAccessException
+
+        user.version = user.version + 1
+        user
     }
 
     UserDetails retrieve(long userId) {
