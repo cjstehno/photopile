@@ -10,6 +10,10 @@ buildscript {
     }
 }
 
+plugins {
+    id 'com.github.hierynomus.license' version '0.12.1'
+}
+
 apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'spring-boot'
@@ -57,4 +61,13 @@ dependencies {
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
+}
+
+license {
+    header rootProject.file('license_header.txt')
+    excludes 'src/main/resources/**/*.*', 'src/test/resources/**/*.*'
+
+    ext.name = 'Christopher J. Stehno'
+    ext.email = 'chris@stehno.com'
+    ext.year = Calendar.instance.get(Calendar.YEAR)
 }
