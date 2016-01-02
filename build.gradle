@@ -65,7 +65,8 @@ task wrapper(type: Wrapper) {
 
 license {
     header rootProject.file('license_header.txt')
-    excludes 'src/main/resources/**/*.*', 'src/test/resources/**/*.*'
+    exclude '**/banner.txt'
+    excludes(['**/*.js', '**/*.css', '**/*.html', '**/*.ftl'])
 
     ext.name = 'Christopher J. Stehno'
     ext.email = 'chris@stehno.com'
