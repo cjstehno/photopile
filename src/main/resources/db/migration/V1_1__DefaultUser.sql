@@ -28,5 +28,7 @@ INSERT INTO users (version, username, password, enabled) VALUES (
 );
 
 INSERT INTO authorities (authority) VALUES ('ADMIN');
+INSERT INTO authorities (authority) VALUES ('USER');
+INSERT INTO authorities (authority) VALUES ('GUEST');
 
 INSERT INTO user_authorities (user_id, authority_id) VALUES (1, 1);

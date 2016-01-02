@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 package com.stehno.photopile.service
-
 import com.stehno.photopile.entity.PhotopileUserDetails
+import com.stehno.photopile.entity.Role
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
-
 /**
  * An extension of the Spring Security UserDetailsService which adds support for the concept of a user id field.
  */
@@ -32,4 +31,22 @@ interface UserDetailsServiceWithId extends UserDetailsService {
      * @throws UsernameNotFoundException if the user is not found
      */
     PhotopileUserDetails loadUserById(final long userId) throws UsernameNotFoundException
+
+    List<PhotopileUserDetails> listUsers()
+
+    /**
+     * Creates and saves a new user with the provided username, display name, password and authority.
+     *
+     * The provided password should be the raw password - the service will preform any required password encryption.
+     *
+     * @param username
+     * @param displayName
+     * @param password
+     * @param authority
+     */
+    void addUser(String username, String displayName, String password, Role role)
+
+    boolean deleteUser(long userid)
+
+    boolean deleteUser(String username)
 }
