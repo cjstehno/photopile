@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional
 class PhotopileUserDetailsService implements UserDetailsServiceWithId {
 
     // FIXME: secure such that only ADMIN users can access list/add/update/delete
+    // FIXME: data validation should probably go in the service rather than repo (or maybe both)
 
     @Autowired private UserDetailsRepository userDetailsRepository
     @Autowired private UserAuthorityRepository authorityRepository
@@ -68,6 +69,19 @@ class PhotopileUserDetailsService implements UserDetailsServiceWithId {
             authorities: [authority],
             enabled: true
         ))
+    }
+
+    @Override @Transactional(readOnly = false)
+    PhotopileUserDetails updateUser(PhotopileUserDetails user, boolean encodePassword = false) {
+        if (encodePassword) {
+            user.password = passwordEncoder.encode(user.password)
+        }
+
+        // load the authority by name
+        UserAuthority populatedAuth = authorityRepository.retrieve(Role.valueOf(user.authorities[0].authority))
+        user.authorities = [populatedAuth]
+
+        userDetailsRepository.update(user) as PhotopileUserDetails
     }
 
     @Override @Transactional(readOnly = false)

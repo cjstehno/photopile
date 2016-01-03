@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 package com.stehno.photopile.service
+
 import com.stehno.photopile.entity.PhotopileUserDetails
 import com.stehno.photopile.entity.Role
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
+
 /**
  * An extension of the Spring Security UserDetailsService which adds support for the concept of a user id field.
  */
@@ -49,4 +51,16 @@ interface UserDetailsServiceWithId extends UserDetailsService {
     boolean deleteUser(long userid)
 
     boolean deleteUser(String username)
+
+    PhotopileUserDetails updateUser(PhotopileUserDetails user)
+
+    /**
+     * Updates the user in the database with the information provided. The password may or may not be re-encoded so that you can leave the existing
+     * password in place when updating other properties.
+     *
+     * @param user
+     * @param encodePassword
+     * @return
+     */
+    PhotopileUserDetails updateUser(PhotopileUserDetails user, boolean encodePassword)
 }
