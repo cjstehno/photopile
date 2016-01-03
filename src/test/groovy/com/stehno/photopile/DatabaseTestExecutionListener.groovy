@@ -46,7 +46,13 @@ class DatabaseTestExecutionListener extends AbstractTestExecutionListener {
     }
 }
 
+/**
+ * Provides access to the tables which should be refreshed for a test case between each individual test.
+ */
 interface DatabaseTableAccessor {
 
+    /**
+     * The tables to be refreshed (deleted) before each test run. The tables should be in order to avoid any key violations.
+     */
     Collection<String> getRefreshableTables()
 }
