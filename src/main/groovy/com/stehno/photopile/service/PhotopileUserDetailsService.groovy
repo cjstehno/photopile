@@ -28,13 +28,16 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import static com.stehno.photopile.SecurityHelper.affirmCurrentUserIs
+import static com.stehno.photopile.entity.Role.ADMIN
+
 /**
  * UserDetailService implementation, providing support for userID and userName-based lookup.
  */
 @Service @Transactional(readOnly = true) @TypeChecked
 class PhotopileUserDetailsService implements UserDetailsServiceWithId {
 
-    // FIXME: secure such that only ADMIN users can access list/add/update/delete
+    FIXME: the principal is not being set during normal operation? WTF?!
 
     @Autowired private UserDetailsRepository userDetailsRepository
     @Autowired private UserAuthorityRepository authorityRepository
@@ -54,11 +57,14 @@ class PhotopileUserDetailsService implements UserDetailsServiceWithId {
 
     @Override
     List<PhotopileUserDetails> listUsers() {
+        affirmCurrentUserIs ADMIN
         userDetailsRepository.retrieveAll() as List<PhotopileUserDetails>
     }
 
     @Override @Transactional(readOnly = false)
     PhotopileUserDetails addUser(String username, String displayName, String password, Role role) {
+        affirmCurrentUserIs ADMIN
+
         UserAuthority authority = authorityRepository.retrieve(role ?: Role.USER)
 
         userDetailsRepository.create(new PhotopileUserDetails(
@@ -72,6 +78,8 @@ class PhotopileUserDetailsService implements UserDetailsServiceWithId {
 
     @Override @Transactional(readOnly = false)
     PhotopileUserDetails updateUser(PhotopileUserDetails user, boolean encodePassword = false) {
+        affirmCurrentUserIs ADMIN
+
         if (encodePassword) {
             user.password = passwordEncoder.encode(user.password)
         }
@@ -85,11 +93,15 @@ class PhotopileUserDetailsService implements UserDetailsServiceWithId {
 
     @Override @Transactional(readOnly = false)
     boolean deleteUser(long userid) {
+        affirmCurrentUserIs ADMIN
+
         userDetailsRepository.delete(userid)
     }
 
     @Override @Transactional(readOnly = false)
     boolean deleteUser(String username) {
+        affirmCurrentUserIs ADMIN
+
         PhotopileUserDetails user = userDetailsRepository.retrieve(username) as PhotopileUserDetails
         return user ? userDetailsRepository.delete(user.id) : false
     }
