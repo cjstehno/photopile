@@ -35,7 +35,6 @@ import org.springframework.transaction.annotation.Transactional
 class PhotopileUserDetailsService implements UserDetailsServiceWithId {
 
     // FIXME: secure such that only ADMIN users can access list/add/update/delete
-    // FIXME: data validation should probably go in the service rather than repo (or maybe both)
 
     @Autowired private UserDetailsRepository userDetailsRepository
     @Autowired private UserAuthorityRepository authorityRepository

@@ -18,9 +18,7 @@ package com.stehno.photopile.repository
 import com.stehno.photopile.entity.PhotopileUserDetails
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException
-import org.springframework.dao.OptimisticLockingFailureException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory
 import org.springframework.jdbc.support.GeneratedKeyHolder
@@ -44,8 +42,8 @@ class UserDetailsRepository {
     }
 
     UserDetails create(PhotopileUserDetails user) {
-        affirm !user.id, 'Attempted to create user with id specified.', DataIntegrityViolationException
-        affirm !user.version, 'Attempted to create user with version specified.', OptimisticLockingFailureException
+        affirm !user.id, 'Attempted to create user with id specified.'
+        affirm !user.version, 'Attempted to create user with version specified.'
         affirm user.authorities?.size() == 1, 'Attempted to create user with more or less than one authority.'
 
         KeyHolder keyHolder = new GeneratedKeyHolder()
@@ -86,22 +84,15 @@ class UserDetailsRepository {
     }
 
     UserDetails update(PhotopileUserDetails user) {
-        affirm user.id > 0, 'Attempted to update user without id specified.', DataIntegrityViolationException
-        affirm user.version > 0, 'Attempted to update user without version specified.', OptimisticLockingFailureException
+        affirm user.id > 0, 'Attempted to update user without id specified.'
+        affirm user.version > 0, 'Attempted to update user without version specified.'
         affirm user.authorities?.size() == 1, 'Attempted to update user with more or less than one authority.'
 
         // TODO: exception will be thrown if version mismatch, how should this be handled?
         int rowCount = jdbcTemplate.update(
             '''
-                UPDATE users SET
-                    version=?,
-                    username=?,
-                    display_name=?,
-                    password=?,
-                    enabled=?,
-                    account_expired=?,
-                    credentials_expired=?,
-                    account_locked=?
+                UPDATE users
+                SET version=?,username=?,display_name=?,password=?,enabled=?,account_expired=?,credentials_expired=?,account_locked=?
                 WHERE id=? AND version=?
             ''',
             user.version + 1,
