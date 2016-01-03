@@ -59,7 +59,7 @@ class PhotopileUserDetailsService implements UserDetailsServiceWithId {
     }
 
     @Override @Transactional(readOnly = false)
-    void addUser(String username, String displayName, String password, Role role) {
+    PhotopileUserDetails addUser(String username, String displayName, String password, Role role) {
         UserAuthority authority = authorityRepository.retrieve(role ?: Role.USER)
 
         userDetailsRepository.create(new PhotopileUserDetails(
@@ -68,7 +68,7 @@ class PhotopileUserDetailsService implements UserDetailsServiceWithId {
             password: passwordEncoder.encode(password),
             authorities: [authority],
             enabled: true
-        ))
+        )) as PhotopileUserDetails
     }
 
     @Override @Transactional(readOnly = false)

@@ -15,6 +15,7 @@
  */
 package com.stehno.photopile.repository
 
+import com.stehno.photopile.RequiresDatabase
 import com.stehno.photopile.entity.PhotopileUserDetails
 import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.test.PropertyRandomizer

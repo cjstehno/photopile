@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.photopile.repository
+package com.stehno.photopile
 
-import com.stehno.photopile.TestConfig
 import groovy.transform.AnnotationCollector
 import org.junit.runner.RunWith
 import org.springframework.test.context.ContextConfiguration
@@ -30,7 +29,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
  */
 @RunWith(SpringJUnit4ClassRunner)
 @ContextConfiguration(classes = [TestConfig])
-@TestExecutionListeners([DependencyInjectionTestExecutionListener, TransactionalTestExecutionListener])
+@TestExecutionListeners([DatabaseTestExecutionListener, DependencyInjectionTestExecutionListener, TransactionalTestExecutionListener])
 @AnnotationCollector
 @interface RequiresDatabase {
     // nothing special

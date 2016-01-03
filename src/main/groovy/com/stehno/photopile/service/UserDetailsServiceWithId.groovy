@@ -46,7 +46,7 @@ interface UserDetailsServiceWithId extends UserDetailsService {
      * @param password
      * @param authority
      */
-    void addUser(String username, String displayName, String password, Role role)
+    PhotopileUserDetails addUser(String username, String displayName, String password, Role role)
 
     boolean deleteUser(long userid)
 

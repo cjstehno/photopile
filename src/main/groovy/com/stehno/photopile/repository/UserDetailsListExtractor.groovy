@@ -15,7 +15,6 @@
  */
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.entity.PhotopileUserDetails
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.security.core.userdetails.UserDetails
@@ -24,28 +23,21 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 /**
- * ResultSetExtractor for the UserDetails entity.
+ * ResultSetExtractor for extracting a List of UserDetails entities.
  */
 @Singleton
-class UserDetailsExtractor implements ResultSetExtractor<UserDetails> {
-
-    private static final UserAuthorityRowMapper AUTHORITY_MAPPER = UserAuthorityRowMapper.mapper('authority_')
+class UserDetailsListExtractor implements ResultSetExtractor<List<UserDetails>> {
 
     @Override
-    UserDetails extractData(ResultSet rs) throws SQLException, DataAccessException {
-        // there should be only one authority per user so we can shortcut this
-        rs.next() ? new PhotopileUserDetails(
-            rs.getLong('id'),
-            rs.getLong('version'),
-            rs.getString('username'),
-            rs.getString('display_name'),
-            rs.getString('password'),
-            rs.getBoolean('enabled'),
-            rs.getBoolean('account_expired'),
-            rs.getBoolean('credentials_expired'),
-            rs.getBoolean('account_locked'),
-            [AUTHORITY_MAPPER.mapRow(rs, 0)]
-        ) : null
+    List<UserDetails> extractData(ResultSet rs) throws SQLException, DataAccessException {
+        def list = []
+
+        def user = UserDetailsExtractor.instance.extractData(rs)
+        while (user) {
+            list << user
+            user = UserDetailsExtractor.instance.extractData(rs)
+        }
+
+        list
     }
 }
-

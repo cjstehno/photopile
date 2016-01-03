@@ -15,30 +15,28 @@
  */
 package com.stehno.photopile.repository
 
+import com.stehno.photopile.RequiresDatabase
 import com.stehno.photopile.entity.Role
 import com.stehno.photopile.entity.UserAuthority
-import groovy.transform.TypeChecked
+import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
-/**
- * Database repository for management of UserAuthority entity data.
- */
-@Repository @TypeChecked @Transactional(readOnly = true)
-class UserAuthorityRepository {
+@RequiresDatabase
+class UserAuthorityRepositoryTest {
 
+    @Autowired private UserAuthorityRepository repository
     @Autowired private JdbcTemplate jdbcTemplate
 
-    /**
-     * Retrieves the UserAuthority entity for the specified role.
-     *
-     * @param role
-     * @return
-     */
-    UserAuthority retrieve(Role role) {
-        jdbcTemplate.query('select id,authority from authorities where authority=?', UserAuthorityRowMapper.mapper(), role.name())[0]
+    @Test @Transactional void 'retrieve'() {
+        UserAuthority admin = repository.retrieve(Role.ADMIN)
+        assert admin.authority == Role.ADMIN.name()
+
+        UserAuthority user = repository.retrieve(Role.USER)
+        assert user.authority == Role.USER.name()
+
+        UserAuthority guest = repository.retrieve(Role.GUEST)
+        assert guest.authority == Role.GUEST.name()
     }
 }
-
