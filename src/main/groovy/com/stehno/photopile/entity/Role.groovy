@@ -15,18 +15,11 @@
  */
 package com.stehno.photopile.entity
 
-import groovy.transform.Canonical
-import org.springframework.security.core.GrantedAuthority
-
-@Canonical
-class UserAuthority implements GrantedAuthority {
-
-    // TODO: remove these constants and just use enum
-    static final String AUTHORITY_ADMIN = Role.ADMIN.name()
-    static final String AUTHORITY_USER = Role.USER.name()
-    static final String AUTHORITY_GUEST = Role.GUEST.name()
-
-    Long id
-    String authority
+/**
+ * Created by cstehno on 1/5/2016.
+ */
+enum Role {
+    ADMIN,
+    USER,
+    GUEST
 }
-

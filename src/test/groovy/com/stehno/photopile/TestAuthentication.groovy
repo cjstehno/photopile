@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.photopile.entity
+package com.stehno.photopile
 
-import groovy.transform.Canonical
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 
-@Canonical
-class UserAuthority implements GrantedAuthority {
+/**
+ * Created by cstehno on 1/5/2016.
+ */
+class TestAuthentication implements Authentication {
 
-    // TODO: remove these constants and just use enum
-    static final String AUTHORITY_ADMIN = Role.ADMIN.name()
-    static final String AUTHORITY_USER = Role.USER.name()
-    static final String AUTHORITY_GUEST = Role.GUEST.name()
-
-    Long id
-    String authority
+    String name
+    Object details
+    boolean authenticated
+    Object principal
+    Object credentials
+    Collection<? extends GrantedAuthority> authorities
 }
-

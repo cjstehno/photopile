@@ -47,12 +47,3 @@ class SecurityHelper {
 }
 
 // FIXME: move me into the test area
-class TestAuthentication implements Authentication {
-
-    String name
-    Object details
-    boolean authenticated
-    Object principal
-    Object credentials
-    Collection<? extends GrantedAuthority> authorities
-}

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package commands
-
 import com.stehno.photopile.entity.PhotopileUserDetails
 import com.stehno.photopile.entity.Role
 import com.stehno.photopile.entity.UserAuthority
@@ -107,7 +106,7 @@ class user {
             user.enabled = true
         }
 
-        if( disabled != null ){
+        if (disabled != null) {
             user.enabled = false
         }
 

@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package com.stehno.photopile.service
-
 import com.stehno.photopile.DatabaseTableAccessor
 import com.stehno.photopile.RequiresDatabase
 import com.stehno.photopile.TestAuthentication
@@ -22,15 +21,12 @@ import com.stehno.photopile.entity.PhotopileUserDetails
 import com.stehno.photopile.entity.Role
 import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.test.PropertyRandomizer
-import org.junit.Before
 import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.security.authentication.InsufficientAuthenticationException
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.context.SecurityContextImpl
 
-import static com.stehno.photopile.entity.Role.ADMIN
 import static com.stehno.photopile.entity.Role.USER
 import static com.stehno.vanilla.test.PropertyRandomizer.randomize
 
@@ -43,10 +39,6 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
     @Autowired private JdbcTemplate jdbcTemplate
 
     private final PropertyRandomizer stringRando = randomize(String)
-
-    @Before void before() {
-        specifyCurrentUser 'test-admin', ADMIN
-    }
 
     // TODO: this will be useful elsewhere, move it somewhere common
     static void specifyCurrentUser(String username, Role role = USER) {
@@ -92,12 +84,6 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
         assert users[1].username == userB.username
     }
 
-    @Test(expected = InsufficientAuthenticationException) void 'listUsers: non-admin'() {
-        specifyCurrentUser 'test-user'
-
-        service.listUsers()
-    }
-
     @Test void 'deleteUser(String)'() {
         PhotopileUserDetails userA = addRandomUser()
         PhotopileUserDetails userB = addRandomUser()
@@ -109,12 +95,6 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
 
         users = service.listUsers()
         assert users.size() == 1
-    }
-
-    @Test(expected = InsufficientAuthenticationException) void 'deleteUser(String): non-admin'() {
-        specifyCurrentUser 'test-user'
-
-        service.deleteUser('someone')
     }
 
     @Test void 'deleteUser(long)'() {
@@ -130,13 +110,6 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
         assert users.size() == 1
     }
 
-
-    @Test(expected = InsufficientAuthenticationException) void 'deleteUser(long): non-admin'() {
-        specifyCurrentUser 'test-user'
-
-        service.deleteUser(100)
-    }
-
     @Test void 'addUser'() {
         def (String username, String displayName, String password) = stringRando * 3
         PhotopileUserDetails user = service.addUser(username, displayName, password, USER)
@@ -150,12 +123,6 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
         assert user.enabled
     }
 
-    @Test(expected = InsufficientAuthenticationException) void 'addUser: non-admin'() {
-        specifyCurrentUser 'test-user'
-
-        service.addUser(*(stringRando * 3), USER)
-    }
-
     @Test void 'updateUser'() {
         String username = stringRando.one()
         String displayName = stringRando.one()
@@ -167,12 +134,6 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
         PhotopileUserDetails updated = service.updateUser(user)
         assert updated.username == username
         assert updated.displayName == displayName
-    }
-
-    @Test(expected = InsufficientAuthenticationException) void 'updateUser: non-admin'() {
-        specifyCurrentUser 'test-user'
-
-        service.updateUser(new PhotopileUserDetails())
     }
 
     private PhotopileUserDetails addRandomUser() {
