@@ -48,8 +48,13 @@ dependencies {
     compile 'org.aspectj:aspectjweaver'
 
     compile 'org.codehaus.groovy:groovy-all:2.4.5'
-    compile 'com.stehno.vanilla:vanilla-core:0.1.0'
+    compile 'org.codehaus.gpars:gpars:1.2.1'
+
+    compile 'com.stehno.vanilla:vanilla-core:0.1.1'
     compile 'org.postgresql:postgresql:9.4.1207'
+    compile 'commons-io:commons-io:2.4'
+    compile 'org.apache.tika:tika-parsers:1.11'
+    compile "org.imgscalr:imgscalr-lib:4.2"
 
     testCompile 'com.h2database:h2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
