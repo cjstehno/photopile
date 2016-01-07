@@ -44,6 +44,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-jdbc'
     compile 'org.springframework.boot:spring-boot-devtools'
+    compile 'org.springframework.boot:spring-boot-configuration-processor'
     compile 'org.flywaydb:flyway-core'
     compile 'org.aspectj:aspectjweaver'
 
@@ -56,13 +57,16 @@ dependencies {
     compile 'org.apache.tika:tika-parsers:1.11'
     compile "org.imgscalr:imgscalr-lib:4.2"
 
+
     testCompile 'com.h2database:h2'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
     testCompile 'junit:junit'
     testCompile 'org.spockframework:spock-core'
-    testCompile 'cglib:cglib-nodep:3.1'
     testCompile 'org.spockframework:spock-spring'
+    testCompile 'cglib:cglib-nodep:3.1'
 }
+
+compileJava.dependsOn(processResources)
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'

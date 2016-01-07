@@ -33,31 +33,41 @@ import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
 @TypeChecked @Repository @Slf4j
 class ImageFileRepository {
 
-    @Value('${photopile.workspace.dir}') String workspaceDir
-    @Value('${photopile.storage.bucket.size}') int bucketSize
+    @Value('${photopile.imagefilerepo.storage.dir}') String storageDir
+    @Value('${photopile.imagefilerepo.bucket.size}') int bucketSize
 
     private File imagesRootDir
 
     @PostConstruct
     void init() {
-        assert validWorkspace(), "Workspace directory ($workspaceDir) does not exist or is not writable."
+        // This exists for testing - would be nice to have a better solution
+        if (storageDir == '<temp>') {
+            File temp = File.createTempDir()
+            temp.deleteOnExit()
+
+            storageDir = temp as String
+
+            log.warn 'Image content storage is in TEMPORARY mode - nothing will be persisted across restarts!'
+        }
+
+        assert validWorkspace(), "Workspace directory ($storageDir) does not exist or is not writable."
         assert bucketSize > 1, "Storage bucket size ($bucketSize) is not value (must be greater than 0)."
 
-        imagesRootDir = new File(workspaceDir, 'images')
+        imagesRootDir = new File(storageDir, 'images')
         if (!imagesRootDir.exists()) {
             imagesRootDir.mkdir()
         }
 
-        log.info 'Workspace-directory: {}', workspaceDir
+        log.info 'Workspace-directory: {}', storageDir
         log.info 'Images-directory: {}', imagesRootDir
     }
 
     /**
      * Stores content for an image in the repository. The image content is extracted from the provided file.
      *
-     * @param photoId
-     * @param image
-     * @param content
+     * @param photoId the id of the photo
+     * @param image the image object
+     * @param content the image content
      */
     void store(long photoId, Image image, File content) {
         copy(
@@ -67,16 +77,32 @@ class ImageFileRepository {
         )
     }
 
+    /**
+     * Stores content for an image in the repository.
+     *
+     * @param photoId the id of the photo
+     * @param image the image object
+     * @param content the image content
+     */
     void store(long photoId, Image image, byte[] content) {
         new File(bucketDir(photoId), fileName(photoId, image.scale)).bytes = content
     }
 
+    /**
+     * Used to retrieve the content for the image content storef for the specified photo ID at the specified scale.
+     *
+     * @param photoId the id of the photo
+     * @param scale the image scale
+     * @return the content of the image as a byte array
+     */
     byte[] retrieveContent(long photoId, ImageScale scale) {
-        new File(bucketDir(photoId), fileName(photoId, scale)).bytes
+        new File(bucketDir(photoId), fileName(photoId, scale)).with {
+            exists() ? bytes : null
+        }
     }
 
     private File bucketDir(long id) {
-        def dir = new File(imagesRootDir, "b${(((id / bucketSize) as int) as String).padLeft(6, '0')}")
+        def dir = new File(imagesRootDir, "b${bucket(id)}")
         if (!dir.exists()) {
             dir.mkdir()
         }
@@ -88,7 +114,11 @@ class ImageFileRepository {
     }
 
     private boolean validWorkspace() {
-        File ws = new File(workspaceDir)
+        File ws = new File(storageDir)
         ws.isDirectory() && ws.exists() && ws.canWrite()
+    }
+
+    private String bucket(long id) {
+        (((id / bucketSize) as int) as String).padLeft(6, '0')
     }
 }

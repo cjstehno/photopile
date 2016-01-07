@@ -17,6 +17,7 @@ package com.stehno.photopile
 
 import groovy.transform.AnnotationCollector
 import org.junit.runner.RunWith
+import org.springframework.boot.test.ConfigFileApplicationContextInitializer
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestExecutionListeners
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
@@ -28,8 +29,12 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
  * therefore not be portable.
  */
 @RunWith(SpringJUnit4ClassRunner)
-@ContextConfiguration(classes = [TestConfig])
-@TestExecutionListeners([DatabaseTestExecutionListener, DependencyInjectionTestExecutionListener, TransactionalTestExecutionListener])
+@ContextConfiguration(classes = TestConfig, initializers = ConfigFileApplicationContextInitializer)
+@TestExecutionListeners([
+    DatabaseTestExecutionListener,
+    DependencyInjectionTestExecutionListener,
+    TransactionalTestExecutionListener
+])
 @AnnotationCollector
 @interface RequiresDatabase {
     // nothing special
