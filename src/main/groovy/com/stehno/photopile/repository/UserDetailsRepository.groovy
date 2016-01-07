@@ -42,8 +42,8 @@ class UserDetailsRepository {
     }
 
     UserDetails create(PhotopileUserDetails user) {
-        affirm !user.id, 'Attempted to store user with id specified.'
-        affirm !user.version, 'Attempted to store user with version specified.'
+        affirm !user.id, 'Attempted to create user with id specified.'
+        affirm !user.version, 'Attempted to create user with version specified.'
         affirm user.authorities?.size() == 1, 'Attempted to store user with more or less than one authority.'
 
         KeyHolder keyHolder = new GeneratedKeyHolder()

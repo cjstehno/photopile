@@ -17,13 +17,18 @@ package com.stehno.photopile.repository
 
 import com.stehno.photopile.entity.Image
 import groovy.transform.TypeChecked
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
 /**
  * Created by cstehno on 1/6/2016.
  */
-@Repository @TypeChecked
+@Repository @TypeChecked @Transactional(readOnly = true)
 class ImageRepository {
+
+    @Autowired private JdbcTemplate jdbcTemplate
 
     // FIXME: temp
     Image create(long photoId, Image image) {

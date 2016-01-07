@@ -17,22 +17,63 @@ package com.stehno.photopile.repository
 
 import com.stehno.photopile.entity.Photo
 import groovy.transform.TypeChecked
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.dao.IncorrectUpdateSemanticsDataAccessException
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.PreparedStatementCreatorFactory
+import org.springframework.jdbc.support.GeneratedKeyHolder
+import org.springframework.jdbc.support.KeyHolder
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
-import java.util.concurrent.atomic.AtomicLong
+import static com.stehno.vanilla.Affirmations.affirm
+import static java.sql.Types.*
 
 /**
  * Created by cstehno on 1/6/2016.
  */
-@Repository @TypeChecked
+@Repository @TypeChecked @Transactional(readOnly = true)
 class PhotoRepository {
 
-    private AtomicLong ids = new AtomicLong(0)
+    @Autowired private JdbcTemplate jdbcTemplate
 
-    // FIXME: temp
     Photo create(Photo photo) {
-        // TODO: save the photo data to the db
-        photo.id = ids.incrementAndGet()
+        affirm !photo.id, 'Attempted to create photo with id specified.'
+        affirm !photo.version, 'Attempted to create photo with version specified.'
+
+        KeyHolder keyHolder = new GeneratedKeyHolder()
+
+        PreparedStatementCreatorFactory factory = new PreparedStatementCreatorFactory(
+            '''
+                INSERT INTO photos
+                    (version,name,description,date_uploaded,date_updated,date_taken,geo_latitude,geo_longitude,geo_altitude)
+                VALUES
+                    (?,?,?,?,?,?,?,?,?)
+            ''',
+            BIGINT, VARCHAR, VARCHAR, TIMESTAMP, TIMESTAMP, TIMESTAMP, DOUBLE, DOUBLE, INTEGER
+        )
+        factory.returnGeneratedKeys = true
+        factory.setGeneratedKeysColumnNames('id')
+
+        int rowCount = jdbcTemplate.update(
+            factory.newPreparedStatementCreator(
+                1,
+                photo.version,
+                photo.name,
+                photo.description,
+                photo.dateUploaded,
+                photo.dateUpdated,
+                photo.dateTaken,
+                photo.location?.latitude,
+                photo.location?.longitude,
+                photo.location?.altitude
+            ),
+            keyHolder
+        )
+        affirm rowCount == 1, "Expected 1 photo row insert, but found ${rowCount}.", IncorrectUpdateSemanticsDataAccessException
+
+        photo.id = keyHolder.key.longValue()
+        photo.version = 1
         photo
     }
 }
