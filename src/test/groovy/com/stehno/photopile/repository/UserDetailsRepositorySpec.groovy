@@ -15,22 +15,22 @@
  */
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.RequiresDatabase
+import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.PhotopileUserDetails
 import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.test.PropertyRandomizer
-import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.transaction.annotation.Transactional
+import spock.lang.Specification
 
 import static com.stehno.photopile.entity.UserAuthority.AUTHORITY_USER
 import static com.stehno.vanilla.test.PropertyRandomizer.randomize
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
-@RequiresDatabase
-class UserDetailsRepositoryTest {
+@ApplicationTest
+class UserDetailsRepositorySpec extends Specification {
 
     // FIXME: test the exceptional cases
     // FIXME: deeper data verification in tests
@@ -38,62 +38,74 @@ class UserDetailsRepositoryTest {
     @Autowired private UserDetailsRepository userDetailsRepository
     @Autowired private JdbcTemplate jdbcTemplate
 
-    private PropertyRandomizer userRando = randomize(PhotopileUserDetails) {
+    private final PropertyRandomizer userRando = randomize(PhotopileUserDetails) {
         ignoringProperties 'id', 'version'
         propertyRandomizer 'authorities', { [new UserAuthority(2, AUTHORITY_USER)] }
     }
 
-    @Test @Transactional void 'retrieve: admin'() {
+    def @Transactional 'retrieve: admin'() {
+        when:
         UserDetails userDetails = userDetailsRepository.retrieve(1)
 
-        assert userDetails
-        assert userDetails.id == 1
-        assert userDetails.username == 'admin'
+        then:
+        userDetails
+        userDetails.id == 1
+        userDetails.username == 'admin'
     }
 
-    @Test @Transactional void 'create'() {
+    def @Transactional 'create'() {
+        setup:
         PhotopileUserDetails originalUser = userRando.one()
 
+        when:
         UserDetails user = userDetailsRepository.create(originalUser)
 
-        assert user == originalUser // the original is updated
-        assert user.id
-        assert user.version == 1
-        assert countRowsInTable(jdbcTemplate, 'users') == 2
-        assert countRowsInTable(jdbcTemplate, 'user_authorities') == 2
+        then:
+        user == originalUser // the original is updated
+        user.id
+        user.version == 1
+        countRowsInTable(jdbcTemplate, 'users') == 2
+        countRowsInTable(jdbcTemplate, 'user_authorities') == 2
     }
 
-    @Test @Transactional void 'delete'() {
-        assert countRowsInTable(jdbcTemplate, 'users') == 1
-        assert countRowsInTable(jdbcTemplate, 'user_authorities') == 1
+    def @Transactional 'delete'() {
+        when:
+        boolean deleted = userDetailsRepository.delete(1)
 
-        assert userDetailsRepository.delete(1)
-
-        assert countRowsInTable(jdbcTemplate, 'users') == 0
-        assert countRowsInTable(jdbcTemplate, 'user_authorities') == 0
+        then:
+        deleted
+        countRowsInTable(jdbcTemplate, 'users') == 0
+        countRowsInTable(jdbcTemplate, 'user_authorities') == 0
     }
 
-    @Test @Transactional void 'retrieveAll'() {
+    def @Transactional 'retrieveAll'() {
+        setup:
         createUser()
 
+        when:
         List<UserDetails> users = userDetailsRepository.retrieveAll()
 
-        assert users.size() == 2
+        then:
+        users.size() == 2
     }
 
-    @Test @Transactional void 'update'() {
+    def @Transactional 'update'() {
+        setup:
         PhotopileUserDetails user = createUser()
         assert user
 
+        when:
         user.username = 'blah'
         user.displayName = 'blah_blah'
 
         PhotopileUserDetails updated = userDetailsRepository.update(user)
-        assert updated
-        assert updated.version == 2
 
-        assert countRowsInTable(jdbcTemplate, 'users') == 2
-        assert countRowsInTable(jdbcTemplate, 'user_authorities') == 2
+        then:
+        updated
+        updated.version == 2
+
+        countRowsInTable(jdbcTemplate, 'users') == 2
+        countRowsInTable(jdbcTemplate, 'user_authorities') == 2
     }
 
     @Transactional

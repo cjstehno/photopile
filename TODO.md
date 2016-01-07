@@ -8,3 +8,5 @@
 * Scanning
  * scan specified directory on command (directory specified on init of scan)
  * provide shell command to initiate a scan
+ 
+ try to get the migrations out of the test resources dir

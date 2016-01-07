@@ -17,6 +17,7 @@ package com.stehno.photopile
 
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
+import org.flywaydb.core.Flyway
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.test.context.TestContext
 import org.springframework.test.context.support.AbstractTestExecutionListener
@@ -28,13 +29,24 @@ import org.springframework.test.context.support.AbstractTestExecutionListener
 class DatabaseTestExecutionListener extends AbstractTestExecutionListener {
 
     @Override
+    void beforeTestClass(final TestContext testContext) throws Exception {
+        rebuildDatabase testContext.applicationContext.getBean(Flyway)
+    }
+
+    @Override
     void beforeTestMethod(final TestContext testContext) throws Exception {
         if (testContext.testInstance instanceof DatabaseTableAccessor) {
             cleanTables(
-                testContext.applicationContext.getBean('jdbcTemplate', JdbcTemplate),
+                testContext.applicationContext.getBean(JdbcTemplate),
                 (testContext.testInstance as DatabaseTableAccessor).refreshableTables
             )
         }
+    }
+
+    private rebuildDatabase(Flyway flyway) {
+        log.debug 'Rebuilding database...'
+        flyway.clean()
+        flyway.migrate()
     }
 
     private void cleanTables(JdbcTemplate jdbcTemplate, Collection<String> tables) {

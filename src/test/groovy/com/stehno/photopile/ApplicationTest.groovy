@@ -15,22 +15,19 @@
  */
 package com.stehno.photopile
 
-import org.flywaydb.core.Flyway
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import groovy.transform.AnnotationCollector
+import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.TestExecutionListeners
 
-@Configuration
-class TestConfig {
 
-    @Bean
-    public FlywayMigrationStrategy cleanMigrateStrategy() {
-        return new FlywayMigrationStrategy() {
-            @Override
-            public void migrate(Flyway flyway) {
-                flyway.clean()
-                flyway.migrate()
-            }
-        }
-    }
+/**
+ * Created by cjstehno on 1/6/16.
+ */
+@SpringApplicationConfiguration(classes = [PhotopileApplication, TestConfig])
+@TestExecutionListeners(listeners = [DatabaseTestExecutionListener], mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@ActiveProfiles('test')
+@AnnotationCollector
+@interface ApplicationTest {
+
 }

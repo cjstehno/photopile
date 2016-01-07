@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 package com.stehno.photopile.service
+
+import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.DatabaseTableAccessor
-import com.stehno.photopile.RequiresDatabase
-import com.stehno.photopile.TestAuthentication
 import com.stehno.photopile.entity.PhotopileUserDetails
-import com.stehno.photopile.entity.Role
-import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.test.PropertyRandomizer
-import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.security.core.context.SecurityContextImpl
+import spock.lang.Specification
 
 import static com.stehno.photopile.entity.Role.USER
 import static com.stehno.vanilla.test.PropertyRandomizer.randomize
 
-@RequiresDatabase
-class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
+@ApplicationTest
+class PhotopileUserDetailsServiceTest extends Specification implements DatabaseTableAccessor {
 
     // NOTE: the tables are cleared with each run so the default user information will NOT be present
 
@@ -40,90 +36,95 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
 
     private final PropertyRandomizer stringRando = randomize(String)
 
-    // TODO: this will be useful elsewhere, move it somewhere common
-    static void specifyCurrentUser(String username, Role role = USER) {
-        SecurityContextHolder.context = new SecurityContextImpl(
-            authentication: new TestAuthentication(
-                principal: new PhotopileUserDetails(
-                    username: username, authorities: [new UserAuthority(authority: role)]
-                )
-            )
-        )
-    }
-
     @Override
     Collection<String> getRefreshableTables() {
         ['user_authorities', 'users']
     }
 
-    @Test void 'loadUserById'() {
+    def 'loadUserById'() {
+        setup:
         PhotopileUserDetails userA = addRandomUser()
 
+        when:
         PhotopileUserDetails user = service.loadUserById(userA.id)
-        assert user.username == userA.username
-        assert user.id == userA.id
-        assert user.version == userA.version
+
+        then:
+        user.username == userA.username
+        user.id == userA.id
+        user.version == userA.version
     }
 
-    @Test void 'loadUserByUsername'() {
+    def 'loadUserByUsername'() {
+        setup:
         PhotopileUserDetails userA = addRandomUser()
 
+        when:
         PhotopileUserDetails user = service.loadUserByUsername(userA.username)
-        assert user.username == userA.username
-        assert user.id == userA.id
-        assert user.version == userA.version
+
+        then:
+        user.username == userA.username
+        user.id == userA.id
+        user.version == userA.version
     }
 
-    @Test void 'listUsers'() {
+    def 'listUsers'() {
+        setup:
         PhotopileUserDetails userA = addRandomUser()
         PhotopileUserDetails userB = addRandomUser()
 
+        when:
         List<PhotopileUserDetails> users = service.listUsers()
-        assert users.size() == 2
-        assert users[0].username == userA.username
-        assert users[1].username == userB.username
+
+        then:
+        users.size() == 2
+        users[0].username == userA.username
+        users[1].username == userB.username
     }
 
-    @Test void 'deleteUser(String)'() {
+    def 'deleteUser(String)'() {
+        setup:
         PhotopileUserDetails userA = addRandomUser()
         PhotopileUserDetails userB = addRandomUser()
 
-        List<PhotopileUserDetails> users = service.listUsers()
-        assert users.size() == 2
-
+        when:
         service.deleteUser(userA.username)
 
-        users = service.listUsers()
-        assert users.size() == 1
+        then:
+        assert service.listUsers().size() == 1
     }
 
-    @Test void 'deleteUser(long)'() {
+    def 'deleteUser(long)'() {
+        setup:
         PhotopileUserDetails userA = addRandomUser()
         PhotopileUserDetails userB = addRandomUser()
 
-        List<PhotopileUserDetails> users = service.listUsers()
-        assert users.size() == 2
-
+        when:
         service.deleteUser(userA.id)
 
-        users = service.listUsers()
+        then:
+        List<PhotopileUserDetails> users = service.listUsers()
         assert users.size() == 1
     }
 
-    @Test void 'addUser'() {
+    def 'addUser'() {
+        setup:
         def (String username, String displayName, String password) = stringRando * 3
+
+        when:
         PhotopileUserDetails user = service.addUser(username, displayName, password, USER)
 
-        assert user.id
-        assert user.version
-        assert user.username == username
-        assert user.displayName == displayName
-        assert user.password
-        assert user.password != password
-        assert user.enabled
+        then:
+        user.id
+        user.version
+        user.username == username
+        user.displayName == displayName
+        user.password
+        user.password != password
+        user.enabled
     }
 
-    @Test void 'updateUser'() {
+    def 'updateUser'() {
+        setup:
         String username = stringRando.one()
         String displayName = stringRando.one()
 
@@ -131,9 +132,12 @@ class PhotopileUserDetailsServiceTest implements DatabaseTableAccessor {
         user.username = username
         user.displayName = displayName
 
+        when:
         PhotopileUserDetails updated = service.updateUser(user)
-        assert updated.username == username
-        assert updated.displayName == displayName
+
+        then:
+        updated.username == username
+        updated.displayName == displayName
     }
 
     private PhotopileUserDetails addRandomUser() {
