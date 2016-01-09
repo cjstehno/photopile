@@ -33,8 +33,6 @@ import static java.sql.Types.*
 @Repository @TypeChecked
 class ImageRepository {
 
-    // FIXME: use MediaType for content type stuff
-
     @Autowired private JdbcTemplate jdbcTemplate
 
     Image create(Image image) {
