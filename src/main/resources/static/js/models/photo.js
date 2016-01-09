@@ -3,7 +3,7 @@ define([], function () {
         idAttribute: 'id',
 
         url: function () {
-            return '/project' + (_.isUndefined(this.id) ? '' : ('/' + this.id));
+            return '/photo' + (_.isUndefined(this.id) ? '' : ('/' + this.id));
         }
     });
 });
