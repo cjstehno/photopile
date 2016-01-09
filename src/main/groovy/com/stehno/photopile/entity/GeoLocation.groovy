@@ -15,12 +15,12 @@
  */
 package com.stehno.photopile.entity
 
-import groovy.transform.Immutable
+import groovy.transform.Canonical
 
 /**
  * Created by cstehno on 1/6/2016.
  */
-@Immutable
+@Canonical // TODO: make immutable when vanilla supports randomized immutables
 class GeoLocation {
     double latitude
     double longitude

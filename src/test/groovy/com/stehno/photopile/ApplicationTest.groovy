@@ -17,16 +17,22 @@ package com.stehno.photopile
 
 import groovy.transform.AnnotationCollector
 import org.springframework.boot.test.SpringApplicationConfiguration
+import org.springframework.test.annotation.DirtiesContext
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.TestExecutionListeners
+import org.springframework.test.context.support.DirtiesContextTestExecutionListener
 
 
 /**
  * Created by cjstehno on 1/6/16.
  */
 @SpringApplicationConfiguration(classes = [PhotopileApplication, TestConfig])
-@TestExecutionListeners(listeners = [DatabaseTestExecutionListener], mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
+@TestExecutionListeners(
+    listeners = [DatabaseTestExecutionListener, DirtiesContextTestExecutionListener],
+    mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS
+)
 @ActiveProfiles('test')
+@DirtiesContext
 @AnnotationCollector
 @interface ApplicationTest {
 

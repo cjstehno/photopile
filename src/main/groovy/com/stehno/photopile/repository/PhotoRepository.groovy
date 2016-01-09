@@ -15,22 +15,16 @@
  */
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.entity.GeoLocation
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory
-import org.springframework.jdbc.core.ResultSetExtractor
-import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import org.springframework.stereotype.Repository
 
-import java.sql.ResultSet
-import java.sql.SQLException
 import java.sql.Timestamp
 
 import static com.stehno.photopile.entity.ImageScale.FULL
@@ -99,7 +93,7 @@ class PhotoRepository {
         affirm imageCnt == 1, 'Unable to save photo-image association.', IllegalStateException
 
         photo.id = savedPhotoId
-        photo.version = 1
+        photo.version = 1L
         photo
     }
 
@@ -110,8 +104,11 @@ class PhotoRepository {
                 t.id as tag_id,t.category as tag_category,t.label as tag_label,
                 i.id as image_id,i.scale as image_scale,i.width as image_width,i.height as image_height,i.content_length as image_content_length,i.content_type as image_content_type
                 from photos p
-                left outer join photo_tags t on t.photo_id=p.id
-                left outer join photo_images i on i.photo_id=p.id
+                left outer join photo_tags pt on pt.photo_id=p.id
+                left outer join tags t on t.id=pt.tag_id
+                left outer join photo_images pi on pi.photo_id=p.id
+                left outer join images i on i.id=pi.image_id
+                where p.id=?
             ''',
             PhotoListResultSetExtractor.instance,
             photoId
@@ -119,58 +116,3 @@ class PhotoRepository {
     }
 }
 
-@TypeChecked @Singleton
-class PhotoListResultSetExtractor implements ResultSetExtractor<List<Photo>> {
-
-    @Override
-    List<Photo> extractData(ResultSet rs) throws SQLException, DataAccessException {
-        Map<Long, Photo> photos = [:]
-
-        while (rs.next()) {
-            long photoId = rs.getLong('id')
-            if (photos[photoId]) {
-                // map only associations
-                // FIXME: tags
-                // FIXME: images
-
-            } else {
-                // map everything
-                photos[photoId] = PhotoRowMapper.instance.mapRow(rs, 0)
-
-                TagRowMapper.mapper('tag_').mapRow(rs, 0)
-                // FIXME: tags
-                // FIXME: images
-            }
-        }
-
-        photos.values() as List<Photo>
-    }
-}
-
-/**
- * NOTE: associations are not populated... just base photo props.
- */
-@TypeChecked @Singleton
-class PhotoRowMapper implements RowMapper<Photo> {
-
-    @Override
-    Photo mapRow(ResultSet rs, int rowNum) throws SQLException {
-        new Photo(
-            id: rs.getLong('id'),
-            version: rs.getLong('version'),
-            name: rs.getString('name'),
-            description: rs.getString('description'),
-            hash: rs.getString('hash'),
-            dateUploaded:,
-            dateUpdated:,
-            dateTaken:,
-            location: mapLocation(rs)
-        )
-    }
-
-    private GeoLocation mapLocation(ResultSet rs) {
-        Double lat = rs.getDouble('geo_latitude')
-        Double lon = rs.getDouble('geo_longitude')
-        (lat != null && lon != null) ? new GeoLocation(lat, lon, rs.getInt('geo_altitude')) : null
-    }
-}

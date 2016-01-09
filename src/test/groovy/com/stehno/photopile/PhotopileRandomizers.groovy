@@ -20,12 +20,12 @@ import com.stehno.vanilla.test.PropertyRandomizer
 import com.stehno.vanilla.test.Randomizers
 import org.springframework.http.MediaType
 
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.ZoneId
+import java.time.LocalTime
 
+import static com.stehno.photopile.entity.ImageScale.FULL
 import static com.stehno.vanilla.test.PropertyRandomizer.randomize
-import static com.stehno.vanilla.test.Randomizers.forDate
-import static java.time.LocalDateTime.ofInstant
 
 /**
  * PropertyRandomizer configurations for use in Photopile testing.
@@ -59,16 +59,21 @@ class PhotopileRandomizers {
         ignoringProperties 'id', 'version'
         typeRandomizers([
             (LocalDateTime): { Random rng ->
-                ofInstant(forDate().call(rng).toInstant(), ZoneId.systemDefault())
+                new LocalDateTime(
+                    new LocalDate(rng.nextInt(2000) + 1970, rng.nextInt(11) + 1, rng.nextInt(29)),
+                    new LocalTime(rng.nextInt(23), rng.nextInt(59), rng.nextInt(59), rng.nextInt(100))
+                )
             },
             (GeoLocation)  : forGeoLocation
         ])
         propertyRandomizers([
             tags  : { Random rng ->
-                (forTag * rng.nextInt(3)) as Set<Tag>
+                (forTag * (rng.nextInt(3)+1)) as Set<Tag>
             },
             images: { Random rng ->
-                [(ImageScale.FULL): forImage.one()]
+                Image img = forImage.one()
+                img.scale = FULL
+                [(FULL): img]
             }
         ])
     }

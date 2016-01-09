@@ -16,6 +16,8 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.entity.PhotopileUserDetails
+import com.stehno.photopile.entity.UserAuthority
+import com.stehno.vanilla.jdbc.mapper.ResultSetMapper
 import org.springframework.dao.DataAccessException
 import org.springframework.jdbc.core.ResultSetExtractor
 import org.springframework.security.core.userdetails.UserDetails
@@ -29,7 +31,7 @@ import java.sql.SQLException
 @Singleton
 class UserDetailsExtractor implements ResultSetExtractor<UserDetails> {
 
-    private static final UserAuthorityRowMapper AUTHORITY_MAPPER = UserAuthorityRowMapper.mapper('authority_')
+    private static final ResultSetMapper AUTHORITY_MAPPER = RowMappers.forUserAuthority('authority_')
 
     @Override
     UserDetails extractData(ResultSet rs) throws SQLException, DataAccessException {
@@ -44,7 +46,7 @@ class UserDetailsExtractor implements ResultSetExtractor<UserDetails> {
             rs.getBoolean('account_expired'),
             rs.getBoolean('credentials_expired'),
             rs.getBoolean('account_locked'),
-            [AUTHORITY_MAPPER.mapRow(rs, 0)]
+            [AUTHORITY_MAPPER.mapRow(rs, 0) as UserAuthority]
         ) : null
     }
 }

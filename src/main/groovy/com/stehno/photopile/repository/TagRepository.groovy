@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 package com.stehno.photopile.repository
+
 import com.stehno.photopile.entity.Tag
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import org.springframework.stereotype.Repository
 
 import static com.stehno.vanilla.Affirmations.affirm
 import static java.sql.Types.VARCHAR
+
 /**
  * Repository used to manage persistence of photo tags.
  */
@@ -61,7 +64,7 @@ class TagRepository {
     Tag retrieve(String category, String label) {
         jdbcTemplate.query(
             'select id,category,label from tags where category=? and label=?',
-            TagRowMapper.mapper(),
+            RowMappers.forTag() as RowMapper<Tag>,
             category, label
         )[0]
     }

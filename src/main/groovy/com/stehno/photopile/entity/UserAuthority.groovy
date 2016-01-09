@@ -21,11 +21,6 @@ import org.springframework.security.core.GrantedAuthority
 @Canonical
 class UserAuthority implements GrantedAuthority {
 
-    // TODO: remove these constants and just use enum
-    static final String AUTHORITY_ADMIN = Role.ADMIN.name()
-    static final String AUTHORITY_USER = Role.USER.name()
-    static final String AUTHORITY_GUEST = Role.GUEST.name()
-
     Long id
     String authority
 }

@@ -69,7 +69,7 @@ class ImageFileRepository {
      * @param image the image object
      * @param content the image content
      */
-    void store(Image image, File content) {
+    void store(Image image, File content) throws IOException {
         affirm image.id != null, 'Attempted to store non-persisted image.'
         affirm(
             content != null && content.exists() && content.canRead(),
@@ -89,7 +89,7 @@ class ImageFileRepository {
      * @param image the image object
      * @param content the image content
      */
-    void store(Image image, byte[] content) {
+    void store(Image image, byte[] content) throws IOException {
         affirm image.id != null, 'Attempted to store non-persisted image.'
         affirm(
             content != null && content.length > 0,

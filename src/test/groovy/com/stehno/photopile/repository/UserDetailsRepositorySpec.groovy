@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 package com.stehno.photopile.repository
-
 import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.PhotopileUserDetails
+import com.stehno.photopile.entity.Role
 import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.test.PropertyRandomizer
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,7 +25,6 @@ import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
-import static com.stehno.photopile.entity.UserAuthority.AUTHORITY_USER
 import static com.stehno.vanilla.test.PropertyRandomizer.randomize
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable
 
@@ -40,7 +39,7 @@ class UserDetailsRepositorySpec extends Specification {
 
     private final PropertyRandomizer userRando = randomize(PhotopileUserDetails) {
         ignoringProperties 'id', 'version'
-        propertyRandomizer 'authorities', { [new UserAuthority(2, AUTHORITY_USER)] }
+        propertyRandomizer 'authorities', { [new UserAuthority(2, Role.USER.name())] }
     }
 
     def @Transactional 'retrieve: admin'() {

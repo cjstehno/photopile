@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 package com.stehno.photopile.scan
+
 import com.stehno.photopile.ApplicationTest
+import com.stehno.photopile.entity.GeoLocation
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.repository.PhotoRepository
 import org.junit.Rule
@@ -24,6 +26,8 @@ import spock.lang.Specification
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
+
+import static com.stehno.photopile.entity.ImageScale.FULL
 
 @ApplicationTest
 class ImageScannerSpec extends Specification {
@@ -48,41 +52,20 @@ class ImageScannerSpec extends Specification {
         then:
         latch.await(10, TimeUnit.SECONDS)
 
-        // FIXME: verify photo, tags, image, image content (FULL)
         Photo photo = photoRepository.retrieve(listener.scannedIds[0])
+        photo.name == input.name
+        photo.hash
+        photo.dateTaken
+        photo.dateUpdated
+        photo.dateUploaded
+        photo.location == new GeoLocation(33.096683d, -96.753544d, 196)
+        photo.tags.collect { "${it.category}:${it.label}" as String }.containsAll([
+            'status:New', 'month:July', 'day:Friday', 'year:2010', 'camera:HTC T-Mobile myTouch 3G'
+        ])
+        photo.images[FULL].width == 2048
+        photo.images[FULL].height == 1536
 
         cleanup:
         imageScanner.removeListener(listener)
     }
 }
-
-/*
-        1 * photoService.create({ Photo p ->
-            p.name == input.name &&
-                (p.dateTaken as String) == '2010-07-23T18:50:37' &&
-                p.dateUploaded && p.dateUpdated &&
-                p.location == new GeoLocation(33.096683d, -96.753544d, 196) &&
-                p.tags.containsAll([
-                    new Tag(label: 'New'),
-                    new Tag(category: 'month', label: 'July'),
-                    new Tag(category: 'day', label: 'Saturday'),
-                    new Tag(category: 'year', label: '2010'),
-                    new Tag(category: 'camera', label: 'HTC Sensation'),
-                ]) &&
-                p.hash &&
-                p.images
-        }, input) >> new Photo(id: 42)
-
-        when:
-        scanner.handleMessage(input)
-
-        then:
-        1 * imageScalingService.requestScaling(42)
-
-        MediaType.IMAGE_JPEG == metaData.contentType
-        'HTC' == metaData.cameraMake
-        'T-Mobile myTouch 3G' == metaData.cameraModel
-        2048 == metaData.width
-        1536 == metaData.height
-
- */

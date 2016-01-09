@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 package com.stehno.photopile.repository
-
 import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.Image
 import com.stehno.photopile.entity.Photo
@@ -36,7 +35,7 @@ class PhotoRepositorySpec extends Specification {
     @Autowired private ImageRepository imageRepository
     @Autowired private JdbcTemplate jdbcTemplate
 
-    def @Transactional 'create'() {
+    @Transactional def 'create'() {
         setup:
         Photo photo = forPhoto.one()
 
@@ -57,6 +56,26 @@ class PhotoRepositorySpec extends Specification {
         countRowsInTableWhere(jdbcTemplate, 'photos', "id=${photo.id} and version=${photo.version}") == 1
         countRowsInTableWhere(jdbcTemplate, 'photo_tags', "photo_id=${photo.id}") == photo.tags.size()
         countRowsInTableWhere(jdbcTemplate, 'photo_images', "photo_id=${photo.id}") == 1
+    }
+
+    @Transactional def 'retrieve'() {
+        setup:
+        Photo photo = createPhoto()
+
+        when:
+        Photo retrieved = photoRepository.retrieve(photo.id)
+
+        then:
+        photo == retrieved
+    }
+
+    @Transactional private Photo createPhoto() {
+        Photo photo = forPhoto.one()
+
+        createTags photo.tags
+        createImage photo.images[FULL]
+
+        photoRepository.create(photo)
     }
 
     @Transactional private void createTags(Collection<Tag> tags) {

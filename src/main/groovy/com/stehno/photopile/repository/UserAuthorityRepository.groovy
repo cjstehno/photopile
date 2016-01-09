@@ -20,6 +20,7 @@ import com.stehno.photopile.entity.UserAuthority
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
@@ -38,7 +39,11 @@ class UserAuthorityRepository {
      * @return
      */
     UserAuthority retrieve(Role role) {
-        jdbcTemplate.query('select id,authority from authorities where authority=?', UserAuthorityRowMapper.mapper(), role.name())[0]
+        jdbcTemplate.query(
+            'select id,authority from authorities where authority=?',
+            RowMappers.forUserAuthority() as RowMapper<UserAuthority>,
+            role.name()
+        )[0]
     }
 }
 
