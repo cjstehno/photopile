@@ -18,13 +18,14 @@ package com.stehno.photopile.meta
 import com.stehno.photopile.entity.GeoLocation
 import groovy.transform.Immutable
 import groovy.transform.ToString
+import org.springframework.http.MediaType
 
 import java.time.LocalDateTime
 
 /**
  * Metadata extracted from the embedded photo image data.
  */
-@Immutable(knownImmutables = ['dateTaken']) @ToString(includeNames = true)
+@Immutable(knownImmutables = ['dateTaken', 'contentType']) @ToString(includeNames = true)
 class PhotoMetadata {
 
     LocalDateTime dateTaken
@@ -39,7 +40,7 @@ class PhotoMetadata {
     Double longitude
     Integer altitude // meters
 
-    String contentType
+    MediaType contentType
 
     GeoLocation getGeoLocation() {
         if (latitude != null && longitude != null) {

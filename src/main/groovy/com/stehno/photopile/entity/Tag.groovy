@@ -24,6 +24,6 @@ import groovy.transform.Canonical
 class Tag {
 
     Long id
-    String group
+    String category
     String label
 }

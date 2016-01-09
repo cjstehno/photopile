@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 package com.stehno.photopile.repository
-
-import com.stehno.photopile.entity.Image
+import com.stehno.photopile.entity.Tag
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -25,40 +24,46 @@ import org.springframework.jdbc.support.KeyHolder
 import org.springframework.stereotype.Repository
 
 import static com.stehno.vanilla.Affirmations.affirm
-import static java.sql.Types.*
-
+import static java.sql.Types.VARCHAR
 /**
- * Created by cstehno on 1/6/2016.
+ * Repository used to manage persistence of photo tags.
  */
 @Repository @TypeChecked
-class ImageRepository {
-
-    // FIXME: use MediaType for content type stuff
+class TagRepository {
 
     @Autowired private JdbcTemplate jdbcTemplate
 
-    Image create(Image image) {
-        affirm !image.id, 'Attempted to create image with id specified.'
+    /**
+     * Persists a new tag in the database. The tag instance used to create the new tag will have its id update if the
+     * creation is successful.
+     *
+     * @param tag the tag to be created and persisted
+     * @return the update tag (a reference to the updated incoming tag instance)
+     */
+    Tag create(Tag tag) {
+        affirm !tag.id, 'Attempted to create photo with id specified.'
 
         KeyHolder keyHolder = new GeneratedKeyHolder()
 
         PreparedStatementCreatorFactory factory = new PreparedStatementCreatorFactory(
-            'INSERT INTO images (scale,width,height,content_length,content_type) VALUES (?,?,?,?,?)',
-            VARCHAR, INTEGER, INTEGER, BIGINT, VARCHAR
+            'INSERT INTO tags (category,label) VALUES (?,?)', VARCHAR, VARCHAR
         )
         factory.returnGeneratedKeys = true
         factory.setGeneratedKeysColumnNames('id')
 
-        int rowCount = jdbcTemplate.update(factory.newPreparedStatementCreator([
-            image.scale.name(),
-            image.width,
-            image.height,
-            image.contentLength,
-            image.contentType as String
-        ]), keyHolder)
-        affirm rowCount == 1, 'Unable to create image.', IllegalStateException
+        int rowCount = jdbcTemplate.update(factory.newPreparedStatementCreator([tag.category, tag.label]), keyHolder)
+        affirm rowCount == 1, "Unable to create tag.", IllegalStateException
 
-        image.id = keyHolder.key.longValue()
-        image
+        tag.id = keyHolder.key.longValue()
+        tag
+    }
+
+    Tag retrieve(String category, String label) {
+        jdbcTemplate.query(
+            'select id,category,label from tags where category=? and label=?',
+            TagRowMapper.mapper(),
+            category, label
+        )[0]
     }
 }
+

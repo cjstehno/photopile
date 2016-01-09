@@ -1,8 +1,25 @@
+--
+-- Copyright (C) 2016 Christopher J. Stehno <chris@stehno.com>
+--
+-- Licensed under the Apache License, Version 2.0 (the "License");
+-- you may not use this file except in compliance with the License.
+-- You may obtain a copy of the License at
+--
+--         http://www.apache.org/licenses/LICENSE-2.0
+--
+-- Unless required by applicable law or agreed to in writing, software
+-- distributed under the License is distributed on an "AS IS" BASIS,
+-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-- See the License for the specific language governing permissions and
+-- limitations under the License.
+--
+
 CREATE TABLE photos (
   id            SERIAL      NOT NULL PRIMARY KEY,
   version       BIGINT    DEFAULT 0,
   name          VARCHAR(50) NOT NULL,
   description   VARCHAR(2000),
+  hash          VARCHAR(64),
 
   date_uploaded TIMESTAMP DEFAULT now(),
   date_updated  TIMESTAMP DEFAULT now(),
@@ -14,10 +31,10 @@ CREATE TABLE photos (
 );
 
 CREATE TABLE tags (
-  id    SERIAL      NOT NULL PRIMARY KEY,
-  group VARCHAR(20) NOT NULL,
-  name  VARCHAR(40) NOT NULL,
-  UNIQUE (group, name)
+  id       SERIAL      NOT NULL PRIMARY KEY,
+  category VARCHAR(20) NOT NULL,
+  label    VARCHAR(40) NOT NULL,
+  UNIQUE (category, label)
 );
 
 CREATE TABLE photo_tags (
@@ -26,14 +43,19 @@ CREATE TABLE photo_tags (
   PRIMARY KEY (photo_id, tag_id)
 );
 
-CREATE TABLE photo_images (
-  photo_id       SERIAL      NOT NULL REFERENCES photos (id),
-  scale          VARCHAR(8)  NOT NULL,
+CREATE TABLE images (
+  id             SERIAL      NOT NULL PRIMARY KEY,
+  scale          VARCHAR(10) NOT NULL,
   width          INT         NOT NULL,
   height         INT         NOT NULL,
   content_length BIGINT      NOT NULL,
-  content_type   VARCHAR(50) NOT NULL,
-  PRIMARY KEY (photo_id, scale)
+  content_type   VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE photo_images (
+  photo_id BIGINT NOT NULL REFERENCES photos (id),
+  image_id BIGINT NOT NULL REFERENCES images (id),
+  PRIMARY KEY (photo_id, image_id)
 );
 
 CREATE TABLE albums (

@@ -17,7 +17,7 @@ package com.stehno.photopile.repository
 
 import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.PhotopileRandomizers
-import com.stehno.photopile.entity.Image
+import com.stehno.photopile.entity.Tag
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
@@ -26,24 +26,24 @@ import spock.lang.Specification
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere
 
 @ApplicationTest
-class ImageRepositorySpec extends Specification {
+class TagRepositorySpec extends Specification {
 
-    @Autowired private ImageRepository repository
+    @Autowired private TagRepository repository
     @Autowired private JdbcTemplate jdbcTemplate
 
     def @Transactional 'create'() {
         setup:
-        Image image = PhotopileRandomizers.forImage.one()
+        Tag tag = PhotopileRandomizers.forTag.one()
 
         when:
-        Image created = repository.create(image)
+        Tag created = repository.create(tag)
 
         then:
         created
         created.id
 
-        image.id
+        tag.id
 
-        countRowsInTableWhere(jdbcTemplate, 'images', "id=${image.id}") == 1
+        countRowsInTableWhere(jdbcTemplate, 'tags', "id=${tag.id}") == 1
     }
 }

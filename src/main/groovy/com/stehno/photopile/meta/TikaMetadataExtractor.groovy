@@ -18,6 +18,7 @@ package com.stehno.photopile.meta
 import groovy.transform.TypeChecked
 import org.apache.tika.metadata.Metadata
 import org.apache.tika.parser.image.ImageMetadataExtractor
+import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
 
 import java.time.LocalDateTime
@@ -75,7 +76,7 @@ class TikaMetadataExtractor implements PhotoMetadataExtractor {
         }
 
         new PhotoMetadata(
-            contentType: 'image/jpeg',
+            contentType: MediaType.IMAGE_JPEG,
             dateTaken: extractField(extracted, 'Creation-Date', 'Date/Time Original', 'Date/Time Digitized') as LocalDateTime,
             width: extractField(extracted, 'tiff:ImageWidth', 'Image Width') as Integer,
             height: extractField(extracted, 'tiff:ImageHeight', 'Image Height') as Integer,

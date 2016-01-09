@@ -14,11 +14,8 @@
  * limitations under the License.
  */
 package com.stehno.photopile.repository
-
 import com.stehno.photopile.entity.Image
 import com.stehno.photopile.entity.ImageScale
-import com.stehno.vanilla.test.PropertyRandomizer
-import com.stehno.vanilla.test.Randomizers
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import spock.lang.Specification
@@ -26,24 +23,12 @@ import spock.lang.Unroll
 
 import java.util.concurrent.ThreadLocalRandom
 
-import static com.stehno.vanilla.test.PropertyRandomizer.randomize
-import static java.lang.Math.abs
+import static com.stehno.photopile.PhotopileRandomizers.forBytes
+import static com.stehno.photopile.PhotopileRandomizers.forImage
 
 class ImageFileRepositorySpec extends Specification {
 
     @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder()
-
-    private final PropertyRandomizer imageRando = randomize(Image) {
-        propertyRandomizer 'contentType', { 'image/jpeg' }
-        propertyRandomizer 'scale', { Random rng ->
-            ImageScale.values()[rng.nextInt(ImageScale.values().size())]
-        }
-    }
-
-    private static final Class BYTE_ARRAY = ([] as byte[]).class
-    private final PropertyRandomizer bytesRando = randomize(BYTE_ARRAY){
-        typeRandomizer BYTE_ARRAY, Randomizers.forByteArray()
-    }
 
     private ImageFileRepository repository
 
@@ -55,10 +40,10 @@ class ImageFileRepositorySpec extends Specification {
     @Unroll
     def 'bucket(#photoId) -> #result'() {
         expect:
-        repository.bucket(photoId) == result
+        repository.bucket(imageId) == result
 
         where:
-        photoId || result
+        imageId || result
         1       || '000000'
         999     || '000000'
         1000    || '000001'
@@ -68,10 +53,10 @@ class ImageFileRepositorySpec extends Specification {
 
     def 'fileName'() {
         expect:
-        repository.fileName(photoId, scale) == result
+        repository.fileName(imageId, scale) == result
 
         where:
-        photoId   | scale            || result
+        imageId   | scale            || result
         1         | ImageScale.FULL  || 'image-000001-FULL.jpg'
         100       | ImageScale.MINI  || 'image-000100-MINI.jpg'
         1000      | ImageScale.LARGE || 'image-001000-LARGE.jpg'
@@ -80,19 +65,19 @@ class ImageFileRepositorySpec extends Specification {
 
     def 'store file'() {
         setup:
-        long photoId = abs(ThreadLocalRandom.current().nextLong())
-        Image image = imageRando.one()
+        Image image = forImage.one()
+        image.id = ThreadLocalRandom.current().nextLong()
 
         File file = temporaryFolder.newFile()
-        file.bytes = bytesRando.one()
+        file.bytes = forBytes.one()
 
         when:
-        repository.store(photoId, image, file)
+        repository.store(image, file)
 
         then:
         def storedFile = new File(
             repository.storageDir,
-            "images/b${repository.bucket(photoId)}/${repository.fileName(photoId, image.scale)}"
+            "images/b${repository.bucket(image.id)}/${repository.fileName(image.id, image.scale)}"
         )
 
         storedFile.exists()
@@ -101,25 +86,25 @@ class ImageFileRepositorySpec extends Specification {
 
     def 'store bytes'() {
         setup:
-        long photoId = abs(ThreadLocalRandom.current().nextLong())
-        Image image = imageRando.one()
+        Image image = forImage.one()
+        image.id = ThreadLocalRandom.current().nextLong()
 
-        byte[] bytes = bytesRando.one()
+        byte[] bytes = forBytes.one()
 
         when:
-        repository.store(photoId, image, bytes)
+        repository.store(image, bytes)
 
         then:
         def storedFile = new File(
             repository.storageDir,
-            "images/b${repository.bucket(photoId)}/${repository.fileName(photoId, image.scale)}"
+            "images/b${repository.bucket(image.id)}/${repository.fileName(image.id, image.scale)}"
         )
 
         storedFile.exists()
         storedFile.bytes == bytes
     }
 
-    def 'retrieveContent: non-existing'(){
+    def 'retrieveContent: non-existing'() {
         when:
         byte[] content = repository.retrieveContent(1234, ImageScale.FULL)
 
@@ -127,16 +112,17 @@ class ImageFileRepositorySpec extends Specification {
         content == null
     }
 
-    def 'retrieveContent: existing'(){
+    def 'retrieveContent: existing'() {
         setup:
-        long photoId = abs(ThreadLocalRandom.current().nextLong())
-        Image image = imageRando.one()
-        byte[] imageContent = bytesRando.one()
+        Image image = forImage.one()
+        image.id = ThreadLocalRandom.current().nextLong()
 
-        repository.store(photoId, image, imageContent)
+        byte[] imageContent = forBytes.one()
+
+        repository.store(image, imageContent)
 
         when:
-        byte[] content = repository.retrieveContent(photoId, image.scale)
+        byte[] content = repository.retrieveContent(image.id, image.scale)
 
         then:
         content == imageContent

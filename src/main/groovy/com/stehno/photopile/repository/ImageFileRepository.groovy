@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository
 
 import javax.annotation.PostConstruct
 
+import static com.stehno.vanilla.Affirmations.affirm
 import static java.nio.file.Files.copy
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES
 
@@ -65,14 +66,19 @@ class ImageFileRepository {
     /**
      * Stores content for an image in the repository. The image content is extracted from the provided file.
      *
-     * @param photoId the id of the photo
      * @param image the image object
      * @param content the image content
      */
-    void store(long photoId, Image image, File content) {
+    void store(Image image, File content) {
+        affirm image.id != null, 'Attempted to store non-persisted image.'
+        affirm(
+            content != null && content.exists() && content.canRead(),
+            'Attempted to store image content without readable file.'
+        )
+
         copy(
             content.toPath(),
-            new File(bucketDir(photoId), fileName(photoId, image.scale)).toPath(),
+            new File(bucketDir(image.id), fileName(image.id, image.scale)).toPath(),
             COPY_ATTRIBUTES
         )
     }
@@ -80,23 +86,28 @@ class ImageFileRepository {
     /**
      * Stores content for an image in the repository.
      *
-     * @param photoId the id of the photo
      * @param image the image object
      * @param content the image content
      */
-    void store(long photoId, Image image, byte[] content) {
-        new File(bucketDir(photoId), fileName(photoId, image.scale)).bytes = content
+    void store(Image image, byte[] content) {
+        affirm image.id != null, 'Attempted to store non-persisted image.'
+        affirm(
+            content != null && content.length > 0,
+            'Attempted to store image content without readable file.'
+        )
+
+        new File(bucketDir(image.id), fileName(image.id, image.scale)).bytes = content
     }
 
     /**
      * Used to retrieve the content for the image content storef for the specified photo ID at the specified scale.
      *
-     * @param photoId the id of the photo
+     * @param imageId the id of the photo
      * @param scale the image scale
      * @return the content of the image as a byte array
      */
-    byte[] retrieveContent(long photoId, ImageScale scale) {
-        new File(bucketDir(photoId), fileName(photoId, scale)).with {
+    byte[] retrieveContent(long imageId, ImageScale scale) {
+        new File(bucketDir(imageId), fileName(imageId, scale)).with {
             exists() ? bytes : null
         }
     }

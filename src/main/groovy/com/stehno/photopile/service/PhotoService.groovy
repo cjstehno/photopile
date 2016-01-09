@@ -16,37 +16,54 @@
 package com.stehno.photopile.service
 
 import com.stehno.photopile.entity.Photo
+import com.stehno.photopile.entity.Tag
 import com.stehno.photopile.repository.ImageFileRepository
 import com.stehno.photopile.repository.ImageRepository
 import com.stehno.photopile.repository.PhotoRepository
+import com.stehno.photopile.repository.TagRepository
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 import static com.stehno.photopile.entity.ImageScale.FULL
-/**
- * Created by cstehno on 1/6/2016.
- */
-@TypeChecked @Service @Slf4j
-class PhotoService {
+import static com.stehno.vanilla.Affirmations.affirm
 
-    // FIXME: services should keep incoming domain objects updated if possible
+/**
+ * Service entry point for working with Photos.
+ */
+@TypeChecked @Service @Slf4j @Transactional(readOnly = true)
+class PhotoService {
 
     @Autowired private ImageFileRepository imageFileRepository
     @Autowired private ImageRepository imageRepository
     @Autowired private PhotoRepository photoRepository
+    @Autowired private TagRepository tagRepository
 
-    void create(Photo photo, File file) {
+    @Transactional(readOnly = false)
+    Photo create(Photo photo, File file) {
+        affirm photo.images?.size() > 0, 'Attempted to create Photo without images.'
+        affirm photo.images[FULL] != null, 'Attempted to create Photo without FULL scale image.'
+
+        if (photo.images.size() > 1) {
+            log.warn 'Photo contains more than one image ({}) - all but FULL scale will be ignored', photo.images.size()
+        }
+
+        photo.tags?.each { Tag tag ->
+            if (!tag.id) {
+                Tag exsitingTag = tagRepository.retrieve(tag.category, tag.label)
+                if (exsitingTag) {
+                    tag.id = exsitingTag.id
+                } else {
+                    tagRepository.create(tag)
+                }
+            }
+        }
+
+        imageRepository.create(photo.images[FULL])
+        imageFileRepository.store(photo.images[FULL], file)
+
         photoRepository.create(photo)
-
-        // TODO: save the tags (use existing as can)
-
-        imageRepository.create(photo.id, photo.images[FULL])
-
-        imageFileRepository.store(photo.id, photo.images[FULL], file)
-
-        // FIXME: temp
-        log.info 'Photo: {}', photo
     }
 }

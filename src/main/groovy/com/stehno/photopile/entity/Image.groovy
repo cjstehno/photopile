@@ -16,6 +16,7 @@
 package com.stehno.photopile.entity
 
 import groovy.transform.Canonical
+import org.springframework.http.MediaType
 
 /**
  * Created by cstehno on 1/6/2016.
@@ -23,10 +24,11 @@ import groovy.transform.Canonical
 @Canonical
 class Image {
 
+    Long id
     ImageScale scale
     int width
     int height
     long contentLength
-    String contentType
+    MediaType contentType
 }
 

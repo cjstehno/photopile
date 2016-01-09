@@ -21,7 +21,7 @@ import groovy.transform.ToString
 import java.time.LocalDateTime
 
 /**
- * Created by cstehno on 1/6/2016.
+ * Object representation of a photo.
  */
 @Canonical @ToString(includeNames = true)
 class Photo {

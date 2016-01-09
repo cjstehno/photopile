@@ -10,3 +10,5 @@
  * provide shell command to initiate a scan
  
  try to get the migrations out of the test resources dir
+ 
+ * audit log table functionality to record login/logout, import operations, etc
