@@ -116,7 +116,7 @@ class ImageScanner extends DefaultActor {
                 log.warn 'Unable to delete file ({}) after processing.', file
             }
 
-            scalingService.requestScaling(photo.id)
+            scalingService.requestScaling(photo.id, photo.images[FULL].id)
 
             listeners*.scanned(file, photo.id)
 

@@ -18,7 +18,7 @@ package com.stehno.photopile.scan
 import groovy.transform.Immutable
 
 /**
- * Created by cstehno on 1/6/2016.
+ * Represents the meta information for a scaled image.
  */
 @Immutable
 class ScaledImage {

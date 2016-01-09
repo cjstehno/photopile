@@ -39,3 +39,22 @@ class TestImageScanListener implements ImageScanListener {
         latch.countDown()
     }
 }
+
+class TestImageScaleListener implements ImageScaleListener {
+
+    CountDownLatch latch
+    List<ScalingRequest> scaled = []
+    List<ScalingRequest> failed = []
+
+    @Override
+    void scaled(ScalingRequest request) {
+        scaled << request
+        latch.countDown()
+    }
+
+    @Override
+    void failed(ScalingRequest request) {
+        failed << request
+        latch.countDown()
+    }
+}

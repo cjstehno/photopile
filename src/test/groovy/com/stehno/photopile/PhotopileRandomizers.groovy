@@ -45,7 +45,8 @@ class PhotopileRandomizers {
         ignoringProperties 'id'
         propertyRandomizer 'contentType', { MediaType.IMAGE_JPEG }
         propertyRandomizer 'scale', { Random rng ->
-            ImageScale.values()[rng.nextInt(ImageScale.values().size())]
+            def allowed = ImageScale.values() - FULL
+            allowed[rng.nextInt(allowed.size())]
         }
     }
 

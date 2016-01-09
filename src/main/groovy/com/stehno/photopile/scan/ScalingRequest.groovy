@@ -24,5 +24,6 @@ import groovy.transform.Immutable
 @Immutable
 class ScalingRequest {
     long photoId
+    long imageId
     ImageScale scale
 }

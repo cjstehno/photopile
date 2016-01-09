@@ -18,28 +18,26 @@ package com.stehno.photopile.service
 import com.stehno.photopile.entity.ImageScale
 import com.stehno.photopile.scan.ImageScaler
 import com.stehno.photopile.scan.ScalingRequest
-import groovy.transform.TypeChecked
-import groovy.util.logging.Slf4j
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
+import spock.lang.Specification
 
-import static com.stehno.photopile.entity.ImageScale.MEDIUM
-import static com.stehno.photopile.entity.ImageScale.MINI
+import static com.stehno.photopile.entity.ImageScale.*
 
-/**
- * Service providing access to the image scaling functionality.
- */
-@Service @TypeChecked @Slf4j
-class ImageScalingService {
+class ImageScalingServiceSpec extends Specification {
 
-    List<ImageScale> activeScales = [MINI, MEDIUM]
+    private ImageScaler imageScaler = GroovyMock(ImageScaler)
+    private ImageScalingService service = new ImageScalingService(
+        activeScales: ImageScale.values() - ImageScale.FULL,
+        imageScaler: imageScaler
+    )
 
-    @Autowired private ImageScaler imageScaler
+    def 'requestScaling'() {
+        when:
+        service.requestScaling(977, 3245)
 
-    void requestScaling(long photoId, long imageId) {
-        activeScales.each { scale ->
-            log.info 'Requesting scaling ({} at {}) of photo ({})', imageId, scale, photoId
-            imageScaler << new ScalingRequest(photoId, imageId, scale)
-        }
+        then:
+        1 * imageScaler.leftShift(new ScalingRequest(977, 3245, MINI))
+        1 * imageScaler.leftShift(new ScalingRequest(977, 3245, SMALL))
+        1 * imageScaler.leftShift(new ScalingRequest(977, 3245, MEDIUM))
+        1 * imageScaler.leftShift(new ScalingRequest(977, 3245, LARGE))
     }
 }

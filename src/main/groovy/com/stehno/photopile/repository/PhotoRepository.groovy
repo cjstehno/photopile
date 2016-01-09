@@ -114,5 +114,16 @@ class PhotoRepository {
             photoId
         )[0]
     }
+
+    /**
+     * Adds (links) the given image to the specified photo.
+     *
+     * @param photoId
+     * @param imageId
+     * @return true if the add was successful
+     */
+    boolean addImage(long photoId, long imageId) {
+        jdbcTemplate.update('insert into photo_images (photo_id,image_id) values (?,?)', photoId, imageId)
+    }
 }
 

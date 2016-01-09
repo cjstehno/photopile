@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 package com.stehno.photopile.repository
+
 import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.Image
 import com.stehno.photopile.entity.Photo
@@ -23,6 +24,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
+import static com.stehno.photopile.PhotopileRandomizers.forImage
 import static com.stehno.photopile.PhotopileRandomizers.forPhoto
 import static com.stehno.photopile.entity.ImageScale.FULL
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere
@@ -69,6 +71,25 @@ class PhotoRepositorySpec extends Specification {
         photo == retrieved
     }
 
+    @Transactional def 'retrieve with multiple images'() {
+        setup:
+        Photo photo = createPhoto()
+        def image = createImage(forImage.one())
+        photo.images[image.scale] = image
+        addImage(photo.id, image.id)
+
+        when:
+        Photo retrieved = photoRepository.retrieve(photo.id)
+
+        then:
+        photo == retrieved
+        retrieved.images.size() == 2
+    }
+
+    @Transactional private void addImage(long photoId, long imageId) {
+        photoRepository.addImage(photoId, imageId)
+    }
+
     @Transactional private Photo createPhoto() {
         Photo photo = forPhoto.one()
 
@@ -84,7 +105,7 @@ class PhotoRepositorySpec extends Specification {
         }
     }
 
-    @Transactional private void createImage(Image image) {
+    @Transactional private Image createImage(Image image) {
         imageRepository.create(image)
     }
 }

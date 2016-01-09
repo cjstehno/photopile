@@ -18,6 +18,7 @@ package com.stehno.photopile.scan
 import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.GeoLocation
 import com.stehno.photopile.entity.Photo
+import com.stehno.photopile.repository.ImageFileRepository
 import com.stehno.photopile.repository.PhotoRepository
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -28,6 +29,8 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 import static com.stehno.photopile.entity.ImageScale.FULL
+import static com.stehno.photopile.entity.ImageScale.MEDIUM
+import static com.stehno.photopile.entity.ImageScale.MINI
 
 @ApplicationTest
 class ImageScannerSpec extends Specification {
@@ -35,13 +38,18 @@ class ImageScannerSpec extends Specification {
     @Rule public TemporaryFolder temporaryFolder = new TemporaryFolder()
 
     @Autowired private ImageScanner imageScanner
+    @Autowired private ImageScaler imageScaler
     @Autowired private PhotoRepository photoRepository
+    @Autowired private ImageFileRepository imageFileRepository
 
     def 'handleMessage'() {
         setup:
-        CountDownLatch latch = new CountDownLatch(1)
-        TestImageScanListener listener = new TestImageScanListener(latch: latch)
-        imageScanner.addListener(listener)
+        CountDownLatch latch = new CountDownLatch(3)
+        TestImageScanListener scanListener = new TestImageScanListener(latch: latch)
+        imageScanner.addListener(scanListener)
+
+        TestImageScaleListener scaleListener = new TestImageScaleListener(latch: latch)
+        imageScaler.addListener(scaleListener)
 
         File input = temporaryFolder.newFile()
         input.bytes = new File(getClass().getResource('/test-image.jpg').toURI()).bytes
@@ -52,7 +60,7 @@ class ImageScannerSpec extends Specification {
         then:
         latch.await(10, TimeUnit.SECONDS)
 
-        Photo photo = photoRepository.retrieve(listener.scannedIds[0])
+        Photo photo = photoRepository.retrieve(scanListener.scannedIds[0])
         photo.name == input.name
         photo.hash
         photo.dateTaken
@@ -62,10 +70,21 @@ class ImageScannerSpec extends Specification {
         photo.tags.collect { "${it.category}:${it.label}" as String }.containsAll([
             'status:New', 'month:July', 'day:Friday', 'year:2010', 'camera:HTC T-Mobile myTouch 3G'
         ])
+
+        photo.images.size() == 3
+
         photo.images[FULL].width == 2048
         photo.images[FULL].height == 1536
+        imageFileRepository.retrieveContent(photo.images[FULL].id, FULL)
+
+        photo.images[MINI]
+        imageFileRepository.retrieveContent(photo.images[MINI].id, MINI)
+
+        photo.images[MEDIUM]
+        imageFileRepository.retrieveContent(photo.images[MEDIUM].id, MEDIUM)
 
         cleanup:
-        imageScanner.removeListener(listener)
+        imageScanner.removeListener(scanListener)
+        imageScaler.removeListener(scaleListener)
     }
 }
