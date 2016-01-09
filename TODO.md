@@ -12,3 +12,5 @@
  try to get the migrations out of the test resources dir
  
  * audit log table functionality to record login/logout, import operations, etc
+ 
+ FIXME: would feel better about scannign if it didnt delete the scanned files
