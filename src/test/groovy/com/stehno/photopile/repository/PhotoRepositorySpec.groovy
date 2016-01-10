@@ -32,7 +32,7 @@ import static com.stehno.photopile.PhotopileRandomizers.forPhoto
 import static com.stehno.photopile.entity.ImageScale.FULL
 import static com.stehno.photopile.service.OrderDirection.ASCENDING
 import static com.stehno.photopile.service.PhotoFilter.NO_ALBUM
-import static com.stehno.photopile.service.PhotoOrderField.DATE_TAKEN
+import static com.stehno.photopile.service.PhotoOrderField.TAKEN
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere
 
 @ApplicationTest
@@ -101,13 +101,15 @@ class PhotoRepositorySpec extends Specification {
 
         PhotoFilter filter = new PhotoFilter(NO_ALBUM, null)
         Pagination pagination = new Pagination(0, 3)
-        PhotoOrderBy orderBy = new PhotoOrderBy(DATE_TAKEN, ASCENDING)
+        PhotoOrderBy orderBy = new PhotoOrderBy(TAKEN, ASCENDING)
 
         when:
         List<Photo> photos = photoRepository.retrieveAll(filter, pagination, orderBy)
 
         then:
         photos.size() == 3
+
+
 
         // TODO: this needs more detailed testing
     }

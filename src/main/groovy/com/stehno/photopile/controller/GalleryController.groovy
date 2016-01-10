@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 package com.stehno.photopile.controller
-
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.service.*
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.servlet.ModelAndView
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET
-
 /**
  * Created by cjstehno on 1/9/16.
  */
 @Controller @TypeChecked @Slf4j
 class GalleryController {
 
-    private static final int PAGE_SIZE = 16
+    private static final int PAGE_SIZE = 3
 
     @Autowired private PhotoService photoService
 
@@ -61,19 +60,23 @@ class GalleryController {
     //        return new ModelAndView('gallery', 'photos', photos)
     //    }
 
-    There is an index out of bounds in the pagination stuff.
-    The code above was causing odd bean errors so rebuild it with the below
+//    There is an index out of bounds in the pagination stuff.
+//    The code above was causing odd bean errors so rebuild it with the below
 
-    @RequestMapping(value = '/gallery', method = GET)
-    public ModelAndView list() {
+    @RequestMapping(value = '/gallery/{page}', method = GET)
+    public ModelAndView list(
+        @PathVariable(value='page') Integer page
+    ) {
+        // TODO: validate that page is within range
+
         List<Photo> photos = photoService.retrieveAll(
             new PhotoFilter(PhotoFilter.NO_ALBUM, null),
-            Pagination.forPage(1, PAGE_SIZE),
+            Pagination.forPage(page ?: 1, PAGE_SIZE),
             new PhotoOrderBy(PhotoOrderField.TAKEN, OrderDirection.ASCENDING)
         )
 
         photos.each {
-            log.info 'Showing photo: {}', it.name
+            log.info 'Showing photo (page {}): {}', page, it.name
         }
 
         return new ModelAndView('gallery', 'photos', photos)

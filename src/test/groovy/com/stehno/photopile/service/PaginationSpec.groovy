@@ -15,24 +15,18 @@
  */
 package com.stehno.photopile.service
 
-import groovy.transform.Immutable
+import spock.lang.Specification
 
-/**
- * Created by cjstehno on 1/10/16.
- */
-@Immutable
-class Pagination {
-    int offset
-    int limit
+class PaginationSpec extends Specification {
 
-    /**
-     * Creates the pagination object for the specified page and page size. The page is 1-based.
-     *
-     * @param page
-     * @param pageSize
-     * @return
-     */
-    static Pagination forPage(int page, int pageSize) {
-        new Pagination((page - 1) * pageSize, pageSize)
+    def 'forPage'() {
+        expect:
+        Pagination.forPage(page, pageSize) == result
+
+        where:
+        page | pageSize || result
+        1    | 3        || new Pagination(0, 3)
+        2    | 3        || new Pagination(3, 3)
+        3    | 3        || new Pagination(6, 3)
     }
 }
