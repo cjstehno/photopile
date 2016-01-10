@@ -66,4 +66,14 @@ class PhotoService {
 
         photoRepository.create(photo)
     }
+
+    List<Photo> retrieveAll(PhotoFilter filterBy, Pagination pagination, PhotoOrderBy orderBy) {
+        photoRepository.retrieveAll(filterBy, pagination, orderBy)
+    }
 }
+
+
+
+
+
+

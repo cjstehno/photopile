@@ -1,19 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>PhotoPile: Your photos, your way.</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<#assign pageCss = "css/start-page.css">
 
-    <link rel="stylesheet" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="css/start-page.css"/>
-
-    <style type="text/css">
-        body {
-            padding-top: 50px;
-        }
-    </style>
-</head>
-<body>
+<#include "header.ftl">
 
 <div class="container-fluid">
     <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -65,8 +52,4 @@
     </div>
 </div>
 
-<script src="js/libs/jquery-2.1.4.min.js"></script>
-<script src="js/libs/bootstrap.min.js"></script>
-
-</body>
-</html>
+<#include "footer.ftl">

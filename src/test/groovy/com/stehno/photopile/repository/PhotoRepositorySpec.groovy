@@ -19,6 +19,9 @@ import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.Image
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
+import com.stehno.photopile.service.Pagination
+import com.stehno.photopile.service.PhotoFilter
+import com.stehno.photopile.service.PhotoOrderBy
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
@@ -27,6 +30,9 @@ import spock.lang.Specification
 import static com.stehno.photopile.PhotopileRandomizers.forImage
 import static com.stehno.photopile.PhotopileRandomizers.forPhoto
 import static com.stehno.photopile.entity.ImageScale.FULL
+import static com.stehno.photopile.service.OrderDirection.ASCENDING
+import static com.stehno.photopile.service.PhotoFilter.NO_ALBUM
+import static com.stehno.photopile.service.PhotoOrderField.DATE_TAKEN
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere
 
 @ApplicationTest
@@ -60,6 +66,7 @@ class PhotoRepositorySpec extends Specification {
         countRowsInTableWhere(jdbcTemplate, 'photo_images', "photo_id=${photo.id}") == 1
     }
 
+    // TODO: this test is a little flaky - figure out why
     @Transactional def 'retrieve'() {
         setup:
         Photo photo = createPhoto()
@@ -84,6 +91,25 @@ class PhotoRepositorySpec extends Specification {
         then:
         photo == retrieved
         retrieved.images.size() == 2
+    }
+
+    @Transactional def 'retrieveAll'() {
+        setup:
+        7.times {
+            createPhoto()
+        }
+
+        PhotoFilter filter = new PhotoFilter(NO_ALBUM, null)
+        Pagination pagination = new Pagination(0, 3)
+        PhotoOrderBy orderBy = new PhotoOrderBy(DATE_TAKEN, ASCENDING)
+
+        when:
+        List<Photo> photos = photoRepository.retrieveAll(filter, pagination, orderBy)
+
+        then:
+        photos.size() == 3
+
+        // TODO: this needs more detailed testing
     }
 
     @Transactional private void addImage(long photoId, long imageId) {

@@ -17,6 +17,9 @@ package com.stehno.photopile.repository
 
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
+import com.stehno.photopile.service.Pagination
+import com.stehno.photopile.service.PhotoFilter
+import com.stehno.photopile.service.PhotoOrderBy
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
@@ -28,6 +31,7 @@ import org.springframework.stereotype.Repository
 import java.sql.Timestamp
 
 import static com.stehno.photopile.entity.ImageScale.FULL
+import static com.stehno.photopile.repository.PhotoSelectBuilder.select
 import static com.stehno.vanilla.Affirmations.affirm
 import static java.sql.Types.*
 
@@ -98,21 +102,7 @@ class PhotoRepository {
     }
 
     Photo retrieve(long photoId) {
-        jdbcTemplate.query(
-            '''select
-                p.id,p.version,p.name,p.description,p.hash,p.date_uploaded,p.date_updated,p.date_taken,p.geo_latitude,p.geo_longitude,p.geo_altitude,
-                t.id as tag_id,t.category as tag_category,t.label as tag_label,
-                i.id as image_id,i.scale as image_scale,i.width as image_width,i.height as image_height,i.content_length as image_content_length,i.content_type as image_content_type
-                from photos p
-                left outer join photo_tags pt on pt.photo_id=p.id
-                left outer join tags t on t.id=pt.tag_id
-                left outer join photo_images pi on pi.photo_id=p.id
-                left outer join images i on i.id=pi.image_id
-                where p.id=?
-            ''',
-            PhotoListResultSetExtractor.instance,
-            photoId
-        )[0]
+        jdbcTemplate.query(select().filterById(photoId).sql(), PhotoListResultSetExtractor.instance, photoId)[0]
     }
 
     /**
@@ -125,5 +115,99 @@ class PhotoRepository {
     boolean addImage(long photoId, long imageId) {
         jdbcTemplate.update('insert into photo_images (photo_id,image_id) values (?,?)', photoId, imageId)
     }
+
+    List<Photo> retrieveAll(PhotoFilter filterBy, Pagination pagination, PhotoOrderBy orderBy) {
+        PhotoSelectBuilder select = select()
+
+        if (filterBy.albumId && filterBy.albumId != PhotoFilter.NO_ALBUM) {
+            select.filterByAlbum(filterBy.albumId)
+        }
+
+        if (filterBy.tagIds) {
+            select.filterByTags(filterBy.tagIds)
+        }
+
+        if (orderBy) {
+            select.orderBy(orderBy.field.field, orderBy.direction.text)
+        }
+
+        List<Photo> photos = jdbcTemplate.query(
+            select.sql(),
+            select.arguments(),
+            PhotoListResultSetExtractor.instance,
+        )
+
+        if (pagination) {
+            // pagination has to be done externally since the limit+offset are meaningless in an outer join query
+            // Note: this may become a performance problem :-/
+            return photos[pagination.offset..(pagination.offset + pagination.limit-1)]
+        }
+
+        return photos
+    }
 }
 
+@TypeChecked
+class PhotoSelectBuilder {
+
+    private static final String SQL = '''
+            select
+                p.id,p.version,p.name,p.description,p.hash,p.date_uploaded,p.date_updated,p.date_taken,p.geo_latitude,p.geo_longitude,p.geo_altitude,
+                t.id as tag_id,t.category as tag_category,t.label as tag_label,
+                i.id as image_id,i.scale as image_scale,i.width as image_width,i.height as image_height,i.content_length as image_content_length,i.content_type as image_content_type
+            from photos p
+            left outer join photo_tags pt on pt.photo_id=p.id
+            left outer join tags t on t.id=pt.tag_id
+            left outer join photo_images pi on pi.photo_id=p.id
+            left outer join images i on i.id=pi.image_id
+        '''
+
+    private final List<String> wheres = []
+    private final List<Object> args = []
+    private String orderBy
+
+    static PhotoSelectBuilder select() {
+        new PhotoSelectBuilder()
+    }
+
+    PhotoSelectBuilder filterById(long id) {
+        wheres << 'p.id = ?'
+        args << id
+        this
+    }
+
+    PhotoSelectBuilder filterByTags(Set<Long> tags) {
+        wheres << 't.id in (?)'
+        args << tags
+        this
+    }
+
+    PhotoSelectBuilder filterByAlbum(long albumId) {
+        wheres << 'p.id in (select photo_id from album_photos where album_id = ?)'
+        args << albumId
+        this
+    }
+
+    PhotoSelectBuilder orderBy(String field, String direction) {
+        orderBy = "order by $field $direction"
+        this
+    }
+
+    Object[] arguments() {
+        args as Object[]
+    }
+
+    String sql() {
+        StringBuilder str = new StringBuilder(SQL)
+
+        if (wheres) {
+            str.append(' where ').append(wheres.join(' and '))
+        }
+
+        if (orderBy) {
+            str.append(' ').append(orderBy)
+        }
+
+        str.toString()
+    }
+}

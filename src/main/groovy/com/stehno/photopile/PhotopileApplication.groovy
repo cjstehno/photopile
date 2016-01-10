@@ -25,8 +25,8 @@ class PhotopileApplication extends WebMvcConfigurerAdapter {
 
     @Override
     void addViewControllers(final ViewControllerRegistry registry) {
-        // allows customization of the login page
         registry.addViewController('/login').setViewName('login')
+        registry.addViewController('/').setViewName('index')
     }
 
     @Override
