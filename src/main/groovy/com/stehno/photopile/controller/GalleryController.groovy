@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 package com.stehno.photopile.controller
+
 import com.stehno.photopile.entity.Photo
-import com.stehno.photopile.service.*
+import com.stehno.photopile.service.PhotoService
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 
+import static com.stehno.photopile.service.Pagination.forPage
+import static com.stehno.photopile.service.PhotoFilter.NO_ALBUM
+import static com.stehno.photopile.service.PhotoFilter.filterBy
+import static com.stehno.photopile.service.PhotoOrderBy.orderBy
 import static org.springframework.web.bind.annotation.RequestMethod.GET
+
 /**
  * Created by cjstehno on 1/9/16.
  */
@@ -37,42 +44,20 @@ class GalleryController {
 
     // /gallery/{album}/{page}?tags=1,2,3&order=uploaded&direction=asc
 
-    // FIXME: should be able to auto-create the objects
-    //    @RequestMapping(value = '/gallery/{album}/{page}', method = GET)
-    //    public ModelAndView list(
-    //        @PathVariable('album') long albumId,
-    //        @PathVariable('page') Integer page = 1,
-    //        @RequestParam(value = 'tags', required = false) Set<Long> tagIds,
-    //        @RequestParam(value = 'order', required = false, defaultValue = 'TAKEN') PhotoOrderField orderField,
-    //        @RequestParam(value = 'direction', required = false, defaultValue = 'ASCENDING') OrderDirection orderDirection
-    //    ) {
-    //
-    //        List<Photo> photos = photoService.retrieveAll(
-    //            new PhotoFilter(albumId, tagIds),
-    //            Pagination.forPage(page, PAGE_SIZE),
-    //            new PhotoOrderBy(orderField, orderDirection)
-    //        )
-    //
-    //        photos.each {
-    //            log.info 'Showing photo: {}', it.name
-    //        }
-    //
-    //        return new ModelAndView('gallery', 'photos', photos)
-    //    }
-
-//    There is an index out of bounds in the pagination stuff.
-//    The code above was causing odd bean errors so rebuild it with the below
-
-    @RequestMapping(value = '/gallery/{page}', method = GET)
+    @RequestMapping(value = '/gallery/{album}/{page}', method = GET)
     public ModelAndView list(
-        @PathVariable(value='page') Integer page
+        @PathVariable('album') final String album,
+        @PathVariable('page') final int page,
+        @RequestParam(value = 'tags', required = false) final Long[] tags,
+        @RequestParam(value = 'order', required = false, defaultValue = 'taken') String order,
+        @RequestParam(value = 'direction', required = false, defaultValue = 'asc') String direction
     ) {
-        // TODO: validate that page is within range
+        long albumId = album == 'all' ? NO_ALBUM : album as long
 
         List<Photo> photos = photoService.retrieveAll(
-            new PhotoFilter(PhotoFilter.NO_ALBUM, null),
-            Pagination.forPage(page ?: 1, PAGE_SIZE),
-            new PhotoOrderBy(PhotoOrderField.TAKEN, OrderDirection.ASCENDING)
+            filterBy(albumId, tags),
+            forPage(page ?: 1, PAGE_SIZE),
+            orderBy(order, direction)
         )
 
         photos.each {
@@ -81,4 +66,12 @@ class GalleryController {
 
         return new ModelAndView('gallery', 'photos', photos)
     }
+}
+
+@TypeChecked
+class PagintatedList<T> implements List<T> {
+
+    @Delegate List<T> contents
+
+    int total
 }

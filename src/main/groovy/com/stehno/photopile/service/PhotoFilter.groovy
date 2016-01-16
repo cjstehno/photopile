@@ -27,4 +27,8 @@ class PhotoFilter {
 
     Long albumId
     Set<Long> tagIds
+
+    static PhotoFilter filterBy(long album, Long[] tags) {
+        new PhotoFilter(album, tags as Set<Long>)
+    }
 }

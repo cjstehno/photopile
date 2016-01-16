@@ -15,6 +15,7 @@
  */
 package com.stehno.photopile.service
 
+import com.stehno.photopile.controller.PagintatedList
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
 import com.stehno.photopile.repository.ImageFileRepository
@@ -67,8 +68,11 @@ class PhotoService {
         photoRepository.create(photo)
     }
 
-    List<Photo> retrieveAll(PhotoFilter filterBy, Pagination pagination, PhotoOrderBy orderBy) {
-        photoRepository.retrieveAll(filterBy, pagination, orderBy)
+    PagintatedList<Photo> retrieveAll(PhotoFilter filterBy, Pagination pagination, PhotoOrderBy orderBy) {
+        new PagintatedList<>(
+            contents: photoRepository.retrieveAll(filterBy, pagination, orderBy),
+            total: photoRepository.count(filterBy)
+        )
     }
 }
 

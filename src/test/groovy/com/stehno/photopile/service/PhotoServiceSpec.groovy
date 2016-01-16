@@ -61,4 +61,8 @@ class PhotoServiceSpec extends Specification {
 
         imageFileRepository.retrieveContent(photo.images[FULL].id, FULL) == content
     }
+
+    def 'retrieveAll'(){
+
+    }
 }

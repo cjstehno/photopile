@@ -30,4 +30,8 @@ enum PhotoOrderField {
         this.name = name
         this.field = field
     }
+
+    static PhotoOrderField fromName(String name){
+        values().find { it.name == name }
+    }
 }

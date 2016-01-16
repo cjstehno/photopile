@@ -29,4 +29,8 @@ enum OrderDirection {
 
     @Override
     String toString() { text }
+
+    static OrderDirection fromText(String text) {
+        values().find { it.text == text }
+    }
 }

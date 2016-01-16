@@ -17,6 +17,9 @@ package com.stehno.photopile.service
 
 import groovy.transform.Immutable
 
+import static com.stehno.photopile.service.OrderDirection.fromText
+import static com.stehno.photopile.service.PhotoOrderField.fromName
+
 /**
  * Created by cjstehno on 1/10/16.
  */
@@ -28,5 +31,9 @@ class PhotoOrderBy {
     @Override
     String toString() {
         "${field.field} $direction"
+    }
+
+    static PhotoOrderBy orderBy(String order, String dir) {
+        new PhotoOrderBy(fromName(order), fromText(dir))
     }
 }

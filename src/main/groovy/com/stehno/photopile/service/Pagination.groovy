@@ -20,7 +20,7 @@ import groovy.transform.Immutable
 /**
  * Created by cjstehno on 1/10/16.
  */
-@Immutable
+@Immutable(copyWith = true)
 class Pagination {
     int offset
     int limit

@@ -19,7 +19,6 @@ import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.entity.Image
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
-import com.stehno.photopile.service.Pagination
 import com.stehno.photopile.service.PhotoFilter
 import com.stehno.photopile.service.PhotoOrderBy
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,6 +30,7 @@ import static com.stehno.photopile.PhotopileRandomizers.forImage
 import static com.stehno.photopile.PhotopileRandomizers.forPhoto
 import static com.stehno.photopile.entity.ImageScale.FULL
 import static com.stehno.photopile.service.OrderDirection.ASCENDING
+import static com.stehno.photopile.service.Pagination.forPage
 import static com.stehno.photopile.service.PhotoFilter.NO_ALBUM
 import static com.stehno.photopile.service.PhotoOrderField.TAKEN
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere
@@ -99,19 +99,49 @@ class PhotoRepositorySpec extends Specification {
             createPhoto()
         }
 
-        PhotoFilter filter = new PhotoFilter(NO_ALBUM, null)
-        Pagination pagination = new Pagination(0, 3)
+        PhotoFilter filter = new PhotoFilter(NO_ALBUM, allTags())
         PhotoOrderBy orderBy = new PhotoOrderBy(TAKEN, ASCENDING)
 
         when:
-        List<Photo> photos = photoRepository.retrieveAll(filter, pagination, orderBy)
+        List<Photo> photos = photoRepository.retrieveAll(filter, forPage(1, 3), orderBy)
 
         then:
         photos.size() == 3
 
+        when:
+        photos = photoRepository.retrieveAll(filter, forPage(2, 3), orderBy)
 
+        then:
+        photos.size() == 3
 
-        // TODO: this needs more detailed testing
+        when:
+        photos = photoRepository.retrieveAll(filter, forPage(3, 3), orderBy)
+
+        then:
+        photos.size() == 1
+    }
+
+    private static Set<Long> allTags() {
+        def values = [] as Set<Long>
+        35.times {
+            values << it
+        }
+        values
+    }
+
+    @Transactional def 'count'() {
+        setup:
+        7.times {
+            createPhoto()
+        }
+
+        PhotoFilter filter = new PhotoFilter(NO_ALBUM, allTags())
+
+        when:
+        int count = photoRepository.count(filter)
+
+        then:
+        count == 7
     }
 
     @Transactional private void addImage(long photoId, long imageId) {
