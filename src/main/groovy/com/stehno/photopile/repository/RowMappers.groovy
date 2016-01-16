@@ -20,46 +20,25 @@ import com.stehno.photopile.entity.ImageScale
 import com.stehno.photopile.entity.Tag
 import com.stehno.photopile.entity.UserAuthority
 import com.stehno.vanilla.jdbc.mapper.ResultSetMapper
-import groovy.transform.Memoized
+import com.stehno.vanilla.jdbc.mapper.annotation.InjectResultSetMapper
 import org.springframework.http.MediaType
 
-import static com.stehno.vanilla.jdbc.mapper.MappingStyle.EXPLICIT
-import static com.stehno.vanilla.jdbc.mapper.runtime.RuntimeResultSetMapper.mapper
-
 /**
- * Created by cjstehno on 1/9/16.
+ * Collected row mappers.
  */
-// TODO: refactor once vanilla supports prefix and/or injection is fixed
 class RowMappers {
 
-    @Memoized
-    static ResultSetMapper forImage(String prefix = '') {
-        mapper(Image, EXPLICIT) {
-            map 'id' fromLong("${prefix}id" as String)
-            map 'scale' fromString("${prefix}scale" as String) using { v -> ImageScale.valueOf(v) }
-            map 'width' fromInt("${prefix}width" as String)
-            map 'height' fromInt("${prefix}height" as String)
-            map 'contentLength' fromLong("${prefix}content_length" as String)
-            map 'contentType' fromString("${prefix}content_type" as String) using { v -> MediaType.valueOf(v) }
-        }
-    }
+    @InjectResultSetMapper(value = Image, config = {
+        map 'scale' using { v -> ImageScale.valueOf(v) }
+        map 'contentType' using { v -> MediaType.valueOf(v) }
+    })
+    static ResultSetMapper forImage(String prefix = '') {}
 
-    @Memoized
-    static ResultSetMapper forTag(String prefix = '') {
-        mapper(Tag, EXPLICIT) {
-            map 'id' fromLong("${prefix}id" as String)
-            map 'category' fromString("${prefix}category" as String)
-            map 'label' fromString("${prefix}label" as String)
-        }
-    }
+    @InjectResultSetMapper(Tag)
+    static ResultSetMapper forTag(String prefix = '') {}
 
-    @Memoized
-    static ResultSetMapper forUserAuthority(String prefix = '') {
-        mapper(UserAuthority, EXPLICIT) {
-            map 'id' fromLong("${prefix}id" as String)
-            map 'authority' fromString("${prefix}authority" as String)
-        }
-    }
+    @InjectResultSetMapper(UserAuthority)
+    static ResultSetMapper forUserAuthority(String prefix = '') {}
 }
 
 
