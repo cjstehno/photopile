@@ -12,10 +12,10 @@
 
         <div class="collapse navbar-collapse" id="main-navbar">
             <ul class="nav navbar-nav">
-                <li <#if activeMenu == 'gallery'>class="active"</#if>><a href="#gallery"><span class="glyphicon glyphicon-picture"></span> Gallery</a></li>
-                <li <#if activeMenu == 'map'>class="active"</#if>><a href="#map"><span class="glyphicon glyphicon-globe"></span> Map</a></li>
-                <li <#if activeMenu == 'albums'>class="active"</#if>><a href="#albums"><span class="glyphicon glyphicon-book"></span> Albums</a></li>
-                <li <#if activeMenu == 'tags'>class="active"</#if>><a href="#tags"><span class="glyphicon glyphicon-tags"></span> Tags</a></li>
+                <li <% if(activeMenu == 'gallery'){ %>class="active"<% } %>><a href="#gallery"><span class="glyphicon glyphicon-picture"></span> Gallery</a></li>
+                <li <% if(activeMenu == 'map'){ %>class="active"<% } %>><a href="#map"><span class="glyphicon glyphicon-globe"></span> Map</a></li>
+                <li <% if(activeMenu == 'albums'){ %>class="active"<% } %>><a href="#albums"><span class="glyphicon glyphicon-book"></span> Albums</a></li>
+                <li <% if(activeMenu == 'tags'){ %>class="active"<% } %>><a href="#tags"><span class="glyphicon glyphicon-tags"></span> Tags</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="help.html" target="_blank"><span class="glyphicon glyphicon-question-sign"></span> Help</a></li>

@@ -1,11 +1,8 @@
-<#assign pageCss = "css/normal-page.css"/>
-<#assign activeMenu='gallery' />
-
-<#include "header.ftl">
+<%= utils.include('header', pageCss:'css/normal-page.css')  %>
 
 <div class="container-fluid">
     <div class="container-fluid">
-        <#include "menubar.ftl" />
+        <%= utils.include('menubar', activeMenu:'gallery') %>
 
         <div class="content-list">
             <div class="row" style="margin-bottom: 4px;">
@@ -67,65 +64,19 @@
                 </div>
             </div>
 
+        <% page.eachRow { row-> %>
             <div class="row">
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-01.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-02.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-03.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-04.jpg"/></a>
-                </div>
+                <% row.each { photo-> %>
+                    <div class="col-md-3">
+                        <a href="onephoto.html" class="thumbnail"><img src="/image/FULL/${photo.id}"/></a>
+                    </div>
+                <% } %>
             </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-05.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-06.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-07.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-08.jpg"/></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-09.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-10.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-11.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-12.jpg"/></a>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-13.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-14.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    <a href="onephoto.html" class="thumbnail"><img src="photos/photo-15.jpg"/></a>
-                </div>
-                <div class="col-md-3">
-                    &nbsp;
-                </div>
-            </div>
+        <% } %>
+
         </div>
 
     </div>
 </div>
 
-<#include "footer.ftl">
+<%= utils.include('footer') %>

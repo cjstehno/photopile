@@ -41,6 +41,8 @@ class PhotoFilterSelectBuilder {
             where pt.tag_id in (#tag_list) and p.id=pt.photo_id
         '''
 
+    private static final String ALL_PHOTOS_SQL = 'select id as photo_id, #order_field as order_date from photos'
+
     private Long albumId
     private Set<Long> tagsIds
     private Integer offset
@@ -50,6 +52,11 @@ class PhotoFilterSelectBuilder {
 
     static PhotoFilterSelectBuilder filter() {
         new PhotoFilterSelectBuilder()
+    }
+
+    @Override
+    String toString() {
+        "PhotoFilterSelectBuilder(sql=[${sql()}], args=${arguments()})"
     }
 
     PhotoFilterSelectBuilder filterBy(PhotoFilter filterBy) {
@@ -83,10 +90,13 @@ class PhotoFilterSelectBuilder {
             sql.append('(').append(albumSql()).append(') intersect (').append(tagsSql()).append(')')
 
         } else if (albumId) {
-            sql.append('(').append(albumSql()).append(')')
+            sql.append(albumSql())
 
         } else if (tagsIds) {
-            sql.append('(').append(tagsSql()).append(')')
+            sql.append(tagsSql())
+
+        } else {
+            sql.append(allSql())
         }
 
         wrappedSql(sql.toString())
@@ -109,6 +119,10 @@ class PhotoFilterSelectBuilder {
         "${WRAPPER_SQL.replace('#collected', collected)}${limit ? limiter : ''}".replace('#order_direction', orderDirection)
     }
 
+    private String allSql() {
+        ALL_PHOTOS_SQL.replace('#order_field', orderField)
+    }
+
     private String albumSql() {
         ALBUM_PHOTOS_SQL.replace('#order_field', orderField)
     }
@@ -127,11 +141,18 @@ class PhotoCountBuilder {
 
     private static final String TAG_PHOTOS_SQL = 'select photo_id from photo_tags where tag_id in (#tag_list)'
 
+    private static final String ALL_PHOTOS_SQL = 'select id as photo_id from photos'
+
     private Long albumId
     private Set<Long> tagsIds
 
     static PhotoCountBuilder counter() {
         new PhotoCountBuilder()
+    }
+
+    @Override
+    String toString() {
+        "PhotoCountBuilder(sql=[${sql()}], args=${arguments()})"
     }
 
     PhotoCountBuilder filterBy(PhotoFilter filterBy) {
@@ -153,10 +174,12 @@ class PhotoCountBuilder {
             sql.append('(').append(ALBUM_PHOTOS_SQL).append(') intersect (').append(tagsSql()).append(')')
 
         } else if (albumId) {
-            sql.append('(').append(ALBUM_PHOTOS_SQL).append(')')
+            sql.append(ALBUM_PHOTOS_SQL)
 
         } else if (tagsIds) {
-            sql.append('(').append(tagsSql()).append(')')
+            sql.append(tagsSql())
+        } else {
+            sql.append(ALL_PHOTOS_SQL)
         }
 
         wrappedSql(sql.toString())

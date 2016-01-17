@@ -18,11 +18,14 @@ package com.stehno.photopile.repository
 import com.stehno.photopile.ApplicationTest
 import com.stehno.photopile.PhotopileRandomizers
 import com.stehno.photopile.entity.Image
+import com.stehno.photopile.entity.Photo
+import com.stehno.photopile.service.PhotoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
+import static com.stehno.photopile.entity.ImageScale.FULL
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTableWhere
 
 @ApplicationTest
@@ -30,6 +33,7 @@ class ImageRepositorySpec extends Specification {
 
     @Autowired private ImageRepository repository
     @Autowired private JdbcTemplate jdbcTemplate
+    @Autowired private PhotoService photoService
 
     def @Transactional 'create'() {
         setup:
@@ -45,5 +49,16 @@ class ImageRepositorySpec extends Specification {
         image.id
 
         countRowsInTableWhere(jdbcTemplate, 'images', "id=${image.id}") == 1
+    }
+
+    @Transactional def 'retrieve by photo'() {
+        setup:
+        Photo photo = PhotopileRandomizers.createPhoto(photoService)
+
+        when:
+        Image retrieved = repository.retrieve(photo.id, FULL)
+
+        then:
+        retrieved == photo.images[FULL]
     }
 }

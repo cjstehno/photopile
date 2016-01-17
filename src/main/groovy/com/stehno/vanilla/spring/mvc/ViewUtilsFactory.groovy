@@ -13,24 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.stehno.photopile
+package com.stehno.vanilla.spring.mvc
 
-import com.stehno.vanilla.spring.mvc.GroovyTemplateViewResolver
-import groovy.transform.TypeChecked
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+import groovy.transform.TupleConstructor
 import org.springframework.web.servlet.ViewResolver
 
-@Configuration @TypeChecked
-class PhotopileConfig {
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
-    // FIXME: make this configurable in properties and cached for production
-    @Bean ViewResolver viewResolver() {
-        new GroovyTemplateViewResolver(
-            contentType: 'text/html',
-            cache: false,
-            prefix: 'classpath:/templates/',
-            suffix: '.gsp'
-        )
+/**
+ * Created by cjstehno on 1/17/16.
+ */
+@TupleConstructor
+class ViewUtilsFactory {
+
+    ViewResolver viewResolver
+
+    ViewUtils create(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) {
+        new ViewUtils(viewResolver, model, request, response)
     }
 }

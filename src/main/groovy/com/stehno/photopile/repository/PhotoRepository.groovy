@@ -21,6 +21,7 @@ import com.stehno.photopile.service.Pagination
 import com.stehno.photopile.service.PhotoFilter
 import com.stehno.photopile.service.PhotoOrderBy
 import groovy.transform.TypeChecked
+import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory
@@ -41,7 +42,7 @@ import static java.sql.Types.*
 /**
  * Created by cstehno on 1/6/2016.
  */
-@Repository @TypeChecked
+@Repository @TypeChecked @Slf4j
 class PhotoRepository {
 
     @Autowired private JdbcTemplate jdbcTemplate
@@ -126,6 +127,7 @@ class PhotoRepository {
 
         if (photoIds) {
             PhotoSelectBuilder select = select().filterByPhotoIds(photoIds).orderBy(orderBy)
+            log.debug 'Selector: {}', select
 
             photos = jdbcTemplate.query(
                 select.sql(),
@@ -144,9 +146,8 @@ class PhotoRepository {
 
     private List<Long> retrievePhotoIds(PhotoFilter filterBy, Pagination pagination, PhotoOrderBy orderBy) {
         PhotoFilterSelectBuilder filter = filter().filterBy(filterBy).orderBy(orderBy).offsetLimit(pagination.offset, pagination.limit)
+        log.debug 'Filter: {}', filter
 
         jdbcTemplate.query(filter.sql(), filter.arguments(), new SingleColumnRowMapper<Long>(Long))
     }
 }
-
-

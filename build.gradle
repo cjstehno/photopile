@@ -36,7 +36,6 @@ repositories {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.boot:spring-boot-starter-freemarker'
     compile('org.springframework.boot:spring-boot-starter-remote-shell') {
         exclude group: 'org.codehaus.groovy'
     }
@@ -71,7 +70,7 @@ task wrapper(type: Wrapper) {
 license {
     header rootProject.file('license_header.txt')
     exclude '**/banner.txt'
-    excludes(['**/*.js', '**/*.css', '**/*.html', '**/*.ftl'])
+    excludes(['**/*.js', '**/*.css', '**/*.html', '**/*.ftl', '**/*.gsp', '**/*.jpg', '**/*.png'])
 
     ext.name = 'Christopher J. Stehno'
     ext.email = 'chris@stehno.com'

@@ -16,14 +16,17 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.entity.Image
+import com.stehno.photopile.entity.ImageScale
 import groovy.transform.TypeChecked
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.PreparedStatementCreatorFactory
+import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import org.springframework.stereotype.Repository
 
+import static com.stehno.photopile.repository.RowMappers.forImage
 import static com.stehno.vanilla.Affirmations.affirm
 import static java.sql.Types.*
 
@@ -58,5 +61,18 @@ class ImageRepository {
 
         image.id = keyHolder.key.longValue()
         image
+    }
+
+    Image retrieve(long photoId, ImageScale scale) {
+        jdbcTemplate.query(
+            '''
+                select id,scale,width,height,content_length,content_type
+                from images i, photo_images pi
+                where pi.photo_id=? and i.id=pi.image_id and i.scale=?
+            ''',
+            forImage() as RowMapper<Image>,
+            photoId,
+            scale.name()
+        )[0]
     }
 }

@@ -16,6 +16,8 @@
 package com.stehno.photopile.controller
 
 import com.stehno.photopile.entity.Photo
+import com.stehno.photopile.service.OrderDirection
+import com.stehno.photopile.service.PhotoOrderField
 import com.stehno.photopile.service.PhotoService
 import com.stehno.photopile.util.PagintatedList
 import groovy.transform.TypeChecked
@@ -43,10 +45,13 @@ class GalleryController {
 
     @Autowired private PhotoService photoService
 
-    // /gallery/{album}/{page}?tags=1,2,3&order=uploaded&direction=asc
+    @RequestMapping(value = '/gallery', method = GET)
+    ModelAndView view() {
+        list('all', 1, null, PhotoOrderField.TAKEN.name, OrderDirection.ASCENDING.text)
+    }
 
     @RequestMapping(value = '/gallery/{album}/{page}', method = GET)
-    public ModelAndView list(
+    ModelAndView list(
         @PathVariable('album') final String album,
         @PathVariable('page') final int page,
         @RequestParam(value = 'tags', required = false) final Long[] tags,
@@ -66,12 +71,40 @@ class GalleryController {
         }
 
         def galleryPage = new GalleryPage()
+        galleryPage.applyPhotos(photos)
 
-        return new ModelAndView('gallery', 'model', galleryPage)
+        return new ModelAndView('gallery', 'page', galleryPage)
     }
 }
 
 class GalleryPage {
 
-    List<List<Photo>> grid = []
+    private final List<List<Photo>> rows = []
+
+    // FIXME: working on pagination
+    int currentPage
+    int totalPages
+    int nextPage
+    int prevPage
+
+    void applyPhotos(PagintatedList<Photo> photos){
+        int columnCount = 4
+
+        def row = []
+        photos.eachWithIndex { Photo entry, int i ->
+            row << entry
+            if( (i+1) % columnCount == 0){
+                rows << new LinkedList<Photo>(row)
+                row.clear()
+            }
+        }
+        rows << row
+    }
+
+    void eachRow(Closure closure){
+        rows.each { row->
+            closure(row)
+        }
+    }
 }
+

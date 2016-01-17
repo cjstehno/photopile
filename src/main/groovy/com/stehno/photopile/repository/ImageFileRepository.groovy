@@ -107,9 +107,17 @@ class ImageFileRepository {
      * @return the content of the image as a byte array
      */
     byte[] retrieveContent(long imageId, ImageScale scale) {
-        new File(bucketDir(imageId), fileName(imageId, scale)).with {
+        contentFile(imageId, scale).with {
             exists() ? bytes : null
         }
+    }
+
+    InputStream streamContent(long imageId, ImageScale scale){
+        contentFile(imageId, scale).newInputStream()
+    }
+
+    private File contentFile(long imageId, ImageScale scale){
+        new File(bucketDir(imageId), fileName(imageId, scale))
     }
 
     private File bucketDir(long id) {

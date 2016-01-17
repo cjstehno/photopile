@@ -1,13 +1,12 @@
-<#assign pageCss = "css/start-page.css">
 
-<#include "header.ftl">
+<%= utils.include('header', pageCss: 'css/start-page.css') %>
 
 <div class="container-fluid">
     <nav class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar">
-                    <span class="sr-only">Toggle navigation</span>
+                    <span class="sr-only">javafx.scene.control.Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -26,30 +25,34 @@
 
     <div class="jumbotron">
         <h1>Photopile</h1>
+
         <p>Your photos, your way.</p>
     </div>
 
     <div class="row">
         <div class="col-sm-2">&nbsp;</div>
+
         <div class="col-sm-8">
 
             <form name="form" action="/login" method="POST">
                 <div class="form-group">
                     <label>Username:
-                        <input type="text" class="form-control" name="username" placeholder="Enter username" />
+                        <input type="text" class="form-control" name="username" placeholder="Enter username"/>
                     </label>
                 </div>
+
                 <div class="form-group">
                     <label>Password:
-                        <input type="password" class="form-control" name="password" placeholder="Enter password" />
+                        <input type="password" class="form-control" name="password" placeholder="Enter password"/>
                     </label>
                 </div>
                 <button type="submit" class="btn btn-success">Sign In</button>
             </form>
 
         </div>
+
         <div class="col-sm-2">&nbsp;</div>
     </div>
 </div>
 
-<#include "footer.ftl">
+<%= utils.include('footer') %>

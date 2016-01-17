@@ -45,7 +45,9 @@ class RowMappers {
         map 'dateUploaded' fromTimestamp 'date_uploaded' using { d -> d.toLocalDateTime() }
         map 'dateUpdated' fromTimestamp 'date_updated' using { d -> d.toLocalDateTime() }
         map 'dateTaken' fromTimestamp 'date_taken' using { d -> d.toLocalDateTime() }
-        map 'location' fromMapper RowMappers.forGeoLocation('geo_')
+        map 'location' fromDouble 'geo_latitude' using { f, rs ->
+            f ? RowMappers.forGeoLocation('geo_').call(rs) : null
+        }
     })
     static ResultSetMapper forPhoto() {}
 }

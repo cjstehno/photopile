@@ -44,6 +44,11 @@ class PhotoSelectBuilder {
         new PhotoSelectBuilder()
     }
 
+    @Override
+    String toString() {
+        "PhotoSelectBuilder(sql=[${sql()}], args=${arguments()})"
+    }
+
     PhotoSelectBuilder filterById(long id) {
         wheres << 'p.id = ?'
         args << id
