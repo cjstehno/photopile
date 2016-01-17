@@ -16,13 +16,13 @@
 package com.stehno.photopile
 
 import com.stehno.photopile.entity.*
+import com.stehno.photopile.service.PhotoService
 import com.stehno.vanilla.test.PropertyRandomizer
 import com.stehno.vanilla.test.Randomizers
 import org.springframework.http.MediaType
 
-import java.time.LocalDate
+import java.sql.Timestamp
 import java.time.LocalDateTime
-import java.time.LocalTime
 
 import static com.stehno.photopile.entity.ImageScale.FULL
 import static com.stehno.vanilla.test.PropertyRandomizer.randomize
@@ -39,6 +39,12 @@ class PhotopileRandomizers {
 
     static final PropertyRandomizer forBytes = randomize(BYTE_ARRAY) {
         typeRandomizer BYTE_ARRAY, Randomizers.forByteArray()
+    }
+
+    static final PropertyRandomizer forLocalDateTime = randomize(LocalDateTime) {
+        typeRandomizer LocalDateTime, { Random rng ->
+            new Timestamp(System.currentTimeMillis() + rng.nextInt()).toLocalDateTime()
+        }
     }
 
     static final PropertyRandomizer forImage = randomize(Image) {
@@ -59,17 +65,12 @@ class PhotopileRandomizers {
     static final PropertyRandomizer forPhoto = randomize(Photo) {
         ignoringProperties 'id', 'version'
         typeRandomizers([
-            (LocalDateTime): { Random rng ->
-                new LocalDateTime(
-                    new LocalDate(rng.nextInt(2000) + 1970, rng.nextInt(11) + 1, rng.nextInt(29)),
-                    new LocalTime(rng.nextInt(23), rng.nextInt(59), rng.nextInt(59), rng.nextInt(100))
-                )
-            },
+            (LocalDateTime): forLocalDateTime,
             (GeoLocation)  : forGeoLocation
         ])
         propertyRandomizers([
             tags  : { Random rng ->
-                (forTag * (rng.nextInt(3)+1)) as Set<Tag>
+                (forTag * (rng.nextInt(3) + 1)) as Set<Tag>
             },
             images: { Random rng ->
                 Image img = forImage.one()
@@ -77,5 +78,23 @@ class PhotopileRandomizers {
                 [(FULL): img]
             }
         ])
+    }
+
+    static List<Photo> forPhotos(int count, Set<Tag> addedTags) {
+        Collection<Photo> photos = PhotopileRandomizers.forPhoto * count
+        photos.each { p ->
+            p.tags.addAll(addedTags)
+        }
+        photos
+    }
+
+    static Photo createPhoto(PhotoService photoService, Photo photo = forPhoto.one(), File file = null) {
+        photoService.create(photo, file ?: File.createTempFile('fixture_', '.jpg'))
+    }
+
+    static Collection<Photo> createPhotos(PhotoService photoService, Collection<Photo> photos) {
+        photos.collect { p ->
+            createPhoto(photoService, p)
+        }
     }
 }

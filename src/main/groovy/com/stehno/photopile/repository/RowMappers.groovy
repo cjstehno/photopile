@@ -15,10 +15,7 @@
  */
 package com.stehno.photopile.repository
 
-import com.stehno.photopile.entity.Image
-import com.stehno.photopile.entity.ImageScale
-import com.stehno.photopile.entity.Tag
-import com.stehno.photopile.entity.UserAuthority
+import com.stehno.photopile.entity.*
 import com.stehno.vanilla.jdbc.mapper.ResultSetMapper
 import com.stehno.vanilla.jdbc.mapper.annotation.InjectResultSetMapper
 import org.springframework.http.MediaType
@@ -39,6 +36,18 @@ class RowMappers {
 
     @InjectResultSetMapper(UserAuthority)
     static ResultSetMapper forUserAuthority(String prefix = '') {}
+
+    @InjectResultSetMapper(GeoLocation)
+    static ResultSetMapper forGeoLocation(String prefix = '') {}
+
+    @InjectResultSetMapper(value = Photo, config = {
+        ignore 'tags', 'images'
+        map 'dateUploaded' fromTimestamp 'date_uploaded' using { d -> d.toLocalDateTime() }
+        map 'dateUpdated' fromTimestamp 'date_updated' using { d -> d.toLocalDateTime() }
+        map 'dateTaken' fromTimestamp 'date_taken' using { d -> d.toLocalDateTime() }
+        map 'location' fromMapper RowMappers.forGeoLocation('geo_')
+    })
+    static ResultSetMapper forPhoto() {}
 }
 
 

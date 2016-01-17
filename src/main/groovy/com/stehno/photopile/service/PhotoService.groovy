@@ -15,7 +15,7 @@
  */
 package com.stehno.photopile.service
 
-import com.stehno.photopile.controller.PagintatedList
+import com.stehno.photopile.util.PagintatedList
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
 import com.stehno.photopile.repository.ImageFileRepository

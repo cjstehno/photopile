@@ -16,18 +16,17 @@
 package com.stehno.photopile.repository
 
 import com.stehno.photopile.ApplicationTest
-import com.stehno.photopile.entity.Image
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.entity.Tag
 import com.stehno.photopile.service.PhotoFilter
 import com.stehno.photopile.service.PhotoOrderBy
+import com.stehno.photopile.service.PhotoService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.annotation.Transactional
 import spock.lang.Specification
 
-import static com.stehno.photopile.PhotopileRandomizers.forImage
-import static com.stehno.photopile.PhotopileRandomizers.forPhoto
+import static com.stehno.photopile.PhotopileRandomizers.*
 import static com.stehno.photopile.entity.ImageScale.FULL
 import static com.stehno.photopile.service.OrderDirection.ASCENDING
 import static com.stehno.photopile.service.Pagination.forPage
@@ -42,13 +41,13 @@ class PhotoRepositorySpec extends Specification {
     @Autowired private TagRepository tagRepository
     @Autowired private ImageRepository imageRepository
     @Autowired private JdbcTemplate jdbcTemplate
+    @Autowired private PhotoService photoService
 
     @Transactional def 'create'() {
         setup:
         Photo photo = forPhoto.one()
-
-        createTags photo.tags
-        createImage photo.images[FULL]
+        photo.tags.each { t -> tagRepository.create(t) }
+        imageRepository.create(photo.images[FULL])
 
         when:
         Photo created = photoRepository.create(photo)
@@ -69,7 +68,7 @@ class PhotoRepositorySpec extends Specification {
     // TODO: this test is a little flaky - figure out why
     @Transactional def 'retrieve'() {
         setup:
-        Photo photo = createPhoto()
+        Photo photo = createPhoto(photoService)
 
         when:
         Photo retrieved = photoRepository.retrieve(photo.id)
@@ -80,8 +79,8 @@ class PhotoRepositorySpec extends Specification {
 
     @Transactional def 'retrieve with multiple images'() {
         setup:
-        Photo photo = createPhoto()
-        def image = createImage(forImage.one())
+        Photo photo = createPhoto(photoService)
+        def image = imageRepository.create(forImage.one())
         photo.images[image.scale] = image
         addImage(photo.id, image.id)
 
@@ -95,11 +94,10 @@ class PhotoRepositorySpec extends Specification {
 
     @Transactional def 'retrieveAll'() {
         setup:
-        7.times {
-            createPhoto()
-        }
+        def commonTags = forTag * 2
+        createPhotos(photoService, forPhotos(7, commonTags as Set<Tag>))
 
-        PhotoFilter filter = new PhotoFilter(NO_ALBUM, allTags())
+        PhotoFilter filter = PhotoFilter.filterBy(NO_ALBUM, commonTags*.id as Long[])
         PhotoOrderBy orderBy = new PhotoOrderBy(TAKEN, ASCENDING)
 
         when:
@@ -121,49 +119,21 @@ class PhotoRepositorySpec extends Specification {
         photos.size() == 1
     }
 
-    private static Set<Long> allTags() {
-        def values = [] as Set<Long>
-        35.times {
-            values << it
-        }
-        values
-    }
-
     @Transactional def 'count'() {
         setup:
-        7.times {
-            createPhoto()
-        }
+        Tag commonTag = forTag.one()
+        createPhotos(photoService, forPhotos(3, [commonTag] as Set<Tag>))
 
-        PhotoFilter filter = new PhotoFilter(NO_ALBUM, allTags())
+        PhotoFilter filter = PhotoFilter.filterBy(NO_ALBUM, [commonTag.id] as Long[])
 
         when:
         int count = photoRepository.count(filter)
 
         then:
-        count == 7
+        count == 3
     }
 
     @Transactional private void addImage(long photoId, long imageId) {
         photoRepository.addImage(photoId, imageId)
-    }
-
-    @Transactional private Photo createPhoto() {
-        Photo photo = forPhoto.one()
-
-        createTags photo.tags
-        createImage photo.images[FULL]
-
-        photoRepository.create(photo)
-    }
-
-    @Transactional private void createTags(Collection<Tag> tags) {
-        tags.each { Tag tag ->
-            tagRepository.create(tag)
-        }
-    }
-
-    @Transactional private Image createImage(Image image) {
-        imageRepository.create(image)
     }
 }

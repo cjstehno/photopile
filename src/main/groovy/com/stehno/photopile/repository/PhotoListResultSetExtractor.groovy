@@ -46,7 +46,7 @@ class PhotoListResultSetExtractor implements ResultSetExtractor<List<Photo>> {
 
             } else {
                 // map everything
-                photos[photoId] = PhotoRowMapper.instance.mapRow(rs, 0)
+                photos[photoId] = RowMappers.forPhoto().mapRow(rs, 0) as Photo
                 applyTag photos[photoId], rs
                 applyImage photos[photoId], rs
             }

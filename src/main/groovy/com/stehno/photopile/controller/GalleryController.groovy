@@ -17,6 +17,7 @@ package com.stehno.photopile.controller
 
 import com.stehno.photopile.entity.Photo
 import com.stehno.photopile.service.PhotoService
+import com.stehno.photopile.util.PagintatedList
 import groovy.transform.TypeChecked
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
@@ -38,7 +39,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET
 @Controller @TypeChecked @Slf4j
 class GalleryController {
 
-    private static final int PAGE_SIZE = 3
+    private static final int PAGE_SIZE = 16
 
     @Autowired private PhotoService photoService
 
@@ -54,7 +55,7 @@ class GalleryController {
     ) {
         long albumId = album == 'all' ? NO_ALBUM : album as long
 
-        List<Photo> photos = photoService.retrieveAll(
+        PagintatedList<Photo> photos = photoService.retrieveAll(
             filterBy(albumId, tags),
             forPage(page ?: 1, PAGE_SIZE),
             orderBy(order, direction)
@@ -68,10 +69,3 @@ class GalleryController {
     }
 }
 
-@TypeChecked
-class PagintatedList<T> implements List<T> {
-
-    @Delegate List<T> contents
-
-    int total
-}
