@@ -65,7 +65,13 @@ class GalleryController {
             log.info 'Showing photo (page {}): {}', page, it.name
         }
 
-        return new ModelAndView('gallery', 'photos', photos)
+        def galleryPage = new GalleryPage()
+
+        return new ModelAndView('gallery', 'model', galleryPage)
     }
 }
 
+class GalleryPage {
+
+    List<List<Photo>> grid = []
+}
