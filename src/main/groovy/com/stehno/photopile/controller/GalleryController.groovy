@@ -16,6 +16,8 @@
 package com.stehno.photopile.controller
 
 import com.stehno.photopile.entity.Photo
+import com.stehno.photopile.page.GalleryPage
+import com.stehno.photopile.page.PaginationControls
 import com.stehno.photopile.service.OrderDirection
 import com.stehno.photopile.service.PhotoOrderField
 import com.stehno.photopile.service.PhotoService
@@ -60,51 +62,19 @@ class GalleryController {
     ) {
         long albumId = album == 'all' ? NO_ALBUM : album as long
 
+        // TODO: add validations for inputs
+
         PagintatedList<Photo> photos = photoService.retrieveAll(
             filterBy(albumId, tags),
             forPage(page ?: 1, PAGE_SIZE),
             orderBy(order, direction)
         )
 
-        photos.each {
-            log.info 'Showing photo (page {}): {}', page, it.name
-        }
-
-        def galleryPage = new GalleryPage()
-        galleryPage.applyPhotos(photos)
-
-        return new ModelAndView('gallery', 'page', galleryPage)
+        return new ModelAndView('gallery', 'page', new GalleryPage(
+            photos,
+            new PaginationControls(page, PAGE_SIZE, photos.total)
+        ))
     }
 }
 
-class GalleryPage {
-
-    private final List<List<Photo>> rows = []
-
-    // FIXME: working on pagination
-    int currentPage
-    int totalPages
-    int nextPage
-    int prevPage
-
-    void applyPhotos(PagintatedList<Photo> photos){
-        int columnCount = 4
-
-        def row = []
-        photos.eachWithIndex { Photo entry, int i ->
-            row << entry
-            if( (i+1) % columnCount == 0){
-                rows << new LinkedList<Photo>(row)
-                row.clear()
-            }
-        }
-        rows << row
-    }
-
-    void eachRow(Closure closure){
-        rows.each { row->
-            closure(row)
-        }
-    }
-}
 

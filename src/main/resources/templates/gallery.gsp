@@ -55,11 +55,15 @@
                 </div>
                 <div class="col-md-3">
                     <div class="pull-right">
-                        <a href="#" class="btn btn-xs btn-default" role="button"><span class="glyphicon glyphicon-fast-backward"></span></a>
-                        <a href="#" class="btn btn-xs btn-default" role="button"><span class="glyphicon glyphicon-backward"></span></a>
-                        <span>1 of 3</span>
+                        <a href="/gallery/1" class="btn btn-xs btn-default ${page.pagination.firstPage ? 'disabled' : ''}" role="button">
+                            <span class="glyphicon glyphicon-fast-backward"></span>
+                        </a>
+                        <a href="/gallery/${}" class="btn btn-xs btn-default" role="button"><span class="glyphicon glyphicon-backward"></span></a>
+                        <span>${page.pagination.currentPage} of ${page.pagination.pageCount}</span>
                         <a href="#" class="btn btn-xs btn-default" role="button"><span class="glyphicon glyphicon-forward"></span></a>
-                        <a href="#" class="btn btn-xs btn-default" role="button"><span class="glyphicon glyphicon-fast-forward"></span></a>
+                        <a href="/gallery/${page.pagination.lastPage}" class="btn btn-xs btn-default ${page.pagination.lastPage ? 'disabled' : ''}" role="button">
+                            <span class="glyphicon glyphicon-fast-forward"></span>
+                        </a>
                     </div>
                 </div>
             </div>
